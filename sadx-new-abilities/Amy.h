@@ -1,0 +1,66 @@
+#pragma once
+
+enum AmyActions : Uint8 {
+	Act_Amy_Init,
+	Act_Amy_Stand,
+	Act_Amy_Walk,
+	Act_Amy_Path1,
+	Act_Amy_Path2,
+	Act_Amy_Jump,
+	Act_Amy_Spring,
+	Act_Amy_Launch,
+	Act_Amy_Fall,
+	Act_Amy_Brake,
+	Act_Amy_Push,
+	Act_Amy_Damage,
+	Act_Amy_Back,
+	Act_Amy_PLON,
+	Act_Amy_Knocked,
+	Act_Amy_Handle,
+	Act_Amy_Balance,
+	Act_Amy_BarrelOn,
+	Act_Amy_BarrelOff,
+	Act_Amy_HammerAttack,
+	Act_Amy_HammerSpin,
+	Act_Amy_HammerJump_,
+	Act_Amy_AirHammerAttack,
+	Act_Amy_PickObject,
+	Act_Amy_PutObject,
+	Act_Amy_HoldObject,
+	Act_Amy_ThrowObject,
+	Act_Amy_WalkObject,
+	Act_Amy_Throw,
+	Act_Amy_BrakeObject,
+	Act_Amy_FallObject,
+	Act_Amy_JumpObject,
+	Act_Amy_SpringObject,
+	Act_Amy_LaunchObject,
+	Act_Amy_Pull,
+	Act_Amy_THRU,
+	Act_Amy_Shake,
+	Act_Amy_EndShake,
+	Act_Amy_HGWT,
+	Act_Amy_HGGO,
+	Act_Amy_LDWT,
+	Act_Amy_LDGO,
+	Act_Amy_PNJP,
+	Act_Amy_PNWT,
+	Act_Amy_Captured,
+	Act_Amy_Event,
+	Act_Amy_DOZA,
+	Act_Amy_Death,
+	Act_Amy_BumperCar,
+	Act_Amy_CNADE_START,
+	Act_Amy_CNADE_LOOP,
+	Act_Amy_CNADE_END,
+	Act_Amy_Whistle,
+	Act_Amy_Debug,
+
+	// Custom Ones
+
+
+};
+
+enum AmyAnimations {
+	Anm_Amy_Stand
+};
