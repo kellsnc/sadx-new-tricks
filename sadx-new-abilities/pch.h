@@ -12,8 +12,9 @@
 #include "utils.h"
 
 #include "Common.h"
-#include "Amy.h";
-#include "Tails.h";
 #include "Sonic.h";
+#include "Tails.h";
+#include "Knuckles.h"
+#include "Amy.h";
 
 #endif

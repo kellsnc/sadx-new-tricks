@@ -35,6 +35,15 @@ void SetPlayerGrabbed(EntityData1* data, EntityData1* player) {
 		}
 
 		break;
+	case Characters_Knuckles:
+		if (player->Action == Act_Knuckles_Jump) {
+			player->Action = Act_Knuckles_TailsGrab;
+		}
+		else {
+			return;
+		}
+
+		break;
 	default:
 		return;
 	}

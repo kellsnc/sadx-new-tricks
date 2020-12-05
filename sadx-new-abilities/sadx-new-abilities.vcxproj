@@ -95,6 +95,7 @@
     <ClInclude Include="Amy.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Knuckles.h" />
     <ClInclude Include="ninja-utils.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="pointers.h" />
@@ -107,6 +108,7 @@
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="entry.cpp" />
+    <ClCompile Include="Knuckles.cpp" />
     <ClCompile Include="ninja-utils.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
