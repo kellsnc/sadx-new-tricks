@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "Amy.h"
 
+static bool EnableDoubleJump = true;
+static bool EnableHammerPropeller = true;
+
 static constexpr float PropellerGravity = 0.011f;
 static constexpr float PropellerInitialAccTreshold = 1.0f;
 static constexpr float PropellerInitialAcc = 1.01f;
@@ -8,10 +11,12 @@ static constexpr float PropellerAirAccTreshold = 7.0f;
 static constexpr float PropellerAirAcc = 1.005f;
 static constexpr float DoubleJumpAcc = 1.12f;
 
+AnimData DoubleJumpAnim = { nullptr, 78, 4, Anm_Amy_Jump, 1.12f, 1.0f };
+
 Trampoline* Amy_Exec_t = nullptr;
 
 void AmyDoubleJump(EntityData1* data, motionwk* mwp, CharObj2* co2) {
-	if (PressedButtons[data->CharIndex] & JumpButtons && co2->gap16[0] == 0 /* Can Double Jump */ && co2->JumpTime > 8) {
+	if (EnableDoubleJump == true && PressedButtons[data->CharIndex] & JumpButtons && co2->gap16[0] == 0 /* Can Double Jump */ && co2->JumpTime > 8) {
 		co2->gap16[0] = 1;
 
 		PlaySound(1286, 0, 0, 0);
@@ -19,8 +24,7 @@ void AmyDoubleJump(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 		co2->Speed.x /= 4;
 		co2->Speed.z /= 4;
 
-		co2->AnimationThing.Index = Anm_Amy_Jump;
-		co2->AnimationThing.Frame = 0.0f;
+		co2->AnimationThing.Index = 74;
 	}
 }
 
@@ -76,11 +80,14 @@ void AmyProp_Run(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 
 	// This is the hammer scale
 	co2->TailsFlightTime = 1.0f;
+
+	// Attack status
+	data->Status |= Status_Attack;
 }
 
 inline void AmyProp_Check(EntityData1* data, CharObj2* co2, Buttons buttons) {
-	if ((data->Status & Status_Ground) != Status_Ground && PressedButtons[data->CharIndex] & buttons && co2->field_A == 0 && 
-		co2->JumpTime > 5 && co2->gap16[0] == 0 /* Did not Double Jumped */ && co2->ObjectHeld == nullptr) {
+	if (EnableHammerPropeller == true && (data->Status & Status_Ground) != Status_Ground && PressedButtons[data->CharIndex] & buttons &&
+		co2->field_A == 0 && co2->JumpTime > 5 && co2->gap16[0] == 0 /* did not Double Jumped */ && co2->ObjectHeld == nullptr) {
 
 		data->Action = Act_Amy_HammerProp;
 
@@ -97,11 +104,18 @@ inline void AmyProp_Check(EntityData1* data, CharObj2* co2, Buttons buttons) {
 #pragma endregion
 
 void Amy_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
-	if (data->Status & Status_Ground) {
+	if (EnableDoubleJump == true && data->Action != Act_Amy_Init && data->Status & Status_Ground) {
 		co2->gap16[0] = 0; // can double jump
 	}
 
 	switch (data->Action) {
+	case Act_Amy_Init:
+
+		// Initialize the double jump animation
+		DoubleJumpAnim.Animation = AmyAnimData[Anm_Amy_HammerSomerTrickA].Animation;
+		AmyAnimData[74] = DoubleJumpAnim;
+
+		break;
 	case Act_Amy_Jump:
 		AmyProp_Check(data, co2, Buttons_X);
 		AmyDoubleJump(data, mwp, co2);
@@ -132,6 +146,9 @@ void Amy_Exec_r(task* tsk) {
 	Amy_Original(tsk);
 }
 
-void __cdecl Amy_Init(const HelperFunctions& helperFunctions) {
+void __cdecl Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config) {
 	Amy_Exec_t = new Trampoline((int)Amy_Main, (int)Amy_Main + 0x8, Amy_Exec_r);
+
+	EnableDoubleJump = config->getBool("Amy", "EnableDoubleJump", true);
+	EnableHammerPropeller = config->getBool("Amy", "EnableHammerPropeller", true);
 }

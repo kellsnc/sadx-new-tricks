@@ -65,5 +65,8 @@ enum AmyAnimations {
 	Anm_Amy_Stand,
 	Anm_Amy_Jump = 14,
 	Anm_Amy_Fall = 18,
+	Anm_Amy_HammerSomerTrickA = 95,
+	Anm_Amy_HammerSomerTrickB,
+	Anm_Amy_HammerSomerTrickC,
 	Anm_Amy_HammerSpinAttack = 90
 };
