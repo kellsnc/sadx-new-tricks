@@ -62,11 +62,14 @@ enum KnucklesActions : Uint8 {
 
 	// Custom:
 
-	Act_Knuckles_TailsGrab
+	Act_Knuckles_TailsGrab,
+	Act_Knuckles_SpinDash
 };
 
 enum KnucklesAnimations {
 	Anm_Knuckles_Stand,
+	Anm_Knuckles_JumpOrSpin = 14,
+	Anm_Knuckles_Roll = 15,
 	Anm_Knuckles_Fall = 6,
 	Anm_Knuckles_Hang = 84
 };

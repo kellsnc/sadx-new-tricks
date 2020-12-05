@@ -1,5 +1,14 @@
 #include "pch.h"
 
+void RunPhysics(EntityData1* data, motionwk* mwp, CharObj2* co2) {
+	PlayerFunc_Move(data, mwp, co2);
+	PlayerFunc_Acceleration(data, mwp, co2);
+	PlayerFunc_AnalogToDirection(data, mwp, co2);
+	PlayerFunc_RunDynamicCollision(data, mwp, co2);
+	PlayerFunc_UpdateSpeed(data, mwp, co2);
+}
+
+#pragma region TailsGrab
 void TailsGrabAction_Stop(EntityData1* data, CharObj2* co2, int endaction, int fallanim) {
 	data->Action = endaction;
 	co2->AnimationThing.Index = fallanim;
@@ -66,3 +75,53 @@ void TailsGrabAction(EntityData1* data, motionwk* mwp, CharObj2* co2, NJS_VECTOR
 	
 	TailsGrabAction_Stop(data, co2, fallaction, fallanim);
 }
+#pragma endregion
+
+#pragma region SpinDash
+
+void CommonSpinDash_Run(EntityData1* data, motionwk* mwp, CharObj2* co2, float maxspeed, float speedincrease, int rollanim, int rollaction) {
+	if (co2->Speed.x > 0) {
+		co2->Speed.x -= 0.1f;
+	}
+
+	++co2->SonicSpinTimer;
+
+	if (co2->SonicSpinTimer < 300) {
+		if (HeldButtons[data->CharIndex] & Buttons_B) {
+			if (co2->SpindashSpeed < maxspeed) {
+				co2->SpindashSpeed += speedincrease;
+			}
+		}
+		else {
+			DoSoundQueueThing(767);
+			DoSoundQueueThing(763);
+			data->Action = rollaction;
+			co2->AnimationThing.Index = rollanim;
+			co2->Speed.x = co2->SpindashSpeed;
+			co2->SpindashSpeed = 0;
+			co2->SonicSpinTimer = 0;
+		}
+	}
+	else {
+		DoSoundQueueThing(767);
+		DoSoundQueueThing(763);
+		data->Action = 1;
+		co2->IdleTime = 0;
+		data->Status &= ~(Status_Ball | Status_Attack);
+	}
+
+	RunPhysics(data, mwp, co2);
+}
+
+void CommonSpinDash_Check(EntityData1* data, CharObj2* co2, int jumpspinanim, int spindashact, float maxstartspeed) {
+	if (PressedButtons[data->CharIndex] & Buttons_B) {
+		co2->AnimationThing.Index = jumpspinanim;
+		data->Status |= Status_Attack | Status_Ball;
+		data->Action = spindashact;
+		co2->SpindashSpeed = fmin(maxstartspeed, co2->Speed.x);
+		QueueSound_DualEntity(767, data, 1, 0, 2);
+		co2->SonicSpinTimer = 0;
+	}
+}
+
+#pragma endregion
