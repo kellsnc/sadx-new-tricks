@@ -5,7 +5,7 @@ enum AmyActions : Uint8 {
 	Act_Amy_Stand,
 	Act_Amy_Walk,
 	Act_Amy_Path1,
-	Act_Amy_DashControl,
+	Act_Amy_DashSpeedPanel,
 	Act_Amy_Jump,
 	Act_Amy_Spring,
 	Act_Amy_Launch,
@@ -58,13 +58,15 @@ enum AmyActions : Uint8 {
 
 	// Custom Ones
 
-	Act_Amy_HammerProp
+	Act_Amy_HammerProp,
+	Act_Amy_TailsGrab
 };
 
 enum AmyAnimations {
 	Anm_Amy_Stand,
 	Anm_Amy_Jump = 14,
 	Anm_Amy_Fall = 18,
+	Anm_Amy_HangHook = 55,
 	Anm_Amy_HammerSomerTrickA = 95,
 	Anm_Amy_HammerSomerTrickB,
 	Anm_Amy_HammerSomerTrickC,

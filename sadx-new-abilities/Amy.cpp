@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "Amy.h"
 
 static bool EnableDoubleJump = true;
 static bool EnableHammerPropeller = true;
@@ -122,7 +121,7 @@ void Amy_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 
 		break;
 	case Act_Amy_HammerJump:
-	case Act_Amy_DashControl:
+	case Act_Amy_DashSpeedPanel:
 		AmyProp_Check(data, co2, Buttons_X);
 		break;
 	case Act_Amy_Spring:
@@ -131,6 +130,13 @@ void Amy_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 		break;
 	case Act_Amy_HammerProp:
 		AmyProp_Run(data, mwp, co2);
+		break;
+	case Act_Amy_TailsGrab:
+		if (Amy_RunNextAction(co2, mwp, data)) {
+			return;
+		}
+
+		TailsGrabAction(data, mwp, co2, { 0.0f, -6.8f, 0.0f }, Anm_Amy_HangHook, Act_Amy_Fall, Anm_Amy_Fall);
 		break;
 	}
 }

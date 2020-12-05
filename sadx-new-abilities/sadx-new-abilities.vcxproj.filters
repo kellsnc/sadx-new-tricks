@@ -16,6 +16,9 @@
     <Filter Include="Source Files\Characters">
       <UniqueIdentifier>{1f81eae6-09bf-4ab0-92f0-d7f71999bf16}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Characters">
+      <UniqueIdentifier>{ddbff332-d1dd-4847-9daa-11b0d6a9c5ad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -31,7 +34,16 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Amy.h">
+      <Filter>Header Files\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Tails.h">
+      <Filter>Header Files\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Header Files\Characters</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -48,6 +60,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Amy.cpp">
+      <Filter>Source Files\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Tails.cpp">
+      <Filter>Source Files\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Common.cpp">
       <Filter>Source Files\Characters</Filter>
     </ClCompile>
   </ItemGroup>

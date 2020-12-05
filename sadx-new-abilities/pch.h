@@ -9,5 +9,10 @@
 
 #include "pointers.h"
 #include "ninja-utils.h"
+#include "utils.h"
+
+#include "Common.h"
+#include "Amy.h";
+#include "Tails.h";
 
 #endif

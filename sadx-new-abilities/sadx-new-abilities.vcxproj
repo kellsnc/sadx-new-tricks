@@ -93,13 +93,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Amy.h" />
+    <ClInclude Include="Common.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ninja-utils.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="pointers.h" />
+    <ClInclude Include="Tails.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Amy.cpp" />
+    <ClCompile Include="Common.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="entry.cpp" />
     <ClCompile Include="ninja-utils.cpp" />
@@ -107,6 +111,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Tails.cpp" />
+    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

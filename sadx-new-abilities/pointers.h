@@ -32,6 +32,20 @@ static inline signed int Amy_RunNextAction(CharObj2* co2, motionwk* mwp, EntityD
     return result;
 }
 
+//void __usercall PutPlayerBehind(NJS_VECTOR* pos@<edi>, EntityData1* data@<esi>, float dist)
+static const void* const PutPlayerBehindPtr = (void*)0x47DD50;
+static inline void PutPlayerBehind(NJS_VECTOR* pos, EntityData1* data, float dist)
+{
+    __asm
+    {
+        push[dist]
+        mov esi, [data]
+        mov edi, [pos]
+        call PutPlayerBehindPtr
+        add esp, 4
+    }
+}
+
 ObjectFunc(SecondaryObjectPhysics, 0x49D730);
 ObjectFunc(SetObjectStatusHeld, 0x46C120);
 ObjectFunc(ObjectCrash, 0x5A95B0); // position is position, scale is direction, object is the model
