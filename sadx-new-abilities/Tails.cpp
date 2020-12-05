@@ -7,28 +7,21 @@ Trampoline* Tails_Exec_t = nullptr;
 void SetPlayerGrabbed(EntityData1* data, EntityData1* player) {
 	Characters character = (Characters)player->CharID;
 
+	// Launch the correct action per player because sadx is very arbitrary
+
 	switch (character) {
-	case Characters_Amy:
-		if (player->Action == Act_Amy_Jump) {
-			player->Action = Act_Amy_TailsGrab;
-		}
-		else {
-			return;
-		}
-		
-		break;
-	case Characters_Tails:
-		if (player->Action == Act_Tails_Jump) {
-			player->Action = Act_Tails_TailsGrab;
+	case Characters_Sonic:
+		if (player->Action == Act_Sonic_Jump) {
+			player->Action = Act_Sonic_TailsGrab;
 		}
 		else {
 			return;
 		}
 
 		break;
-	case Characters_Sonic:
-		if (player->Action == Act_Sonic_Jump) {
-			player->Action = Act_Sonic_TailsGrab;
+	case Characters_Tails:
+		if (player->Action == Act_Tails_Jump) {
+			player->Action = Act_Tails_TailsGrab;
 		}
 		else {
 			return;
@@ -44,12 +37,21 @@ void SetPlayerGrabbed(EntityData1* data, EntityData1* player) {
 		}
 
 		break;
+	case Characters_Amy:
+		if (player->Action == Act_Amy_Jump) {
+			player->Action = Act_Amy_TailsGrab;
+		}
+		else {
+			return;
+		}
+
+		break;
 	default:
 		return;
 	}
 
 	player->LoopData = (Loop*)data;
-	player->Status = 0;
+	player->Status = 0; // remove status when starting grab, prevent several issues
 	data->field_A = 1; // cannot grab another player
 }
 
@@ -62,7 +64,6 @@ void Tails_FlyGrab(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 				// Fix stupid hurt flag
 				if (IsSpecificPlayerInSphere(&data->Position, 20.0f, i)) {
 					co2->Powerups |= Powerups_Invincibility;
-					co2->gap16[0] = 120;
 				}
 
 				if (IsSpecificPlayerInSphere(&data->Position, 10.0f, i)) {
@@ -77,13 +78,8 @@ void Tails_FlyGrab(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 void Tails_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	if (data->Action != Act_Tails_Init) {
 
-		// Tails' Grab restore things
-
-		if (co2->gap16[0] == 1 && data->InvulnerableTime == 0) {
-			co2->Powerups &= ~Powerups_Invincibility;
-			co2->gap16[0] = 0;
-		}
-
+		// Note: data->field_A is capacity to hold player
+		// Tails' Grab restore capacity to hold player
 		if (data->field_A == 1 && data->Status & Status_Ground) {
 			data->field_A = 0; // can grab a player
 			co2->Powerups &= ~Powerups_Invincibility;
@@ -93,7 +89,6 @@ void Tails_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	
 	switch (data->Action) {
 	case Act_Tails_Fly:
-		co2->Speed.y = 0;
 		Tails_FlyGrab(data, mwp, co2);
 		break;
 	case Act_Tails_TailsGrab:

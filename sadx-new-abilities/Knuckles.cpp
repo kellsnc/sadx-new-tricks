@@ -5,7 +5,7 @@ Trampoline* Knuckles_Exec_t = nullptr;
 void Knuckles_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	switch (data->Action) {
 	case Act_Knuckles_TailsGrab:
-		TailsGrabAction(data, mwp, co2, { -0.5f, -7.5f, 0.0f }, Anm_Knuckles_Hang, Act_Knuckles_Fall, Anm_Knuckles_Fall);
+		TailsGrabAction(data, mwp, co2, { 0.0f, -8.0f, -1.0f }, Anm_Knuckles_Hang, Act_Knuckles_Fall, Anm_Knuckles_Fall);
 		break;
 	}
 }
