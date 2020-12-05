@@ -75,6 +75,55 @@ void Tails_FlyGrab(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	}
 }
 
+void Tails_SpinDash(EntityData1* data, motionwk* mwp, CharObj2* co2) {
+	if (co2->Speed.x > 0) {
+		co2->Speed.x -= 0.1f;
+	}
+
+	++co2->SonicSpinTimer;
+
+	if (co2->SonicSpinTimer < 300) {
+		if (HeldButtons[data->CharIndex] & Buttons_X) {
+			if (co2->SpindashSpeed < 7.0) {
+				co2->SpindashSpeed += 0.2f;
+			}
+		}
+		else {
+			DoSoundQueueThing(767);
+			DoSoundQueueThing(763);
+			data->Action = Act_Tails_Roll;
+			co2->AnimationThing.Index = Anm_Tails_Roll;
+			co2->Speed.x = co2->SpindashSpeed;
+			co2->SpindashSpeed = 0;
+			co2->SonicSpinTimer = 0;
+		}
+	}
+	else {
+		DoSoundQueueThing(767);
+		DoSoundQueueThing(763);
+		data->Action = Act_Tails_Stand;
+		co2->IdleTime = 0;
+		data->Status &= ~(Status_Ball | Status_Attack);
+	}
+	
+	PlayerFunc_Move(data, mwp, co2);
+	PlayerFunc_Acceleration(data, mwp, co2);
+	PlayerFunc_AnalogToDirection(data, mwp, co2);
+	PlayerFunc_RunDynamicCollision(data, mwp, co2);
+	PlayerFunc_UpdateSpeed(data, mwp, co2);
+}
+
+void Tails_CheckSpinDash(EntityData1* data, CharObj2* co2) {
+	if (PressedButtons[data->CharIndex] & Buttons_X) {
+		co2->AnimationThing.Index = Anm_Tails_JumpOrSpin;
+		data->Status |= Status_Attack | Status_Ball;
+		data->Action = Act_Tails_SpinDash;
+		co2->SpindashSpeed = fmin(1.25f, co2->Speed.x);
+		QueueSound_DualEntity(767, data, 1, 0, 2);
+		co2->SonicSpinTimer = 0;
+	}
+}
+
 void Tails_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	if (data->Action != Act_Tails_Init) {
 
@@ -88,11 +137,18 @@ void Tails_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	}
 	
 	switch (data->Action) {
+	case Act_Tails_Stand:
+	case Act_Tails_Walk:
+		Tails_CheckSpinDash(data, co2);
+		break;
 	case Act_Tails_Fly:
 		Tails_FlyGrab(data, mwp, co2);
 		break;
 	case Act_Tails_TailsGrab:
 		TailsGrabAction(data, mwp, co2, { 0.0f, -5.8f, 0.0f }, Anm_Tails_RockVertHang, Act_Tails_Fall, Anm_Tails_Fall);
+		break;
+	case Act_Tails_SpinDash:
+		Tails_SpinDash(data, mwp, co2);
 		break;
 	}
 }

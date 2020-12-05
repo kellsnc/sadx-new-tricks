@@ -72,14 +72,16 @@ enum TailsActions : Uint8 {
 
 	// Custom:
 
-	Act_Tails_TailsGrab
+	Act_Tails_TailsGrab,
+	Act_Tails_SpinDash
 };
 
 enum TailsAnimations {
 	Anm_Tails_Stand,
 	Anm_Tails_Land,
 	Anm_Tails_StandAfterLand,
-	Anm_Tails_JumpRoll = 14,
+	Anm_Tails_JumpOrSpin = 14,
+	Anm_Tails_Roll = 15,
 	Anm_Tails_Fall = 19,
 	Anm_Tails_Fly = 37,
 	Anm_Tails_RockVertHang = 100
