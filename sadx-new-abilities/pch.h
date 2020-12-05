@@ -14,5 +14,6 @@
 #include "Common.h"
 #include "Amy.h";
 #include "Tails.h";
+#include "Sonic.h";
 
 #endif

@@ -2,6 +2,7 @@
 
 void __cdecl Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config);
 void __cdecl Tails_Init(const HelperFunctions& helperFunctions, const IniFile* config);
+void __cdecl Sonic_Init(const HelperFunctions& helperFunctions, const IniFile* config);
 
 extern "C"
 {
@@ -11,6 +12,7 @@ extern "C"
 
 		Amy_Init(helperFunctions, config);
 		Tails_Init(helperFunctions, config);
+		Sonic_Init(helperFunctions, config);
 
 		delete config;
 	}

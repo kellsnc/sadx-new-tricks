@@ -31,18 +31,23 @@ void TailsGrabAction_Run(EntityData1* grabplayer, EntityData1* data, motionwk* m
 		return;
 	}
 	
+	// Some adjustements
 	co2->Powerups |= Powerups_Invincibility;
 	co2->Speed = { 0, 0, 0 };
 	NullifyVelocity((EntityData2*)mwp, co2);
 
+	// Move the player to the grabbing player
 	data->Position = grabplayer->Position;
 	PlayerDirectionToVector(grabplayer, &offset);
 	njAddVector(&data->Position, &offset);
 
+	// Rotate
 	data->Rotation = grabplayer->Rotation;
 
+	// Set the hook animation
 	co2->AnimationThing.Index = animation;
 
+	// Run ground check
 	PlayerFunc_RunDynamicCollision(data, mwp, co2);
 }
 

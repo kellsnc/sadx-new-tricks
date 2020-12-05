@@ -45,6 +45,9 @@
     <ClInclude Include="Common.h">
       <Filter>Header Files\Characters</Filter>
     </ClInclude>
+    <ClInclude Include="Sonic.h">
+      <Filter>Header Files\Characters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -69,6 +72,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Common.cpp">
+      <Filter>Source Files\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Sonic.cpp">
       <Filter>Source Files\Characters</Filter>
     </ClCompile>
   </ItemGroup>

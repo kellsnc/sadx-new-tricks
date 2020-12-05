@@ -35,8 +35,8 @@ enum TailsActions : Uint8 {
 	Act_Tails_ObjectLaunched,
 	Act_Tails_Pull,
 	Act_Tails_AirThrow,
+	Act_Tails_ShakeTree,
 	Act_Tails_Shaken,
-	Act_Tails_EnmShaken,
 	Act_Tails_MonkeyBars,
 	Act_Tails_MonkeyBarsOn,
 	Act_Tails_Ladder,
@@ -69,6 +69,10 @@ enum TailsActions : Uint8 {
 	Act_Tails_PetSop,
 	Act_Tails_Whistle,
 	Act_Tails_Debug,
+
+	// Custom:
+
+	Act_Tails_TailsGrab
 };
 
 enum TailsAnimations {
@@ -76,5 +80,7 @@ enum TailsAnimations {
 	Anm_Tails_Land,
 	Anm_Tails_StandAfterLand,
 	Anm_Tails_JumpRoll = 14,
-	Anm_Tails_Fly = 37
+	Anm_Tails_Fall = 19,
+	Anm_Tails_Fly = 37,
+	Anm_Tails_RockVertHang = 100
 };
