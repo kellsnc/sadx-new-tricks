@@ -3,12 +3,12 @@
 static bool EnableDoubleJump = true;
 static bool EnableHammerPropeller = true;
 
-static constexpr float PropellerGravity = 0.011f;
-static constexpr float PropellerInitialAccTreshold = 1.0f;
-static constexpr float PropellerInitialAcc = 1.01f;
-static constexpr float PropellerAirAccTreshold = 7.0f;
-static constexpr float PropellerAirAcc = 1.005f;
-static constexpr float DoubleJumpAcc = 1.12f;
+static float PropellerGravity = 0.011f;
+static float PropellerInitialAccTreshold = 1.0f;
+static float PropellerInitialAcc = 1.01f;
+static float PropellerAirAccTreshold = 7.0f;
+static float PropellerAirAcc = 1.005f;
+static float DoubleJumpAcc = 1.12f;
 
 AnimData DoubleJumpAnim = { nullptr, 78, 4, Anm_Amy_Jump, 1.12f, 1.0f };
 
@@ -150,9 +150,16 @@ void Amy_Exec_r(task* tsk) {
 	Amy_Original(tsk);
 }
 
-void __cdecl Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config) {
+void __cdecl Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics) {
 	Amy_Exec_t = new Trampoline((int)Amy_Main, (int)Amy_Main + 0x8, Amy_Exec_r);
 
 	EnableDoubleJump = config->getBool("Amy", "EnableDoubleJump", true);
 	EnableHammerPropeller = config->getBool("Amy", "EnableHammerPropeller", true);
+
+	PropellerGravity = physics->getFloat("Amy", "PropellerGravity", 0.011f);
+	PropellerInitialAccTreshold = physics->getFloat("Amy", "PropellerInitialAccTreshold", 1.0f);
+	PropellerInitialAcc = physics->getFloat("Amy", "PropellerInitialAcc", 1.01f);
+	PropellerAirAccTreshold = physics->getFloat("Amy", "PropellerAirAccTreshold", 7.0f);
+	PropellerAirAcc = physics->getFloat("Amy", "PropellerAirAcc", 1.005f);
+	DoubleJumpAcc = physics->getFloat("Amy", "DoubleJumpAcc", 1.12f);
 }

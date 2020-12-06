@@ -121,6 +121,12 @@
     <ClCompile Include="Tornado.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\files\configschema.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\files\physics.ini" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

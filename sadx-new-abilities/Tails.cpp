@@ -4,9 +4,9 @@ static bool EnableTailsGrab = true;
 static bool EnableTailsSpinDash = true;
 static bool EnableTailsSpinTails = false;
 
-static constexpr float TailsSpinDashMaxInitialSpeed = 1.25f;
-static constexpr float TailsSpinDashMaxSpeed = 7.0f;
-static constexpr float TailsSpinDashSpeedIncrement = 0.2f;
+static float TailsSpinDashMaxInitialSpeed = 1.25f;
+static float TailsSpinDashMaxSpeed = 7.0f;
+static float TailsSpinDashSpeedIncrement = 0.2f;
 
 Trampoline* Tails_Exec_t = nullptr;
 Trampoline* Tails_Render_t = nullptr;
@@ -158,14 +158,17 @@ void Tails_Exec_r(task* tsk) {
 	Tails_Original(tsk);
 }
 
-void __cdecl Tails_Init(const HelperFunctions& helperFunctions, const IniFile* config) {
-	EnableTailsGrab = config->getBool("Tails", "EnableTailsGrab", true);
-	EnableTailsSpinDash = config->getBool("Tails", "EnableTailsSpinDash", true);
-	EnableTailsSpinTails = config->getBool("Tails", "EnableTailsSpinTails", false);
+void __cdecl Tails_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics) {
+	Tails_Exec_t = new Trampoline((int)Tails_Main, (int)Tails_Main + 0x8, Tails_Exec_r);
 
-	if (EnableTailsSpinTails) {
+	if (config->getBool("Tails", "EnableTailsSpinTails", false)) {
 		Tails_Render_t = new Trampoline((int)Tails_Display, (int)Tails_Display + 0x8, Tails_Render_r);
 	}
+	
+	EnableTailsGrab = config->getBool("Tails", "EnableTailsGrab", true);
+	EnableTailsSpinDash = config->getBool("Tails", "EnableTailsSpinDash", true);
 
-	Tails_Exec_t = new Trampoline((int)Tails_Main, (int)Tails_Main + 0x8, Tails_Exec_r);
+	TailsSpinDashMaxInitialSpeed = physics->getFloat("Tails", "SpinDashMaxInitialSpeed", 1.25f);
+	TailsSpinDashMaxSpeed = physics->getFloat("Tails", "SpinDashMaxSpeed", 7.0f);
+	TailsSpinDashSpeedIncrement = physics->getFloat("Tails", "SpinDashSpeedIncrement", 0.2f);
 }

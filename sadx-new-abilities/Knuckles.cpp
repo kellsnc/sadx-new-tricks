@@ -2,9 +2,9 @@
 
 static bool EnableKnucklesSpinDash = true;
 
-static constexpr float KnucklesSpinDashMaxInitialSpeed = 1.45f;
-static constexpr float KnucklesSpinDashMaxSpeed = 8.0f;
-static constexpr float KnucklesSpinDashSpeedIncrement = 0.28f;
+static float KnucklesSpinDashMaxInitialSpeed = 1.45f;
+static float KnucklesSpinDashMaxSpeed = 8.0f;
+static float KnucklesSpinDashSpeedIncrement = 0.28f;
 
 Trampoline* Knuckles_Exec_t = nullptr;
 
@@ -44,8 +44,12 @@ void Knuckles_Exec_r(task* tsk) {
 	Knuckles_Original(tsk);
 }
 
-void __cdecl Knuckles_Init(const HelperFunctions& helperFunctions, const IniFile* config) {
+void __cdecl Knuckles_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics) {
 	Knuckles_Exec_t = new Trampoline((int)Knuckles_Main, (int)Knuckles_Main + 0x8, Knuckles_Exec_r);
 
 	EnableKnucklesSpinDash = config->getBool("Knuckles", "EnableKnucklesSpinDash", true);
+
+	KnucklesSpinDashMaxInitialSpeed = physics->getFloat("Knuckles", "SpinDashMaxInitialSpeed", 1.45f);
+	KnucklesSpinDashMaxSpeed = physics->getFloat("Knuckles", "SpinDashMaxSpeed", 8.0f);
+	KnucklesSpinDashSpeedIncrement = physics->getFloat("Knuckles", "SpinDashSpeedIncrement", 0.28f);
 }

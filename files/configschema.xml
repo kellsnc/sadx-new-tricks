@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<ConfigSchema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.sonicretro.org">
+  <Groups>
+    <Group name="General" display="- General">
+      <Property name="EnableSonic" type="bool" defaultvalue="True" display="Custom Sonic Actions">
+        <HelpText>Enable custom actions for Sonic. This will disable Tails grab on this character.</HelpText>
+      </Property>
+      <Property name="EnableTails" type="bool" defaultvalue="True" display="Custom Tails Actions">
+        <HelpText>Enable custom actions for Tails.</HelpText>
+      </Property>
+      <Property name="EnableKnuckles" type="bool" defaultvalue="True" display="Custom Knuckles Actions">
+        <HelpText>Enable custom actions for Knuckles. This will disable Tails grab on this character.</HelpText>
+      </Property>
+      <Property name="EnableAmy" type="bool" defaultvalue="True" display="Custom Amy Actions">
+        <HelpText>Enable custom actions for Amy. This will disable Tails grab on this character.</HelpText>
+      </Property>
+      <Property name="EnableGamma" type="bool" defaultvalue="True" display="Custom Gamma Actions">
+        <HelpText>Enable custom actions for Gamma.</HelpText>
+      </Property>
+      <Property name="EnableBig" type="bool" defaultvalue="True" display="Custom Big Actions">
+        <HelpText>Enable custom actions for Big.</HelpText>
+      </Property>
+      <Property name="EnableTornado" type="bool" defaultvalue="True" display="Custom Tornado Actions">
+        <HelpText>Enable custom actions for the Tornado planes.</HelpText>
+      </Property>
+    </Group>
+    <Group name="Tails">
+      <Property name="EnableTailsGrab" type="bool" defaultvalue="True" display="Enable Player Grab">
+        <HelpText>Tails can hold another player if he is flying, and the other player jumps on him. Use the 2nd controller to control Tails AI.</HelpText>
+      </Property>
+      <Property name="EnableTailsSpinDash" type="bool" defaultvalue="True" display="Enable SpinDash">
+        <HelpText>Tails will be able to SpinDash like Sonic using the second attack button (B).</HelpText>
+      </Property>
+      <Property name="EnableTailsSpinTails" type="bool" defaultvalue="False" display="Enable SpinTails (experimental)">
+        <HelpText>Tails' tails will go out of his ball when rolling/SpinDashing.</HelpText>
+      </Property>
+    </Group>
+    <Group name="Knuckles">
+      <Property name="EnableKnucklesSpinDash" type="bool" defaultvalue="True" display="Enable SpinDash">
+        <HelpText>Knuckles will be able to SpinDash like Sonic using the second attack button (B).</HelpText>
+      </Property>
+    </Group>
+    <Group name="Amy">
+      <Property name="EnableDoubleJump" type="bool" defaultvalue="True" display="Enable Double Jump">
+        <HelpText>Press Jump two times with Amy to do a double jump.</HelpText>
+      </Property>
+      <Property name="EnableHammerPropeller" type="bool" defaultvalue="True" display="Enable Hammer Propeller">
+        <HelpText>Hold the action button while in air to do the Hammer Propeller. For the normal hammer attack, press the 2nd action button.</HelpText>
+      </Property>
+    </Group>
+  </Groups>
+</ConfigSchema>
