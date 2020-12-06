@@ -129,8 +129,8 @@ void Tails_Render_r(task* tsk) {
 	NonStaticFunctionPointer(void, Tails_Original, (task * tsk), Tails_Render_t->Target());
 	Tails_Original(tsk);
 	
-	// Draw tails out of the ball
-	if (EnableTailsSpinTails == true && (data->Action == Act_Tails_SpinDash || data->Action == Act_Tails_Roll)) {
+	// Draw tails out of the ball if enabled in the config (otherwise the trampoline is not enabled)
+	if (data->Action == Act_Tails_SpinDash || data->Action == Act_Tails_Roll) {
 		njSetTexture(&MILES_TEXLIST);
 		Direct3D_PerformLighting(2);
 		njPushMatrixEx();
@@ -159,10 +159,13 @@ void Tails_Exec_r(task* tsk) {
 }
 
 void __cdecl Tails_Init(const HelperFunctions& helperFunctions, const IniFile* config) {
-	Tails_Exec_t = new Trampoline((int)Tails_Main, (int)Tails_Main + 0x8, Tails_Exec_r);
-	Tails_Render_t = new Trampoline((int)Tails_Display, (int)Tails_Display + 0x8, Tails_Render_r);
-
 	EnableTailsGrab = config->getBool("Tails", "EnableTailsGrab", true);
 	EnableTailsSpinDash = config->getBool("Tails", "EnableTailsSpinDash", true);
 	EnableTailsSpinTails = config->getBool("Tails", "EnableTailsSpinTails", false);
+
+	if (EnableTailsSpinTails) {
+		Tails_Render_t = new Trampoline((int)Tails_Display, (int)Tails_Display + 0x8, Tails_Render_r);
+	}
+
+	Tails_Exec_t = new Trampoline((int)Tails_Main, (int)Tails_Main + 0x8, Tails_Exec_r);
 }
