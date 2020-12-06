@@ -2,6 +2,7 @@
 
 static constexpr int MaxPlayers = 4;
 
+FunctionPointer(void, DrawObject, (NJS_OBJECT*), 0x408530);
 FunctionPointer(Float, GetGroundYPosition, (Float x, Float y, Float z, Rotation3* rot), 0x49E920);
 FunctionPointer(Bool, IsEventPerforming, (), 0x42FB00);
 FunctionPointer(int, GetClosestPlayerID, (NJS_VECTOR* pos), 0x441B70);

@@ -2,12 +2,14 @@
 
 static bool EnableTailsGrab = true;
 static bool EnableTailsSpinDash = true;
+static bool EnableTailsSpinTails = false;
 
 static constexpr float TailsSpinDashMaxInitialSpeed = 1.25f;
 static constexpr float TailsSpinDashMaxSpeed = 7.0f;
 static constexpr float TailsSpinDashSpeedIncrement = 0.2f;
 
 Trampoline* Tails_Exec_t = nullptr;
+Trampoline* Tails_Render_t = nullptr;
 
 void SetPlayerGrabbed(EntityData1* data, EntityData1* player) {
 	Characters character = (Characters)player->CharID;
@@ -119,6 +121,32 @@ void Tails_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	}
 }
 
+void Tails_Render_r(task* tsk) {
+	EntityData1* data = (EntityData1*)tsk->twp;
+	motionwk* mwp = tsk->mwp;
+	CharObj2* co2 = (CharObj2*)mwp->work.ptr;
+
+	NonStaticFunctionPointer(void, Tails_Original, (task * tsk), Tails_Render_t->Target());
+	Tails_Original(tsk);
+	
+	// Draw tails out of the ball
+	if (EnableTailsSpinTails == true && (data->Action == Act_Tails_SpinDash || data->Action == Act_Tails_Roll)) {
+		njSetTexture(&MILES_TEXLIST);
+		Direct3D_PerformLighting(2);
+		njPushMatrixEx();
+		njTranslateEx(&data->Position);
+		njRotateZ_(data->Rotation.z);
+		njRotateX_(data->Rotation.x);
+		njRotateY_(-LOWORD(data->Rotation.y + 0x8000));
+		njRotateZ(0, 0x500);
+		njTranslate(0, data->Action == Act_Tails_SpinDash ? 2.2f : 4.0f, 5.0f, 0);
+		njDrawModel_SADX(MILES_MODELS[9]);
+		njDrawModel_SADX(MILES_MODELS[10]);
+		Direct3D_PerformLighting(0);
+		njPopMatrixEx();
+	}
+}
+
 void Tails_Exec_r(task* tsk) {
 	EntityData1* data = (EntityData1*)tsk->twp; // main task containing position, rotation, scale
 	motionwk* mwp = tsk->mwp; // task containing movement information
@@ -132,7 +160,9 @@ void Tails_Exec_r(task* tsk) {
 
 void __cdecl Tails_Init(const HelperFunctions& helperFunctions, const IniFile* config) {
 	Tails_Exec_t = new Trampoline((int)Tails_Main, (int)Tails_Main + 0x8, Tails_Exec_r);
+	Tails_Render_t = new Trampoline((int)Tails_Display, (int)Tails_Display + 0x8, Tails_Render_r);
 
 	EnableTailsGrab = config->getBool("Tails", "EnableTailsGrab", true);
 	EnableTailsSpinDash = config->getBool("Tails", "EnableTailsSpinDash", true);
+	EnableTailsSpinTails = config->getBool("Tails", "EnableTailsSpinTails", false);
 }

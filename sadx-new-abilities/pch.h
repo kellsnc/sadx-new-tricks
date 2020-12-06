@@ -8,6 +8,7 @@
 #include "IniFile.hpp"
 
 #include "pointers.h"
+#include "camera.h"
 #include "ninja-utils.h"
 #include "utils.h"
 
