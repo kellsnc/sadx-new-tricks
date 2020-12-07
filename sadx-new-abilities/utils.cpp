@@ -1,5 +1,20 @@
 #include "pch.h"
 
+void LoadAnimation(AnimationFile** info, const char* name, const HelperFunctions& helperFunctions) {
+	std::string fullPath = "system\\";
+	fullPath = fullPath + name + ".saanim";
+
+	AnimationFile* anm = new AnimationFile(helperFunctions.GetReplaceablePath(fullPath.c_str()));
+
+	if (anm->getmodelcount() == 0) {
+		delete anm;
+		*info = nullptr;
+	}
+	else {
+		*info = anm;
+	}
+};
+
 float GetLength(NJS_VECTOR* orig, NJS_VECTOR* dest) {
 	return powf(dest->x - orig->x, 2) + powf(dest->y - orig->y, 2) + powf(dest->z - orig->z, 2);
 }

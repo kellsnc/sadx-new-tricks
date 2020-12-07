@@ -20,8 +20,8 @@ enum KnucklesActions : Uint8 {
 	Act_Knuckles_ObjectControl,
 	Act_Knuckles_Knocked,
 	Act_Knuckles_MaxHeatAttack,
-	Act_Knuckles_DigStart,
 	Act_Knuckles_Dig,
+	Act_Knuckles_DigOut,
 	Act_Knuckles_DigOff,
 	Act_Knuckles_CantDig1,
 	Act_Knuckles_CantDig2,
@@ -63,13 +63,24 @@ enum KnucklesActions : Uint8 {
 	// Custom:
 
 	Act_Knuckles_TailsGrab,
-	Act_Knuckles_SpinDash
+	Act_Knuckles_SpinDash,
+	Act_Knuckles_DrillClaw
 };
 
 enum KnucklesAnimations {
 	Anm_Knuckles_Stand,
+	Anm_Knuckles_Fall = 6,
 	Anm_Knuckles_JumpOrSpin = 14,
 	Anm_Knuckles_Roll = 15,
-	Anm_Knuckles_Fall = 6,
-	Anm_Knuckles_Hang = 84
+	Anm_Knuckles_GlideCancelRoll = 34,
+	Anm_Knuckles_DigStart = 41,
+	Anm_Knuckles_Dig,
+	Anm_Knuckles_DigEmerge,
+	Anm_Knuckles_DigJump,
+	Anm_Knuckles_Hang = 84,
+
+	// Custom:
+	Anm_Knuckles_CustomDrillClaw = 57,
+	Anm_Knuckles_CustomDrillDig,
+	Anm_Knuckles_Drill
 };

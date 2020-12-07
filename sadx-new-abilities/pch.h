@@ -4,6 +4,7 @@
 #include "framework.h"
 
 #include "SADXModLoader.h"
+#include "AnimationFile.h"
 #include "Trampoline.h"
 #include "IniFile.hpp"
 

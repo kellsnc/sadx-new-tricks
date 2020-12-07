@@ -65,7 +65,7 @@ void AmyProp_Run(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	// Handle physics
 	Float RestoreGravity = co2->PhysicsData.Gravity;
 	co2->PhysicsData.Gravity = PropellerGravity;
-
+	
 	PlayerFunc_RotateToGravity(data, mwp, co2);
 	PlayerFunc_Acceleration(data, mwp, co2);
 	PlayerFunc_AnalogToDirection(data, mwp, co2);

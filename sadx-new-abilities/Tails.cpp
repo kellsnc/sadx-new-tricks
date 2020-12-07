@@ -82,14 +82,28 @@ void Tails_FlyGrab(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	}
 }
 
-void Tails_SpinDash(EntityData1* data, motionwk* mwp, CharObj2* co2) {
-	CommonSpinDash_Run(data, mwp, co2, TailsSpinDashMaxSpeed, TailsSpinDashSpeedIncrement, Anm_Tails_Roll, Act_Tails_Roll);
-}
-
 void Tails_CheckSpinDash(EntityData1* data, CharObj2* co2) {
 	if (EnableTailsSpinDash == true) {
 		CommonSpinDash_Check(data, co2, Anm_Tails_JumpOrSpin, Act_Tails_SpinDash, TailsSpinDashMaxInitialSpeed);
 	}
+}
+
+void Tails_SpinDash(EntityData1* data, motionwk* mwp, CharObj2* co2) {
+	if (Tails_RunNextAction(co2, mwp, data)) {
+		return;
+	}
+
+	CommonSpinDash_Run(data, mwp, co2, TailsSpinDashMaxSpeed, TailsSpinDashSpeedIncrement, Anm_Tails_Roll, Act_Tails_Roll);
+}
+
+void Tails_TailsGrab(EntityData1* data, motionwk* mwp, CharObj2* co2) {
+	if (Tails_RunNextAction(co2, mwp, data)) {
+		data->LoopData = nullptr;
+		co2->Powerups &= ~Powerups_Invincibility;
+		return;
+	}
+
+	TailsGrabAction(data, mwp, co2, { 0.0f, -5.8f, 0.0f }, Anm_Tails_RockVertHang, Act_Tails_Fall, Anm_Tails_Fall);
 }
 
 void Tails_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
@@ -113,7 +127,7 @@ void Tails_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 		Tails_FlyGrab(data, mwp, co2);
 		break;
 	case Act_Tails_TailsGrab:
-		TailsGrabAction(data, mwp, co2, { 0.0f, -5.8f, 0.0f }, Anm_Tails_RockVertHang, Act_Tails_Fall, Anm_Tails_Fall);
+		Tails_TailsGrab(data, mwp, co2);
 		break;
 	case Act_Tails_SpinDash:
 		Tails_SpinDash(data, mwp, co2);

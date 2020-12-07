@@ -1,5 +1,7 @@
 #pragma once
 
+void LoadAnimation(AnimationFile** info, const char* name, const HelperFunctions& helperFunctions);
+
 float GetLength(NJS_VECTOR* orig, NJS_VECTOR* dest);
 float GetDistance(NJS_VECTOR* orig, NJS_VECTOR* dest);
 bool IsPointInsideSphere(NJS_VECTOR* center, NJS_VECTOR* pos, float radius);

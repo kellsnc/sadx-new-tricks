@@ -39,6 +39,9 @@
       <Property name="EnableKnucklesSpinDash" type="bool" defaultvalue="True" display="Enable SpinDash">
         <HelpText>Knuckles will be able to SpinDash like Sonic using the second attack button (B).</HelpText>
       </Property>
+      <Property name="EnableKnucklesDrillClaw" type="bool" defaultvalue="True" display="Enable DrillClaw">
+        <HelpText>Knuckles will be able to do DrillClaw using the second attack button (B) while jumping or gliding.</HelpText>
+      </Property>
     </Group>
     <Group name="Amy">
       <Property name="EnableDoubleJump" type="bool" defaultvalue="True" display="Enable Double Jump">
