@@ -129,8 +129,8 @@ void Knuckles_DrillClaw(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 		return;
 	}
 
-	// Stop if colliding with solid entity
-	if (data->CollisionInfo->CollidingObject && static_cast<int>(data->CollisionInfo->CollidingObject->CollisionArray->push) & 0x7) {
+	// Stop if colliding with solid object collision
+	if (data->Status & Status_Unknown1) {
 		data->Action = Act_Knuckles_Stand;
 	}
 
@@ -143,6 +143,7 @@ void Knuckles_DrillClaw(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	data->Status |= Status_Attack;
 	data->CollisionInfo->CollisionArray[0].damage &= 0xFCu;
 	data->CollisionInfo->CollisionArray[0].damage |= 0xCu;
+	data->CollisionInfo->CollisionArray[0].damage |= 0xEF;
 	data->CollisionInfo->CollisionArray[1].center = data->Position;
 	data->CollisionInfo->CollisionArray[1].attr &= 0xFFFFFFEF;
 
