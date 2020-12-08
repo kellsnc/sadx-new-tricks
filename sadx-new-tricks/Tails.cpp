@@ -63,8 +63,12 @@ void SetPlayerGrabbed(EntityData1* data, EntityData1* player) {
 }
 
 void Tails_FlyGrab(EntityData1* data, motionwk* mwp, CharObj2* co2) {
+	// If Tails detaches the player
+	if (data->field_A == 1 && PressedButtons[data->CharIndex] & Buttons_B) {
+		data->field_A = 0;
+	}
+
 	if (data->field_A == 0 && ControllerEnabled[data->CharIndex] == true) { // if can grab & not controlled by AI
-		
 		for (int i = 0; i < MaxPlayers; ++i) {
 			if (EntityData1Ptrs[i] != nullptr && i != data->CharIndex) {
 				
@@ -124,6 +128,7 @@ void Tails_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 		Tails_CheckSpinDash(data, co2);
 		break;
 	case Act_Tails_Fly:
+		co2->Speed.y = 0;
 		Tails_FlyGrab(data, mwp, co2);
 		break;
 	case Act_Tails_TailsGrab:

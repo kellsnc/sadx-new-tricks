@@ -29,7 +29,6 @@ void TailsGrabAction_Run(EntityData1* grabplayer, EntityData1* data, motionwk* m
 
 	// Release if grabbing player not holding anymore
 	if (grabplayer->field_A == 0) {
-		PutPlayerBehind(&data->Position, grabplayer, 15.0f);
 		TailsGrabAction_Stop(data, co2, fallaction, fallanim);
 		return;
 	}
