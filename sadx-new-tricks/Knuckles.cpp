@@ -83,7 +83,7 @@ void Knuckles_CheckSpinDash(EntityData1* data, CharObj2* co2) {
 }
 
 void Knuckles_CheckDrillClaw(EntityData1* data, CharObj2* co2) {
-	if (EnableKnucklesDrillClaw == true && HeldButtons[data->CharIndex] & Buttons_B && co2->JumpTime > 5) {
+	if (EnableKnucklesDrillClaw == true && HeldButtons[data->CharIndex] & Buttons_B) {
 		data->Action = Act_Knuckles_DrillClaw;
 		data->Status &= ~Status_Ball;
 		LoadKnucklesAfterImages(data, co2);
@@ -126,6 +126,11 @@ void Knuckles_DrillClaw(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 		}
 		
 		return;
+	}
+
+	// Stop if colliding with solid entity
+	if (data->CollisionInfo->CollidingObject && static_cast<int>(data->CollisionInfo->CollidingObject->CollisionArray->push) & 0x70) {
+		data->Action = Act_Knuckles_Stand;
 	}
 
 	PlayerFunc_RotateToGravity(data, mwp, co2);
