@@ -140,7 +140,7 @@ void Knuckles_DrillClaw(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	co2->Speed.y = -KnucklesDrillSpeed;
 
 	// All that to hurt enemies
-	data->Status = Status_Attack;
+	data->Status |= Status_Attack;
 	data->CollisionInfo->CollisionArray[0].damage &= 0xFCu;
 	data->CollisionInfo->CollisionArray[0].damage |= 0xCu;
 	data->CollisionInfo->CollisionArray[1].center = data->Position;
