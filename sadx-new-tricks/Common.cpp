@@ -92,8 +92,14 @@ void CommonSpinDash_Run(EntityData1* data, motionwk* mwp, CharObj2* co2, float m
 			}
 		}
 		else {
-			DoSoundQueueThing(767);
-			DoSoundQueueThing(763);
+
+			// Only Sonic and Tails have the spindash sound in their soundbank
+			if (data->CharID != Characters_Knuckles) {
+				PlaySound(768, 0, 0, 0);
+				DoSoundQueueThing(767);
+				DoSoundQueueThing(763);
+			}
+			
 			data->Action = rollaction;
 			co2->AnimationThing.Index = rollanim;
 			co2->Speed.x = co2->SpindashSpeed;
@@ -102,8 +108,11 @@ void CommonSpinDash_Run(EntityData1* data, motionwk* mwp, CharObj2* co2, float m
 		}
 	}
 	else {
-		DoSoundQueueThing(767);
-		DoSoundQueueThing(763);
+		if (data->CharID != Characters_Knuckles) {
+			DoSoundQueueThing(767);
+			DoSoundQueueThing(763);
+		}
+		
 		data->Action = 1;
 		co2->IdleTime = 0;
 		data->Status &= ~(Status_Ball | Status_Attack);
