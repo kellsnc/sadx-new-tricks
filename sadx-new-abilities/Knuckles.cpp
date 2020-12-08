@@ -2,6 +2,8 @@
 
 static bool EnableKnucklesSpinDash = true;
 static bool EnableKnucklesDrillClaw = true;
+static bool EnableKnucklesWallDig = true;
+static bool DiggableRMWalls = true;
 
 static float KnucklesSpinDashMaxInitialSpeed = 1.45f;
 static float KnucklesSpinDashMaxSpeed = 8.0f;
@@ -88,6 +90,14 @@ void Knuckles_CheckDrillClaw(EntityData1* data, CharObj2* co2) {
 	}
 }
 
+void Knuckles_CheckWallDig(EntityData1* data, CharObj2* co2) {
+	if (co2->Upgrades & Upgrades_ShovelClaw && PressedButtons[data->CharIndex] & AttackButtons && ((CurrentLevel == LevelIDs_RedMountain && CurrentAct == 2 && DiggableRMWalls) || (co2->SurfaceFlags & ColFlags_Dig))) {
+		data->Action = Act_Knuckles_Dig;
+		co2->AnimationThing.Index = Anm_Knuckles_CustomDrillDig;
+		co2->AnimationThing.Frame = 0.2f;
+	}
+}
+
 void Knuckles_DrillClaw(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	if (Knuckles_RunNextAction(co2, mwp, data)) {
 		return;
@@ -166,6 +176,9 @@ void Knuckles_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	case Act_Knuckles_Walk:
 		Knuckles_CheckSpinDash(data, co2);
 		break;
+	case Act_Knuckles_Climb:
+		Knuckles_CheckWallDig(data, co2);
+		break;
 	case Act_Knuckles_Jump:
 	case Act_Knuckles_Glide:
 		Knuckles_CheckDrillClaw(data, co2);
@@ -198,6 +211,8 @@ void __cdecl Knuckles_Init(const HelperFunctions& helperFunctions, const IniFile
 
 	EnableKnucklesSpinDash = config->getBool("Knuckles", "EnableKnucklesSpinDash", true);
 	EnableKnucklesDrillClaw = config->getBool("Knuckles", "EnableKnucklesDrillClaw", true);
+	EnableKnucklesWallDig = config->getBool("Knuckles", "EnableKnucklesWallDig", true);
+	DiggableRMWalls = config->getBool("Knuckles", "DiggableRMWalls", true);
 
 	KnucklesSpinDashMaxInitialSpeed = physics->getFloat("Knuckles", "SpinDashMaxInitialSpeed", 1.45f);
 	KnucklesSpinDashMaxSpeed = physics->getFloat("Knuckles", "SpinDashMaxSpeed", 8.0f);
