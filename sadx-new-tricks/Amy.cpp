@@ -83,7 +83,7 @@ void AmyProp_Run(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	co2->AnimationThing.Index = Anm_Amy_HammerSpinAttack;
 
 	// This is the hammer scale
-	co2->TailsFlightTime = 1.0f;
+	co2->TailsFlightTime = 1.2f;
 
 	// Attack status
 	data->Status |= Status_Attack;
