@@ -93,6 +93,7 @@ void Knuckles_CheckDrillClaw(EntityData1* data, CharObj2* co2) {
 void Knuckles_CheckWallDig(EntityData1* data, CharObj2* co2) {
 	if (co2->Upgrades & Upgrades_ShovelClaw && PressedButtons[data->CharIndex] & AttackButtons && ((CurrentLevel == LevelIDs_RedMountain && CurrentAct == 2 && DiggableRMWalls) || (co2->SurfaceFlags & ColFlags_Dig))) {
 		data->Action = Act_Knuckles_Dig;
+		data->field_A = Act_Knuckles_Climb; // store next action after walldig in this
 		co2->AnimationThing.Index = Anm_Knuckles_CustomDrillDig;
 		co2->AnimationThing.Frame = 0.2f;
 	}
@@ -185,6 +186,15 @@ void Knuckles_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	case Act_Knuckles_Stand:
 	case Act_Knuckles_Walk:
 		Knuckles_CheckSpinDash(data, co2);
+		break;
+	case Act_Knuckles_DigOff:
+
+		// If stopped digging from wall, go back to climb
+		if (data->field_A == Act_Knuckles_Climb) {
+			data->Action = Act_Knuckles_Climb;
+			data->field_A = 0;
+		}
+		
 		break;
 	case Act_Knuckles_Climb:
 		Knuckles_CheckWallDig(data, co2);
