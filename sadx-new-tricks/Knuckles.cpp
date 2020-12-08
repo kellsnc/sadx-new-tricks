@@ -103,7 +103,7 @@ void Knuckles_DrillClaw(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	if (Knuckles_RunNextAction(co2, mwp, data)) {
 		return;
 	}
-
+	
 	// Stop if B is not held anymore
 	if ((HeldButtons[data->CharIndex] & Buttons_B) != Buttons_B) {
 		data->Status |= Status_Ball;
@@ -130,7 +130,7 @@ void Knuckles_DrillClaw(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	}
 
 	// Stop if colliding with solid entity
-	if (data->CollisionInfo->CollidingObject && static_cast<int>(data->CollisionInfo->CollidingObject->CollisionArray->push) & 0x70) {
+	if (data->CollisionInfo->CollidingObject && static_cast<int>(data->CollisionInfo->CollidingObject->CollisionArray->push) & 0x7) {
 		data->Action = Act_Knuckles_Stand;
 	}
 
