@@ -91,7 +91,7 @@ void AmyProp_Run(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 
 inline void AmyProp_Check(EntityData1* data, CharObj2* co2, Buttons buttons) {
 	if (EnableHammerPropeller == true && (data->Status & Status_Ground) != Status_Ground && PressedButtons[data->CharIndex] & buttons &&
-		co2->field_A == 0 && co2->JumpTime > 5 && && co2->ObjectHeld == nullptr) {
+		co2->field_A == 0 && co2->JumpTime > 5 && co2->ObjectHeld == nullptr) {
 
 		data->Action = Act_Amy_HammerProp;
 
