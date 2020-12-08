@@ -61,6 +61,11 @@ void AmyProp_Run(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	if (co2->Speed.x < PropellerAirAccTreshold) {
 		co2->Speed.x *= PropellerAirAcc;
 	}
+
+	// Fix velocity bug
+	if (co2->Speed.x + co2->Speed.z + co2->Speed.y == 0) {
+		co2->Speed.y -= 0.1f;
+	}
 	
 	// Handle physics
 	Float RestoreGravity = co2->PhysicsData.Gravity;
