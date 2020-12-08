@@ -128,7 +128,6 @@ void Tails_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 		Tails_CheckSpinDash(data, co2);
 		break;
 	case Act_Tails_Fly:
-		co2->Speed.y = 0;
 		Tails_FlyGrab(data, mwp, co2);
 		break;
 	case Act_Tails_TailsGrab:
