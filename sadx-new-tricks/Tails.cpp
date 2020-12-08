@@ -69,6 +69,12 @@ void Tails_FlyGrab(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	}
 
 	if (data->field_A == 0 && ControllerEnabled[data->CharIndex] == true) { // if can grab & not controlled by AI
+		
+		// Tails AI checks
+		if (data->CharIndex == 1 && TailsAI_ptr && (TailsAI_ptr->Data1->Action == 4 || TailsAI_ptr->Data1->Action == 5)) {
+			return;
+		}
+		
 		for (int i = 0; i < MaxPlayers; ++i) {
 			if (EntityData1Ptrs[i] != nullptr && i != data->CharIndex) {
 				
