@@ -82,6 +82,8 @@ void CommonSpinDash_Run(EntityData1* data, motionwk* mwp, CharObj2* co2, float m
 	++co2->SonicSpinTimer;
 
 	if (co2->SonicSpinTimer < 300) {
+		data->Status |= Status_Attack | Status_Ball;
+
 		if (HeldButtons[data->CharIndex] & Buttons_B) {
 			if (co2->SpindashSpeed < maxspeed) {
 				co2->SpindashSpeed += speedincrease;
@@ -125,7 +127,6 @@ void CommonSpinDash_Run(EntityData1* data, motionwk* mwp, CharObj2* co2, float m
 void CommonSpinDash_Check(EntityData1* data, CharObj2* co2, int jumpspinanim, int spindashact, float maxstartspeed) {
 	if (PressedButtons[data->CharIndex] & Buttons_B) {
 		co2->AnimationThing.Index = jumpspinanim;
-		data->Status |= Status_Attack | Status_Ball;
 		data->Action = spindashact;
 		co2->SpindashSpeed = fmin(maxstartspeed, co2->Speed.x);
 
