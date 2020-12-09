@@ -58,14 +58,15 @@ void SetPlayerGrabbed(EntityData1* data, EntityData1* player) {
 	}
 
 	player->LoopData = (Loop*)data;
-	player->Status = 0; // remove status when starting grab, prevent several issues
-	data->field_A = 1; // cannot grab another player
+	player->Status = 0; // Remove eventual hurt flag for grabbed player
+	data->field_A = 1; // Cannot grab another player
+	data->Status = 0; // Remove eventual hurt flag for grabbing player
 }
 
 void Tails_FlyGrab(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	// If Tails detaches the player
 	if (data->field_A == 1 && PressedButtons[data->CharIndex] & Buttons_B) {
-		data->field_A = 0;
+		data->field_A = 0; // TailsGrab flag here
 	}
 
 	if (data->field_A == 0 && ControllerEnabled[data->CharIndex] == true) { // if can grab & not controlled by AI
@@ -75,19 +76,10 @@ void Tails_FlyGrab(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 			return;
 		}
 		
-		for (int i = 0; i < MaxPlayers; ++i) {
-			if (EntityData1Ptrs[i] != nullptr && i != data->CharIndex) {
-				
-				// Fix stupid hurt flag
-				if (IsSpecificPlayerInSphere(&data->Position, 20.0f, i)) {
-					co2->Powerups |= Powerups_Invincibility;
-				}
+		EntityData1* entity = GetCollidingEntityA(data);
 
-				if (IsSpecificPlayerInSphere(&data->Position, 10.0f, i)) {
-					SetPlayerGrabbed(data, EntityData1Ptrs[i]); // If a player is very close to flying tails
-					break;
-				}
-			}
+		if (entity) {
+			SetPlayerGrabbed(data, entity);
 		}
 	}
 }

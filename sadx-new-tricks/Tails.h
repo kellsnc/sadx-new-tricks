@@ -85,5 +85,6 @@ enum TailsAnimations {
 	Anm_Tails_Fall = 19,
 	Anm_Tails_Uncurl = 36,
 	Anm_Tails_Fly = 37,
+	Anm_Tails_FlyLimit = 42,
 	Anm_Tails_RockVertHang = 100
 };
