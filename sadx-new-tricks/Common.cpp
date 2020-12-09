@@ -78,11 +78,7 @@ void TailsGrabAction(EntityData1* data, motionwk* mwp, CharObj2* co2, NJS_VECTOR
 
 #pragma region SpinDash
 
-void CommonSpinDash_Run(EntityData1* data, motionwk* mwp, CharObj2* co2, float maxspeed, float speedincrease, int rollanim, int rollaction) {
-	if (co2->Speed.x > 0) {
-		co2->Speed.x -= 0.1f;
-	}
-
+void CommonSpinDash_Run(EntityData1* data, motionwk* mwp, CharObj2* co2, float maxspeed, float speedincrease, int rollanim, int uncurlanim, int rollaction) {
 	++co2->SonicSpinTimer;
 
 	if (co2->SonicSpinTimer < 300) {
@@ -114,11 +110,16 @@ void CommonSpinDash_Run(EntityData1* data, motionwk* mwp, CharObj2* co2, float m
 		}
 		
 		data->Action = 1;
+		co2->AnimationThing.Index = uncurlanim;
 		co2->IdleTime = 0;
 		data->Status &= ~(Status_Ball | Status_Attack);
 	}
 
-	RunPhysics(data, mwp, co2);
+	PlayerFunc_Move(data, mwp, co2);
+	PlayerFunc_RollPhysics(data, mwp, co2);
+	PlayerFunc_AnalogToDirection(data, mwp, co2);
+	PlayerFunc_RunDynamicCollision(data, mwp, co2);
+	PlayerFunc_UpdateSpeed(data, mwp, co2);
 }
 
 void CommonSpinDash_Check(EntityData1* data, CharObj2* co2, int jumpspinanim, int spindashact, float maxstartspeed) {
@@ -127,7 +128,11 @@ void CommonSpinDash_Check(EntityData1* data, CharObj2* co2, int jumpspinanim, in
 		data->Status |= Status_Attack | Status_Ball;
 		data->Action = spindashact;
 		co2->SpindashSpeed = fmin(maxstartspeed, co2->Speed.x);
-		QueueSound_DualEntity(767, data, 1, 0, 2);
+
+		if (data->CharID != Characters_Knuckles) {
+			QueueSound_DualEntity(767, data, 1, 0, 2);
+		}
+
 		co2->SonicSpinTimer = 0;
 	}
 }

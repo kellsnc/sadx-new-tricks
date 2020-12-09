@@ -103,7 +103,7 @@ void Tails_SpinDash(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 		return;
 	}
 
-	CommonSpinDash_Run(data, mwp, co2, TailsSpinDashMaxSpeed, TailsSpinDashSpeedIncrement, Anm_Tails_Roll, Act_Tails_Roll);
+	CommonSpinDash_Run(data, mwp, co2, TailsSpinDashMaxSpeed, TailsSpinDashSpeedIncrement, Anm_Tails_Roll, Anm_Tails_Uncurl, Act_Tails_Roll);
 }
 
 void Tails_TailsGrab(EntityData1* data, motionwk* mwp, CharObj2* co2) {
@@ -131,7 +131,10 @@ void Tails_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	switch (data->Action) {
 	case Act_Tails_Stand:
 	case Act_Tails_Walk:
-		Tails_CheckSpinDash(data, co2);
+		if (ControllerEnabled[data->CharIndex]) {
+			Tails_CheckSpinDash(data, co2);
+		}
+		
 		break;
 	case Act_Tails_Fly:
 		Tails_FlyGrab(data, mwp, co2);

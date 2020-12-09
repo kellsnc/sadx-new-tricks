@@ -160,7 +160,7 @@ void Knuckles_SpinDash(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 		return;
 	}
 
-	CommonSpinDash_Run(data, mwp, co2, KnucklesSpinDashMaxSpeed, KnucklesSpinDashSpeedIncrement, Anm_Knuckles_Roll, Act_Knuckles_Roll);
+	CommonSpinDash_Run(data, mwp, co2, KnucklesSpinDashMaxSpeed, KnucklesSpinDashSpeedIncrement, Anm_Knuckles_Roll, Anm_Knuckles_Uncurl, Act_Knuckles_Roll);
 }
 
 void Knuckles_TailsGrab(EntityData1* data, motionwk* mwp, CharObj2* co2) {
@@ -186,7 +186,10 @@ void Knuckles_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 		break;
 	case Act_Knuckles_Stand:
 	case Act_Knuckles_Walk:
-		Knuckles_CheckSpinDash(data, co2);
+		if (ControllerEnabled[data->CharIndex]) {
+			Knuckles_CheckSpinDash(data, co2);
+		}
+
 		break;
 	case Act_Knuckles_DigOff:
 

@@ -14,6 +14,7 @@ FunctionPointer(void, PlayerFunc_AnalogToDirection, (EntityData1* data, motionwk
 FunctionPointer(void, PlayerFunc_RunDynamicCollision, (EntityData1* data, motionwk* mwp, CharObj2* co2), 0x44CDF0);
 FunctionPointer(void, PlayerFunc_UpdateSpeed, (EntityData1* data, motionwk* mwp, CharObj2* co2), 0x43EE70);
 FunctionPointer(void, PlayerFunc_RotateToGravity, (EntityData1* data, motionwk* mwp, CharObj2* co2), 0x443AD0);
+FunctionPointer(void, PlayerFunc_RollPhysics, (EntityData1* data, motionwk* mwp, CharObj2* co2), 0x448E50);
 
 FunctionPointer(void, PlayerDirectionToVector, (EntityData1* player, NJS_VECTOR* direction), 0x43EC90);
 

@@ -83,6 +83,7 @@ enum TailsAnimations {
 	Anm_Tails_JumpOrSpin = 14,
 	Anm_Tails_Roll = 15,
 	Anm_Tails_Fall = 19,
+	Anm_Tails_Uncurl = 36,
 	Anm_Tails_Fly = 37,
 	Anm_Tails_RockVertHang = 100
 };
