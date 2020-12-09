@@ -231,7 +231,7 @@ void Knuckles_Exec_r(task* tsk) {
 }
 
 void __cdecl Knuckles_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics) {
-	Knuckles_Exec_t = new Trampoline((int)Knuckles_Main, (int)Knuckles_Main + 0x8, Knuckles_Exec_r);
+	Knuckles_Exec_t = new Trampoline((int)Knuckles_Main, (int)Knuckles_Main + 0x7, Knuckles_Exec_r);
 
 	EnableKnucklesSpinDash = config->getBool("Knuckles", "EnableKnucklesSpinDash", true);
 	EnableKnucklesDrillClaw = config->getBool("Knuckles", "EnableKnucklesDrillClaw", true);

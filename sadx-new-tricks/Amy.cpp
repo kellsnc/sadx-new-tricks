@@ -156,7 +156,7 @@ void Amy_Exec_r(task* tsk) {
 }
 
 void __cdecl Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics) {
-	Amy_Exec_t = new Trampoline((int)Amy_Main, (int)Amy_Main + 0x8, Amy_Exec_r);
+	Amy_Exec_t = new Trampoline((int)Amy_Main, (int)Amy_Main + 0x7, Amy_Exec_r);
 
 	EnableDoubleJump = config->getBool("Amy", "EnableDoubleJump", true);
 	EnableHammerPropeller = config->getBool("Amy", "EnableHammerPropeller", true);

@@ -186,7 +186,7 @@ void Tails_Exec_r(task* tsk) {
 }
 
 void __cdecl Tails_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics) {
-	Tails_Exec_t = new Trampoline((int)Tails_Main, (int)Tails_Main + 0x8, Tails_Exec_r);
+	Tails_Exec_t = new Trampoline((int)Tails_Main, (int)Tails_Main + 0x7, Tails_Exec_r);
 
 	if (config->getBool("Tails", "EnableTailsSpinTails", false)) {
 		Tails_Render_t = new Trampoline((int)Tails_Display, (int)Tails_Display + 0x8, Tails_Render_r);
