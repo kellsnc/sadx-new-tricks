@@ -1,10 +1,10 @@
 #include "pch.h"
 
-void __cdecl Sonic_Init(const HelperFunctions& helperFunctions, const IniFile* config);
-void __cdecl Tails_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics);
-void __cdecl Knuckles_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics);
-void __cdecl Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics);
-void __cdecl Tornado_Init(const HelperFunctions& helperFunctions, const IniFile* config);
+void Sonic_Init(const HelperFunctions& helperFunctions, const IniFile* config);
+void Tails_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics);
+void Knuckles_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics);
+void Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics);
+void Tornado_Init(const HelperFunctions& helperFunctions, const IniFile* config);
 
 extern "C"
 {

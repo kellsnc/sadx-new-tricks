@@ -21,6 +21,6 @@ void Sonic_Exec_r(task* tsk) {
 	Sonic_Original(tsk);
 }
 
-void __cdecl Sonic_Init(const HelperFunctions& helperFunctions, const IniFile* config) {
+void Sonic_Init(const HelperFunctions& helperFunctions, const IniFile* config) {
 	Sonic_Exec_t = new Trampoline((int)Sonic_Main, (int)Sonic_Main + 0x7, Sonic_Exec_r);
 }
