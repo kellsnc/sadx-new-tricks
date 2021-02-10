@@ -92,7 +92,8 @@ enum SonicActions : Uint8 {
 
 	// Custom:
 
-	Act_Sonic_TailsGrab
+	Act_Sonic_TailsGrab,
+	Act_Sonic_InstantDash
 };
 
 enum SonicAnimations : Uint16 {

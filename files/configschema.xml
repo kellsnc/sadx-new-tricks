@@ -57,5 +57,19 @@
         <HelpText>Hold the action button while in air to do the Hammer Propeller. For the normal hammer attack, press the 2nd action button.</HelpText>
       </Property>
     </Group>
+    <Group name="Sonic">
+      <Property name="InstantLSD" type="LSDButtons" defaultvalue="0" display="Instant Light Dash">
+        <HelpText>Press the specified button near rings (while standing, walking or jumping) to follow rings. You will need the Crystal Ring.</HelpText>
+      </Property>
+    </Group>
   </Groups>
+  <Enums>
+    <Enum name="LSDButtons">
+      <EnumMember name="0" display="Disabled" />
+      <EnumMember name="512" display="Y" />
+      <EnumMember name="1" display="C" />
+      <EnumMember name="256" display="Z" />
+      <EnumMember name="2" display="B" />
+    </Enum>
+  </Enums>
 </ConfigSchema>
