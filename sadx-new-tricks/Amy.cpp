@@ -1,7 +1,7 @@
 #include "pch.h"
 
 static bool EnableDoubleJump = true;
-static bool EnableHammerPropeller = true;
+static Buttons HammerPropButton = Buttons_X;
 
 static float PropellerGravity = 0.011f;
 static float PropellerInitialAccTreshold = 1.0f;
@@ -35,8 +35,8 @@ void AmyProp_Run(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 		return;
 	}
 
-	// If the player stops holding one of the attack buttons, stop
-	if (!(HeldButtons[data->CharIndex] & AttackButtons)) {
+	// If the player stops holding the button, stop
+	if (!(HeldButtons[data->CharIndex] & HammerPropButton)) {
 		data->Action = Act_Amy_Fall;
 		co2->AnimationThing.Index = Anm_Amy_Fall;
 		co2->TailsFlightTime = 0.0f;
@@ -89,8 +89,8 @@ void AmyProp_Run(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	data->Status |= Status_Attack;
 }
 
-inline void AmyProp_Check(EntityData1* data, CharObj2* co2, Buttons buttons) {
-	if (EnableHammerPropeller == true && (data->Status & Status_Ground) != Status_Ground && PressedButtons[data->CharIndex] & buttons &&
+inline void AmyProp_Check(EntityData1* data, CharObj2* co2) {
+	if (PressedButtons[data->CharIndex] & HammerPropButton && (data->Status & Status_Ground) != Status_Ground &&
 		co2->field_A == 0 && co2->JumpTime > 5 && co2->ObjectHeld == nullptr) {
 
 		data->Action = Act_Amy_HammerProp;
@@ -120,17 +120,16 @@ void Amy_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 
 		break;
 	case Act_Amy_Jump:
-		AmyProp_Check(data, co2, Buttons_X);
+		AmyProp_Check(data, co2);
 		AmyDoubleJump(data, mwp, co2);
 		break;
 	case Act_Amy_HammerJump:
 	case Act_Amy_DashSpeedPanel:
-	case Act_Amy_Fall:
-		AmyProp_Check(data, co2, Buttons_X);
+		AmyProp_Check(data, co2);
 		break;
 	case Act_Amy_Spring:
 	case Act_Amy_Launch:
-		AmyProp_Check(data, co2, AttackButtons);
+		AmyProp_Check(data, co2);
 		break;
 	case Act_Amy_HammerProp:
 		AmyProp_Run(data, mwp, co2);
@@ -160,7 +159,7 @@ void Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config, con
 	Amy_Exec_t = new Trampoline((int)Amy_Main, (int)Amy_Main + 0x7, Amy_Exec_r);
 
 	EnableDoubleJump = config->getBool("Amy", "EnableDoubleJump", true);
-	EnableHammerPropeller = config->getBool("Amy", "EnableHammerPropeller", true);
+	HammerPropButton = (Buttons)config->getInt("Amy", "HammerPropButton", Buttons_X);
 
 	PropellerGravity = physics->getFloat("Amy", "PropellerGravity", 0.011f);
 	PropellerInitialAccTreshold = physics->getFloat("Amy", "PropellerInitialAccTreshold", 1.0f);

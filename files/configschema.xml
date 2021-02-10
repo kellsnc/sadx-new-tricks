@@ -53,23 +53,24 @@
       <Property name="EnableDoubleJump" type="bool" defaultvalue="True" display="Enable Double Jump">
         <HelpText>Press Jump two times with Amy to do a double jump.</HelpText>
       </Property>
-      <Property name="EnableHammerPropeller" type="bool" defaultvalue="True" display="Enable Hammer Propeller">
-        <HelpText>Hold the action button while in air to do the Hammer Propeller. For the normal hammer attack, press the 2nd action button.</HelpText>
+      <Property name="HammerPropButton" type="Buttons" defaultvalue="1024" display="Hammer Propeller">
+        <HelpText>Hold the specified button while in air to do the Hammer Propeller.</HelpText>
       </Property>
     </Group>
     <Group name="Sonic">
-      <Property name="InstantLSD" type="LSDButtons" defaultvalue="0" display="Instant Light Dash">
+      <Property name="InstantLSD" type="Buttons" defaultvalue="0" display="Instant Light Dash">
         <HelpText>Press the specified button near rings (while standing, walking or jumping) to follow rings. You will need the Crystal Ring.</HelpText>
       </Property>
     </Group>
   </Groups>
   <Enums>
-    <Enum name="LSDButtons">
+    <Enum name="Buttons">
       <EnumMember name="0" display="Disabled" />
-      <EnumMember name="512" display="Y" />
-      <EnumMember name="1" display="C" />
-      <EnumMember name="256" display="Z" />
-      <EnumMember name="2" display="B" />
+      <EnumMember name="512" display="Y Button" />
+      <EnumMember name="2" display="B Button" />
+      <EnumMember name="1024" display="X Button" />
+      <EnumMember name="1" display="C Button" />
+      <EnumMember name="256" display="Z Button" />
     </Enum>
   </Enums>
 </ConfigSchema>
