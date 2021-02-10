@@ -125,6 +125,7 @@ void Amy_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 		break;
 	case Act_Amy_HammerJump:
 	case Act_Amy_DashSpeedPanel:
+	case Act_Amy_Fall:
 		AmyProp_Check(data, co2, Buttons_X);
 		break;
 	case Act_Amy_Spring:
