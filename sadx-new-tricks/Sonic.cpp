@@ -5,14 +5,26 @@ Trampoline* Sonic_Exec_t = nullptr;
 Buttons InstantLightDashButton = Buttons_Y;
 
 void CheckRunInstantDash(EntityData1* data, CharObj2* co2) {
-	if (PressedButtons[data->CharIndex] & InstantLightDashButton && 
+	if (InstantLightDashButton && PressedButtons[data->CharIndex] & InstantLightDashButton &&
 		HomingAttackTarget_Sonic_B_Index > 0 && co2->Upgrades & Upgrades_CrystalRing) {
-		data->Status &= ~Status_Ball | Status_Attack;
-		data->Action = Act_Sonic_InstantDash;
-		co2->AnimationThing.Index = Anm_Sonic_LightDashFlight;
-		co2->LightdashTime = 10;
-		co2->LightdashTimer = 0;
-		co2->Speed.x = 8.0f;
+		float distance = 10000000.0f;
+		HomingAttackTarget* closest = HomingAttackTarget_Sonic_B; // Target rings
+
+		for (int i = 0; i < HomingAttackTarget_Sonic_B_Index; ++i) {
+			if (HomingAttackTarget_Sonic_B[i].distance < distance) {
+				distance = HomingAttackTarget_Sonic_B[i].distance;
+				closest = &HomingAttackTarget_Sonic_B[i];
+			}
+		}
+
+		if (distance < 1000.0f) {
+			data->Status &= ~Status_Ball | Status_Attack;
+			data->Action = Act_Sonic_InstantDash;
+			co2->AnimationThing.Index = Anm_Sonic_LightDashFlight;
+			co2->LightdashTime = 10;
+			co2->LightdashTimer = 0;
+			co2->Speed.x = 8.0f;
+		}
 	}
 }
 
@@ -34,8 +46,8 @@ void SonicInstantDash(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	if (Sonic_NAct(co2, data, (EntityData2*)mwp)) {
 		co2->LightdashTime = 0;
 		DoSoundQueueThing(764);
-		if (co2->Speed.x > 2.0) {
-			co2->Speed.x = 2.0;
+		if (co2->Speed.x > 2.0f) {
+			co2->Speed.x = 2.0f;
 		}
 		data->Status &= ~Status_Attack;
 	}
