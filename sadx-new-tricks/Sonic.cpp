@@ -17,13 +17,12 @@ void CheckRunInstantDash(EntityData1* data, CharObj2* co2) {
 			}
 		}
 
-		if (distance < 1000.0f) {
+		if (distance < 1500.0f) {
 			data->Status &= ~Status_Ball | Status_Attack;
 			data->Action = Act_Sonic_InstantDash;
 			co2->AnimationThing.Index = Anm_Sonic_LightDashFlight;
 			co2->LightdashTime = 10;
 			co2->LightdashTimer = 0;
-			co2->Speed.x = 8.0f;
 		}
 	}
 }
@@ -46,9 +45,6 @@ void SonicInstantDash(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	if (Sonic_NAct(co2, data, (EntityData2*)mwp)) {
 		co2->LightdashTime = 0;
 		DoSoundQueueThing(764);
-		if (co2->Speed.x > 2.0f) {
-			co2->Speed.x = 2.0f;
-		}
 		data->Status &= ~Status_Attack;
 	}
 	else {
@@ -61,9 +57,6 @@ void SonicInstantDash(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 		if (--co2->LightdashTime <= 0 || ++co2->LightdashTimer > 100) {
 			data->Action = Act_Sonic_Brake;
 			co2->AnimationThing.Index = Anm_Sonic_Brake;
-			if (co2->Speed.x > 2.0f) {
-				co2->Speed.x = 2.0f;
-			}
 			data->Status &= ~Status_Attack;
 			co2->LightdashTime = 0;
 			DoSoundQueueThing(764);
