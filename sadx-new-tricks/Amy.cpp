@@ -10,12 +10,14 @@ static float PropellerAirAccTreshold = 7.0f;
 static float PropellerAirAcc = 1.005f;
 static float DoubleJumpAcc = 1.12f;
 
-AnimData DoubleJumpAnim = { nullptr, 78, 4, Anm_Amy_Jump, 1.12f, 1.0f };
+static AnimData DoubleJumpAnim = { nullptr, 78, 4, Anm_Amy_Jump, 1.12f, 1.0f };
 
-Trampoline* Amy_Exec_t = nullptr;
+static Trampoline* Amy_Exec_t = nullptr;
 
-void AmyDoubleJump(EntityData1* data, motionwk* mwp, CharObj2* co2) {
-	if (EnableDoubleJump == true && ControllerEnabled[data->CharIndex] && ControlEnabled && PressedButtons[data->CharIndex] & JumpButtons && co2->gap16[0] == 0 /* Can Double Jump */ && co2->JumpTime > 8) {
+static void AmyDoubleJump(EntityData1* data, motionwk* mwp, CharObj2* co2)
+{
+	if (EnableDoubleJump == true && ControllerEnabled[data->CharIndex] && ControlEnabled && PressedButtons[data->CharIndex] & JumpButtons && co2->gap16[0] == 0 /* Can Double Jump */ && co2->JumpTime > 8)
+	{
 		co2->gap16[0] = 1;
 
 		PlaySound(1286, 0, 0, 0);
@@ -28,15 +30,18 @@ void AmyDoubleJump(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 }
 
 #pragma region Propeller
-void AmyProp_Run(EntityData1* data, motionwk* mwp, CharObj2* co2) {
+static void AmyProp_Run(EntityData1* data, motionwk* mwp, CharObj2* co2)
+{
 	// If an object overrides the player action, stop
-	if (Amy_RunNextAction(co2, mwp, data)) {
+	if (Amy_RunNextAction(co2, mwp, data))
+	{
 		co2->TailsFlightTime = 0.0f;
 		return;
 	}
 
 	// If the player stops holding the button, stop
-	if (!(HeldButtons[data->CharIndex] & HammerPropButton)) {
+	if (!(HeldButtons[data->CharIndex] & HammerPropButton))
+	{
 		data->Action = Act_Amy_Fall;
 		co2->AnimationThing.Index = Anm_Amy_Fall;
 		co2->TailsFlightTime = 0.0f;
@@ -44,40 +49,44 @@ void AmyProp_Run(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	}
 
 	// If the player touches the ground, stop
-	if (data->Status & Status_Ground) {
+	if (data->Status & Status_Ground)
+	{
 		PlaySound(33, 0, 0, 0);
 		co2->AnimationThing.Index = Anm_Amy_Stand;
 		data->Action = Act_Amy_Walk;
 		co2->TailsFlightTime = 0.0f;
 		return;
 	}
-	
+
 	// Initial acceleration if close to no input speed
-	if (co2->Speed.x < PropellerInitialAccTreshold) {
+	if (co2->Speed.x < PropellerInitialAccTreshold)
+	{
 		co2->Speed.x *= PropellerInitialAcc;
 	}
 
 	// Hammer Air acceleration
-	if (co2->Speed.x < PropellerAirAccTreshold) {
+	if (co2->Speed.x < PropellerAirAccTreshold)
+	{
 		co2->Speed.x *= PropellerAirAcc;
 	}
 
 	// Fix velocity bug
-	if (njScalor(&co2->Speed) == 0) {
+	if (njScalor(&co2->Speed) == 0)
+	{
 		co2->Speed.y -= 0.1f;
 	}
-	
+
 	// Handle physics
 	Float RestoreGravity = co2->PhysicsData.Gravity;
 	co2->PhysicsData.Gravity = PropellerGravity;
-	
+
 	PlayerFunc_Move(data, mwp, co2);
 	PlayerFunc_RotateToGravity(data, mwp, co2);
 	PlayerFunc_Acceleration(data, mwp, co2);
 	PlayerFunc_AnalogToDirection(data, mwp, co2);
 	PlayerFunc_RunDynamicCollision(data, mwp, co2);
 	PlayerFunc_UpdateSpeed(data, mwp, co2);
-	
+
 	co2->PhysicsData.Gravity = RestoreGravity;
 
 	// Hammer Spin Animation
@@ -90,13 +99,16 @@ void AmyProp_Run(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	data->Status |= Status_Attack;
 }
 
-inline void AmyProp_Check(EntityData1* data, CharObj2* co2) {
+static inline void AmyProp_Check(EntityData1* data, CharObj2* co2)
+{
 	if (ControllerEnabled[data->CharIndex] && ControlEnabled && PressedButtons[data->CharIndex] & HammerPropButton && (data->Status & Status_Ground) != Status_Ground &&
-		co2->field_A == 0 && co2->JumpTime > 5 && co2->ObjectHeld == nullptr) {
+		co2->field_A == 0 && co2->JumpTime > 5 && co2->ObjectHeld == nullptr)
+	{
 
 		data->Action = Act_Amy_HammerProp;
 
-		if (data->Rotation.x || data->Rotation.z) {
+		if (data->Rotation.x || data->Rotation.z)
+		{
 			PlayerDirectionToVector(data, &co2->Speed);
 		}
 
@@ -108,12 +120,15 @@ inline void AmyProp_Check(EntityData1* data, CharObj2* co2) {
 }
 #pragma endregion
 
-void Amy_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
-	if (EnableDoubleJump == true && data->Action != Act_Amy_Init && data->Status & Status_Ground) {
+static void Amy_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2)
+{
+	if (EnableDoubleJump == true && data->Action != Act_Amy_Init && data->Status & Status_Ground)
+	{
 		co2->gap16[0] = 0; // can double jump
 	}
 
-	switch (data->Action) {
+	switch (data->Action)
+	{
 	case Act_Amy_Init:
 		// Initialize the double jump animation
 		DoubleJumpAnim.Animation = AmyAnimData[Anm_Amy_HammerSomerTrickA].Animation;
@@ -136,7 +151,8 @@ void Amy_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 		AmyProp_Run(data, mwp, co2);
 		break;
 	case Act_Amy_TailsGrab:
-		if (Amy_RunNextAction(co2, mwp, data)) {
+		if (Amy_RunNextAction(co2, mwp, data))
+		{
 			return;
 		}
 
@@ -145,18 +161,19 @@ void Amy_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	}
 }
 
-void Amy_Exec_r(task* tsk) {
+static void Amy_Exec_r(task* tsk)
+{
 	EntityData1* data = (EntityData1*)tsk->twp; // main task containing position, rotation, scale
 	motionwk* mwp = tsk->mwp; // task containing movement information
 	CharObj2* co2 = (CharObj2*)mwp->work.ptr; // physics, animation info, and countless other things
 
 	Amy_NewActions(data, mwp, co2);
 
-	NonStaticFunctionPointer(void, Amy_Original, (task * tsk), Amy_Exec_t->Target());
-	Amy_Original(tsk);
+	TRAMPOLINE(Amy_Exec)(tsk);
 }
 
-void Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics) {
+void Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics)
+{
 	Amy_Exec_t = new Trampoline((int)Amy_Main, (int)Amy_Main + 0x7, Amy_Exec_r);
 
 	EnableDoubleJump = config->getBool("Amy", "EnableDoubleJump", true);

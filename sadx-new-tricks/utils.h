@@ -1,5 +1,7 @@
 #pragma once
 
+#define TRAMPOLINE(name) ((decltype(name##_r)*)name##_t->Target())
+
 void LoadAnimation(AnimationFile** info, const char* name, const HelperFunctions& helperFunctions);
 
 float GetLength(NJS_VECTOR* orig, NJS_VECTOR* dest);

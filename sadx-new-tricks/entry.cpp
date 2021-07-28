@@ -13,23 +13,28 @@ extern "C"
 		const IniFile* config = new IniFile(std::string(path) + "\\config.ini");
 		const IniFile* physics = new IniFile(std::string(path) + "\\physics.ini");
 
-		if (config->getBool("General", "EnableSonic", true)) {
+		if (config->getBool("General", "EnableSonic", true))
+		{
 			Sonic_Init(helperFunctions, config);
 		}
 
-		if (config->getBool("General", "EnableTails", true)) {
+		if (config->getBool("General", "EnableTails", true))
+		{
 			Tails_Init(helperFunctions, config, physics);
 		}
 		
-		if (config->getBool("General", "EnableKnuckles", true)) {
+		if (config->getBool("General", "EnableKnuckles", true))
+		{
 			Knuckles_Init(helperFunctions, config, physics);
 		}
 
-		if (config->getBool("General", "EnableAmy", true)) {
+		if (config->getBool("General", "EnableAmy", true))
+		{
 			Amy_Init(helperFunctions, config, physics);
 		}
 		
-		if (config->getBool("General", "EnableTornado", true)) {
+		if (config->getBool("General", "EnableTornado", true))
+		{
 			Tornado_Init(helperFunctions, config);
 		}
 		

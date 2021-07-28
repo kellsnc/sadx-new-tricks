@@ -10,28 +10,33 @@ static float KnucklesSpinDashMaxSpeed = 8.0f;
 static float KnucklesSpinDashSpeedIncrement = 0.28f;
 static float KnucklesDrillSpeed = 7.0f;
 
-Trampoline* Knuckles_Exec_t = nullptr;
+static Trampoline* Knuckles_Exec_t = nullptr;
 
-AnimData DrillClawAnim = { nullptr, 78, 3, Anm_Knuckles_CustomDrillClaw, 0.5f, 2.0f };
-AnimData DrillDigAnim = { nullptr, 78, 4, Anm_Knuckles_Dig, 1.0f, 1.5f };
+static AnimData DrillClawAnim = { nullptr, 78, 3, Anm_Knuckles_CustomDrillClaw, 0.5f, 2.0f };
+static AnimData DrillDigAnim = { nullptr, 78, 4, Anm_Knuckles_Dig, 1.0f, 1.5f };
 
-AnimationFile* DrillClawMotion = nullptr;
+static AnimationFile* DrillClawMotion = nullptr;
 
-void Knuckles_AfterImages(task* tsk) {
-	if (!MissedFrames) {
+static void Knuckles_AfterImages(task* tsk)
+{
+	if (!MissedFrames)
+	{
 		CharObj2* co2 = CharObj2Ptrs[tsk->twp->value.b[0]];
 		taskwk* wk = tsk->twp;
 
-		if (IsGamePaused() == false) {
+		if (IsGamePaused() == false)
+		{
 			wk->scl.x -= 0.1f;
-			
-			if (wk->scl.x <= 0.0f) {
+
+			if (wk->scl.x <= 0.0f)
+			{
 				FreeTask(tsk);
 				return;
 			}
 		}
 
-		if (wk->scl.x < 0.9f) {
+		if (wk->scl.x < 0.9f)
+		{
 			Direct3D_PerformLighting(2);
 			njSetTexture(&KNUCKLES_TEXLIST);
 			BackupConstantAttr();
@@ -44,7 +49,7 @@ void Knuckles_AfterImages(task* tsk) {
 			njColorBlendingMode(NJD_SOURCE_COLOR, NJD_COLOR_BLENDING_SRCALPHA);
 			njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_ONE);
 			SetMaterialAndSpriteColor_Float(wk->scl.x, 1.0f, 1.0f, 1.0f);
-			
+
 			njPushMatrixEx();
 			njTranslateEx(&wk->pos);
 			njRotateZ_(wk->ang.z);
@@ -63,10 +68,11 @@ void Knuckles_AfterImages(task* tsk) {
 	}
 }
 
-void LoadKnucklesAfterImages(EntityData1* data, CharObj2* co2) {
+static void LoadKnucklesAfterImages(EntityData1* data, CharObj2* co2)
+{
 	task* tsk = CreateElementalTask(LoadObj_Data1, tasklevel::LEV_4, Knuckles_AfterImages);
 	tsk->disp = Knuckles_AfterImages;
-	
+
 	taskwk* wk = tsk->twp;
 
 	wk->value.b[0] = data->CharIndex;
@@ -76,22 +82,28 @@ void LoadKnucklesAfterImages(EntityData1* data, CharObj2* co2) {
 	wk->ang = *(Angle3*)&data->Rotation;
 }
 
-void Knuckles_CheckSpinDash(EntityData1* data, CharObj2* co2) {
-	if (EnableKnucklesSpinDash == true) {
+static void Knuckles_CheckSpinDash(EntityData1* data, CharObj2* co2)
+{
+	if (EnableKnucklesSpinDash == true)
+	{
 		CommonSpinDash_Check(data, co2, Anm_Knuckles_JumpOrSpin, Act_Knuckles_SpinDash, KnucklesSpinDashMaxInitialSpeed);
 	}
 }
 
-void Knuckles_CheckDrillClaw(EntityData1* data, CharObj2* co2) {
-	if (EnableKnucklesDrillClaw == true && ControllerEnabled[data->CharIndex] && ControlEnabled && HeldButtons[data->CharIndex] & Buttons_B) {
+static void Knuckles_CheckDrillClaw(EntityData1* data, CharObj2* co2)
+{
+	if (EnableKnucklesDrillClaw == true && ControllerEnabled[data->CharIndex] && ControlEnabled && HeldButtons[data->CharIndex] & Buttons_B)
+	{
 		data->Action = Act_Knuckles_DrillClaw;
 		data->Status &= ~Status_Ball;
 		LoadKnucklesAfterImages(data, co2);
 	}
 }
 
-void Knuckles_CheckWallDig(EntityData1* data, CharObj2* co2) {
-	if (co2->Upgrades & Upgrades_ShovelClaw && PressedButtons[data->CharIndex] & AttackButtons && ((CurrentLevel == LevelIDs_RedMountain && CurrentAct == 2 && DiggableRMWalls) || (co2->SurfaceFlags & ColFlags_Dig))) {
+static void Knuckles_CheckWallDig(EntityData1* data, CharObj2* co2)
+{
+	if (co2->Upgrades & Upgrades_ShovelClaw && PressedButtons[data->CharIndex] & AttackButtons && ((CurrentLevel == LevelIDs_RedMountain && CurrentAct == 2 && DiggableRMWalls) || (co2->SurfaceFlags & ColFlags_Dig)))
+	{
 		data->Action = Act_Knuckles_Dig;
 		data->field_A = Act_Knuckles_Climb; // store next action after walldig in this
 		co2->AnimationThing.Index = Anm_Knuckles_CustomDrillDig;
@@ -99,13 +111,16 @@ void Knuckles_CheckWallDig(EntityData1* data, CharObj2* co2) {
 	}
 }
 
-void Knuckles_DrillClaw(EntityData1* data, motionwk* mwp, CharObj2* co2) {
-	if (Knuckles_RunNextAction(co2, mwp, data)) {
+static void Knuckles_DrillClaw(EntityData1* data, motionwk* mwp, CharObj2* co2)
+{
+	if (Knuckles_RunNextAction(co2, mwp, data))
+	{
 		return;
 	}
-	
+
 	// Stop if B is not held anymore
-	if ((HeldButtons[data->CharIndex] & Buttons_B) != Buttons_B) {
+	if ((HeldButtons[data->CharIndex] & Buttons_B) != Buttons_B)
+	{
 		data->Status |= Status_Ball;
 		data->Action = Act_Knuckles_Jump;
 		co2->AnimationThing.Index = Anm_Knuckles_GlideCancelRoll;
@@ -113,24 +128,28 @@ void Knuckles_DrillClaw(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	}
 
 	// Stop if touches the ground
-	if (data->Status & Status_Ground) {
+	if (data->Status & Status_Ground)
+	{
 
 		// If Knuckles has the ShovelClaw and the floor is diggable, dig.
-		if (co2->Upgrades & Upgrades_ShovelClaw && (co2->SurfaceFlags & ColFlags_Dig)) {
+		if (co2->Upgrades & Upgrades_ShovelClaw && (co2->SurfaceFlags & ColFlags_Dig))
+		{
 			co2->Speed.y = 0;
 			NullifyVelocity((EntityData2*)mwp, co2);
 			co2->AnimationThing.Index = Anm_Knuckles_CustomDrillDig;
 			data->Action = Act_Knuckles_Dig;
 		}
-		else {
+		else
+		{
 			data->Action = Act_Knuckles_Stand;
 		}
-		
+
 		return;
 	}
 
 	// Stop if colliding with solid object collision
-	if (data->Status & Status_Unknown1) {
+	if (data->Status & Status_Unknown1)
+	{
 		data->Action = Act_Knuckles_Stand;
 	}
 
@@ -150,21 +169,26 @@ void Knuckles_DrillClaw(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	// Custom animation
 	co2->AnimationThing.Index = Anm_Knuckles_CustomDrillClaw;
 
-	if (FrameCounterUnpaused % 2 == 0) {
+	if (FrameCounterUnpaused % 2 == 0)
+	{
 		LoadKnucklesAfterImages(data, co2);
 	}
 }
 
-void Knuckles_SpinDash(EntityData1* data, motionwk* mwp, CharObj2* co2) {
-	if (Knuckles_RunNextAction(co2, mwp, data)) {
+static void Knuckles_SpinDash(EntityData1* data, motionwk* mwp, CharObj2* co2)
+{
+	if (Knuckles_RunNextAction(co2, mwp, data))
+	{
 		return;
 	}
 
 	CommonSpinDash_Run(data, mwp, co2, KnucklesSpinDashMaxSpeed, KnucklesSpinDashSpeedIncrement, Anm_Knuckles_Roll, Anm_Knuckles_Uncurl, Act_Knuckles_Roll);
 }
 
-void Knuckles_TailsGrab(EntityData1* data, motionwk* mwp, CharObj2* co2) {
-	if (Knuckles_RunNextAction(co2, mwp, data)) {
+static void Knuckles_TailsGrab(EntityData1* data, motionwk* mwp, CharObj2* co2)
+{
+	if (Knuckles_RunNextAction(co2, mwp, data))
+	{
 		data->LoopData = nullptr;
 		co2->Powerups &= ~Powerups_Invincibility;
 		return;
@@ -173,8 +197,10 @@ void Knuckles_TailsGrab(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	TailsGrabAction(data, mwp, co2, { 0.0f, -8.0f, -1.0f }, Anm_Knuckles_Hang, Act_Knuckles_Fall, Anm_Knuckles_Fall);
 }
 
-void Knuckles_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
-	switch (data->Action) {
+static void Knuckles_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2)
+{
+	switch (data->Action)
+	{
 	case Act_Knuckles_Init:
 		// Set up the fast transition dig from drill
 		DrillDigAnim.Animation = KnucklesAnimData[Anm_Knuckles_DigStart].Animation;
@@ -192,11 +218,12 @@ void Knuckles_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	case Act_Knuckles_DigOff:
 
 		// If stopped digging from wall, go back to climb
-		if (data->field_A == Act_Knuckles_Climb) {
+		if (data->field_A == Act_Knuckles_Climb)
+		{
 			data->Action = Act_Knuckles_Climb;
 			data->field_A = 0;
 		}
-		
+
 		break;
 	case Act_Knuckles_Climb:
 		Knuckles_CheckWallDig(data, co2);
@@ -207,7 +234,7 @@ void Knuckles_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 		break;
 	case Act_Knuckles_TailsGrab:
 		Knuckles_TailsGrab(data, mwp, co2);
-		break; 
+		break;
 	case Act_Knuckles_SpinDash:
 		Knuckles_SpinDash(data, mwp, co2);
 		break;
@@ -217,7 +244,8 @@ void Knuckles_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	}
 }
 
-void Knuckles_Exec_r(task* tsk) {
+static void Knuckles_Exec_r(task* tsk)
+{
 	EntityData1* data = (EntityData1*)tsk->twp; // main task containing position, rotation, scale
 	motionwk* mwp = tsk->mwp; // task containing movement information
 	CharObj2* co2 = (CharObj2*)mwp->work.ptr; // physics, animation info, and countless other things
@@ -259,12 +287,12 @@ void Knuckles_Exec_r(task* tsk) {
 			WriteData<1>((void*)0x4723D9, Anm_Knuckles_JumpOrSpin);
 		}
 	}
-	
-	NonStaticFunctionPointer(void, Knuckles_Original, (task * tsk), Knuckles_Exec_t->Target());
-	Knuckles_Original(tsk);
+
+	TRAMPOLINE(Knuckles_Exec)(tsk);
 }
 
-void Knuckles_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics) {
+void Knuckles_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics)
+{
 	Knuckles_Exec_t = new Trampoline((int)Knuckles_Main, (int)Knuckles_Main + 0x7, Knuckles_Exec_r);
 
 	EnableKnucklesSpinDash = config->getBool("Knuckles", "EnableKnucklesSpinDash", true);
