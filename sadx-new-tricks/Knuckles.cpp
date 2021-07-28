@@ -83,7 +83,7 @@ void Knuckles_CheckSpinDash(EntityData1* data, CharObj2* co2) {
 }
 
 void Knuckles_CheckDrillClaw(EntityData1* data, CharObj2* co2) {
-	if (EnableKnucklesDrillClaw == true && HeldButtons[data->CharIndex] & Buttons_B) {
+	if (EnableKnucklesDrillClaw == true && ControllerEnabled[data->CharIndex] && ControlEnabled && HeldButtons[data->CharIndex] & Buttons_B) {
 		data->Action = Act_Knuckles_DrillClaw;
 		data->Status &= ~Status_Ball;
 		LoadKnucklesAfterImages(data, co2);
@@ -186,9 +186,7 @@ void Knuckles_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 		break;
 	case Act_Knuckles_Stand:
 	case Act_Knuckles_Walk:
-		if (ControllerEnabled[data->CharIndex]) {
-			Knuckles_CheckSpinDash(data, co2);
-		}
+		Knuckles_CheckSpinDash(data, co2);
 
 		break;
 	case Act_Knuckles_DigOff:
@@ -224,10 +222,7 @@ void Knuckles_Exec_r(task* tsk) {
 	motionwk* mwp = tsk->mwp; // task containing movement information
 	CharObj2* co2 = (CharObj2*)mwp->work.ptr; // physics, animation info, and countless other things
 
-	if (ControllerEnabled[data->CharIndex] && ControlEnabled)
-	{
-		Knuckles_NewActions(data, mwp, co2);
-	}
+	Knuckles_NewActions(data, mwp, co2);
 
 	// Hack to get the ball to bend during spindash
 	// They made the code in the wrong order in Knuckles Display so I have to patch the condition.

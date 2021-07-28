@@ -123,9 +123,7 @@ void Tails_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	switch (data->Action) {
 	case Act_Tails_Stand:
 	case Act_Tails_Walk:
-		if (ControllerEnabled[data->CharIndex]) {
-			Tails_CheckSpinDash(data, co2);
-		}
+		Tails_CheckSpinDash(data, co2);
 		
 		break;
 	case Act_Tails_Fly:
@@ -171,11 +169,8 @@ void Tails_Exec_r(task* tsk) {
 	motionwk* mwp = tsk->mwp; // task containing movement information
 	CharObj2* co2 = (CharObj2*)mwp->work.ptr; // physics, animation info, and countless other things
 
-	if (ControllerEnabled[data->CharIndex] && ControlEnabled)
-	{
-		Tails_NewActions(data, mwp, co2);
-	}
-	
+	Tails_NewActions(data, mwp, co2);
+
 	NonStaticFunctionPointer(void, Tails_Original, (task * tsk), Tails_Exec_t->Target());
 	Tails_Original(tsk);
 }
