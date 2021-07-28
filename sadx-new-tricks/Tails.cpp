@@ -171,8 +171,11 @@ void Tails_Exec_r(task* tsk) {
 	motionwk* mwp = tsk->mwp; // task containing movement information
 	CharObj2* co2 = (CharObj2*)mwp->work.ptr; // physics, animation info, and countless other things
 
-	Tails_NewActions(data, mwp, co2);
-
+	if (ControllerEnabled[data->CharIndex] && ControlEnabled)
+	{
+		Tails_NewActions(data, mwp, co2);
+	}
+	
 	NonStaticFunctionPointer(void, Tails_Original, (task * tsk), Tails_Exec_t->Target());
 	Tails_Original(tsk);
 }

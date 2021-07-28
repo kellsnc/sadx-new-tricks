@@ -72,6 +72,7 @@ enum KnucklesAnimations {
 	Anm_Knuckles_Fall = 6,
 	Anm_Knuckles_JumpOrSpin = 14,
 	Anm_Knuckles_Roll = 15,
+	Anm_Knuckles_Roll2,
 	Anm_Knuckles_Uncurl = 33,
 	Anm_Knuckles_GlideCancelRoll,
 	Anm_Knuckles_DigStart = 41,

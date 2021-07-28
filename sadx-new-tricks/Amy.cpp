@@ -63,7 +63,7 @@ void AmyProp_Run(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	}
 
 	// Fix velocity bug
-	if (co2->Speed.x + co2->Speed.z + co2->Speed.y == 0) {
+	if (njScalor(&co2->Speed) == 0) {
 		co2->Speed.y -= 0.1f;
 	}
 	
@@ -71,6 +71,7 @@ void AmyProp_Run(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 	Float RestoreGravity = co2->PhysicsData.Gravity;
 	co2->PhysicsData.Gravity = PropellerGravity;
 	
+	PlayerFunc_Move(data, mwp, co2);
 	PlayerFunc_RotateToGravity(data, mwp, co2);
 	PlayerFunc_Acceleration(data, mwp, co2);
 	PlayerFunc_AnalogToDirection(data, mwp, co2);

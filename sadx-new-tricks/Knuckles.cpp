@@ -224,8 +224,40 @@ void Knuckles_Exec_r(task* tsk) {
 	motionwk* mwp = tsk->mwp; // task containing movement information
 	CharObj2* co2 = (CharObj2*)mwp->work.ptr; // physics, animation info, and countless other things
 
-	Knuckles_NewActions(data, mwp, co2);
+	if (ControllerEnabled[data->CharIndex] && ControlEnabled)
+	{
+		Knuckles_NewActions(data, mwp, co2);
+	}
 
+	// Hack to get the ball to bend during spindash
+	// They made the code in the wrong order in Knuckles Display so I have to patch the condition.
+	if (co2)
+	{
+		int timer = LOWORD(co2->field_84);
+
+		++timer;
+
+		bool test;
+
+		if (co2->AnimationThing.Index == 34)
+		{
+			test = (LOBYTE(timer) & 1) == 0;
+		}
+		else
+		{
+			test = (LOBYTE(timer) & 0x11) == 0;
+		}
+
+		if (!test)
+		{
+			WriteData<1>((void*)0x4723D9, Anm_Knuckles_Roll2);
+		}
+		else
+		{
+			WriteData<1>((void*)0x4723D9, Anm_Knuckles_JumpOrSpin);
+		}
+	}
+	
 	NonStaticFunctionPointer(void, Knuckles_Original, (task * tsk), Knuckles_Exec_t->Target());
 	Knuckles_Original(tsk);
 }
@@ -241,7 +273,7 @@ void Knuckles_Init(const HelperFunctions& helperFunctions, const IniFile* config
 	KnucklesSpinDashMaxInitialSpeed = physics->getFloat("Knuckles", "SpinDashMaxInitialSpeed", 1.45f);
 	KnucklesSpinDashMaxSpeed = physics->getFloat("Knuckles", "SpinDashMaxSpeed", 8.0f);
 	KnucklesSpinDashSpeedIncrement = physics->getFloat("Knuckles", "SpinDashSpeedIncrement", 0.28f);
-	KnucklesDrillSpeed = physics->getFloat("Knuckles", "KnucklesDrillSpeed", 7.0f);
+	KnucklesDrillSpeed = physics->getFloat("Knuckles", "KnucklesDrillSpeed", 5.0f);
 
 	// Load custom Drill Claw animation
 	LoadAnimation(&DrillClawMotion, "drillclaw", helperFunctions);
