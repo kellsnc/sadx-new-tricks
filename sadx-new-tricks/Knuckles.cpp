@@ -228,26 +228,33 @@ void Knuckles_Exec_r(task* tsk) {
 	// They made the code in the wrong order in Knuckles Display so I have to patch the condition.
 	if (co2)
 	{
-		int timer = LOWORD(co2->field_84);
-
-		++timer;
-
-		bool test;
-
-		if (co2->AnimationThing.Index == 34)
+		if (co2->AnimationThing.Index == Anm_Knuckles_JumpOrSpin)
 		{
-			test = (LOBYTE(timer) & 1) == 0;
-		}
-		else
-		{
-			test = (LOBYTE(timer) & 0x11) == 0;
-		}
+			int timer = LOWORD(co2->field_84);
 
-		if (!test)
-		{
-			WriteData<1>((void*)0x4723D9, Anm_Knuckles_Roll2);
+			++timer;
+
+			bool test;
+
+			if (co2->AnimationThing.Index == 34)
+			{
+				test = (LOBYTE(timer) & 1) == 0;
+			}
+			else
+			{
+				test = (LOBYTE(timer) & 0x11) == 0;
+			}
+
+			if (!test)
+			{
+				WriteData<1>((void*)0x4723D9, Anm_Knuckles_Roll2);
+			}
+			else
+			{
+				WriteData<1>((void*)0x4723D9, Anm_Knuckles_JumpOrSpin);
+			}
 		}
-		else
+		else if (data->Status & Status_Ball) // Prevent distorting when not spindashing
 		{
 			WriteData<1>((void*)0x4723D9, Anm_Knuckles_JumpOrSpin);
 		}
