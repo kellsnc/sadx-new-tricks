@@ -15,7 +15,7 @@ AnimData DoubleJumpAnim = { nullptr, 78, 4, Anm_Amy_Jump, 1.12f, 1.0f };
 Trampoline* Amy_Exec_t = nullptr;
 
 void AmyDoubleJump(EntityData1* data, motionwk* mwp, CharObj2* co2) {
-	if (EnableDoubleJump == true && PressedButtons[data->CharIndex] & JumpButtons && co2->gap16[0] == 0 /* Can Double Jump */ && co2->JumpTime > 8) {
+	if (EnableDoubleJump == true && ControllerEnabled[data->CharIndex] && ControlEnabled && PressedButtons[data->CharIndex] & JumpButtons && co2->gap16[0] == 0 /* Can Double Jump */ && co2->JumpTime > 8) {
 		co2->gap16[0] = 1;
 
 		PlaySound(1286, 0, 0, 0);
@@ -91,7 +91,7 @@ void AmyProp_Run(EntityData1* data, motionwk* mwp, CharObj2* co2) {
 }
 
 inline void AmyProp_Check(EntityData1* data, CharObj2* co2) {
-	if (PressedButtons[data->CharIndex] & HammerPropButton && (data->Status & Status_Ground) != Status_Ground &&
+	if (ControllerEnabled[data->CharIndex] && ControlEnabled && PressedButtons[data->CharIndex] & HammerPropButton && (data->Status & Status_Ground) != Status_Ground &&
 		co2->field_A == 0 && co2->JumpTime > 5 && co2->ObjectHeld == nullptr) {
 
 		data->Action = Act_Amy_HammerProp;
