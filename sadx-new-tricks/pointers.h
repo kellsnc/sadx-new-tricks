@@ -1,6 +1,6 @@
 #pragma once
 
-static constexpr int MaxPlayers = 4;
+static constexpr int MaxPlayers = 8;
 
 FunctionPointer(void, DrawObject, (NJS_OBJECT*), 0x408530);
 FunctionPointer(Float, GetGroundYPosition, (Float x, Float y, Float z, Rotation3* rot), 0x49E920);

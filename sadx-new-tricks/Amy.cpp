@@ -10,21 +10,19 @@ static float PropellerAirAccTreshold = 7.0f;
 static float PropellerAirAcc = 1.005f;
 static float DoubleJumpAcc = 1.12f;
 
+static bool BlockDoubleJump[MaxPlayers];
+
 static AnimData DoubleJumpAnim = { nullptr, 78, 4, Anm_Amy_Jump, 1.12f, 1.0f };
 
 static Trampoline* Amy_Exec_t = nullptr;
 
-static void AmyDoubleJump(EntityData1* data, motionwk* mwp, CharObj2* co2)
+static void AmyDoubleJump(EntityData1* data, CharObj2* co2)
 {
-	if (EnableDoubleJump == true && ControllerEnabled[data->CharIndex] && ControlEnabled && PressedButtons[data->CharIndex] & JumpButtons && co2->gap16[0] == 0 /* Can Double Jump */ && co2->JumpTime > 8)
+	if (EnableDoubleJump == true && ControllerEnabled[data->CharIndex] && ControlEnabled && PressedButtons[data->CharIndex] & JumpButtons && BlockDoubleJump[data->CharIndex] == false && co2->JumpTime > 8)
 	{
-		co2->gap16[0] = 1;
-
+		BlockDoubleJump[data->CharIndex] = true;
+		EnemyBounceThing(data->CharIndex, 0, DoubleJumpAcc, 0);
 		PlaySound(1286, 0, 0, 0);
-		co2->Speed.y += DoubleJumpAcc;
-		co2->Speed.x /= 4;
-		co2->Speed.z /= 4;
-
 		co2->AnimationThing.Index = 74;
 	}
 }
@@ -122,9 +120,9 @@ static inline void AmyProp_Check(EntityData1* data, CharObj2* co2)
 
 static void Amy_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2)
 {
-	if (EnableDoubleJump == true && data->Action != Act_Amy_Init && data->Status & Status_Ground)
+	if (EnableDoubleJump == true && data->Status & (Status_Ground | Status_Unknown1))
 	{
-		co2->gap16[0] = 0; // can double jump
+		BlockDoubleJump[data->CharIndex] = false; // can double jump
 	}
 
 	switch (data->Action)
@@ -137,7 +135,7 @@ static void Amy_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2)
 		break;
 	case Act_Amy_Jump:
 		AmyProp_Check(data, co2);
-		AmyDoubleJump(data, mwp, co2);
+		AmyDoubleJump(data, co2);
 		break;
 	case Act_Amy_HammerJump:
 	case Act_Amy_DashSpeedPanel:
