@@ -9,12 +9,8 @@ FunctionPointer(int, DetectDyncolCollision, (NJS_VECTOR* pos, NJS_VECTOR* output
 
 FunctionPointer(void, PlayerUpdateSpeed, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x43EE70);
 FunctionPointer(void, PlayerRollPhysics, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x448E50);
-
 FunctionPointer(void, PGlideAcceleration, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x448000);
 FunctionPointer(void, PGlideGetSpeed, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x444580);
-FunctionPointer(int, PResetStuff, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x43EE70);
-
-FunctionPointer(void, PlayerDirectionToVector, (EntityData1* player, NJS_VECTOR* direction), 0x43EC90);
 
 ObjectFunc(SecondaryObjectPhysics, 0x49D730);
 ObjectFunc(SetObjectStatusHeld, 0x46C120);

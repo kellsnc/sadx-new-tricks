@@ -53,7 +53,7 @@ void TailsGrabAction_Run(EntityData1* grabplayer, EntityData1* data, motionwk2* 
 
 	// Move the player to the grabbing player
 	data->Position = grabplayer->Position;
-	PlayerDirectionToVector(grabplayer, &offset);
+	PConvertVector_P2G((taskwk*)grabplayer, &offset);
 	njAddVector(&data->Position, &offset);
 
 	// Rotate
