@@ -28,7 +28,7 @@ static void AmyDoubleJump(EntityData1* data, CharObj2* co2)
 }
 
 #pragma region Propeller
-static void AmyProp_Run(EntityData1* data, motionwk* mwp, CharObj2* co2)
+static void AmyProp_Run(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
 	// If an object overrides the player action, stop
 	if (Amy_RunNextAction(co2, mwp, data))
@@ -47,7 +47,7 @@ static void AmyProp_Run(EntityData1* data, motionwk* mwp, CharObj2* co2)
 	}
 
 	// If the player touches the ground, stop
-	if (data->Status & Status_Ground)
+	if (data->Status & (Status_Ground | Status_Unknown1))
 	{
 		PlaySound(33, 0, 0, 0);
 		co2->AnimationThing.Index = Anm_Amy_Stand;
@@ -75,15 +75,15 @@ static void AmyProp_Run(EntityData1* data, motionwk* mwp, CharObj2* co2)
 	}
 
 	// Handle physics
-	Float RestoreGravity = co2->PhysicsData.Gravity;
+	auto RestoreGravity = co2->PhysicsData.Gravity;
 	co2->PhysicsData.Gravity = PropellerGravity;
 
-	PlayerFunc_Move(data, mwp, co2);
-	PlayerFunc_RotateToGravity(data, mwp, co2);
-	PlayerFunc_Acceleration(data, mwp, co2);
-	PlayerFunc_AnalogToDirection(data, mwp, co2);
-	PlayerFunc_RunDynamicCollision(data, mwp, co2);
-	PlayerFunc_UpdateSpeed(data, mwp, co2);
+	PlayerGetRotation((taskwk*)data, mwp, (playerwk*)co2);
+	PlayerResetAngle((taskwk*)data, mwp, (playerwk*)co2);
+	PlayerGetAcceleration((taskwk*)data, mwp, (playerwk*)co2);
+	PlayerGetSpeed((taskwk*)data, mwp, (playerwk*)co2);
+	PlayerSetPosition((taskwk*)data, mwp, (playerwk*)co2);
+	PlayerUpdateSpeed((taskwk*)data, mwp, (playerwk*)co2);
 
 	co2->PhysicsData.Gravity = RestoreGravity;
 
@@ -102,12 +102,11 @@ static inline void AmyProp_Check(EntityData1* data, CharObj2* co2)
 	if (ControllerEnabled[data->CharIndex] && ControlEnabled && PressedButtons[data->CharIndex] & HammerPropButton && (data->Status & Status_Ground) != Status_Ground &&
 		co2->field_A == 0 && co2->JumpTime > 5 && co2->ObjectHeld == nullptr)
 	{
-
 		data->Action = Act_Amy_HammerProp;
 
 		if (data->Rotation.x || data->Rotation.z)
 		{
-			PlayerDirectionToVector(data, &co2->Speed);
+			PConvertVector_P2G((taskwk*)data, &co2->Speed);
 		}
 
 		data->Rotation.x = GravityAngle_X;
@@ -118,7 +117,7 @@ static inline void AmyProp_Check(EntityData1* data, CharObj2* co2)
 }
 #pragma endregion
 
-static void Amy_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2)
+static void Amy_NewActions(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
 	if (EnableDoubleJump == true && data->Status & (Status_Ground | Status_Unknown1))
 	{
@@ -161,9 +160,9 @@ static void Amy_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2)
 
 static void Amy_Exec_r(task* tsk)
 {
-	EntityData1* data = (EntityData1*)tsk->twp; // main task containing position, rotation, scale
-	motionwk* mwp = tsk->mwp; // task containing movement information
-	CharObj2* co2 = (CharObj2*)mwp->work.ptr; // physics, animation info, and countless other things
+	auto data = (EntityData1*)tsk->twp; // main task containing position, rotation, scale
+	auto mwp = (motionwk2*)tsk->mwp; // task containing movement information
+	auto co2 = (CharObj2*)mwp->work.ptr; // physics, animation info, and countless other things
 
 	Amy_NewActions(data, mwp, co2);
 

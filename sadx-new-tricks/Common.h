@@ -54,9 +54,9 @@ enum TransitionActions : Uint8 {
 	NextAction_Death
 };
 
-void RunPhysics(EntityData1* data, motionwk* mwp, CharObj2* co2);
+void RunPhysics(EntityData1* data, motionwk2* mwp, CharObj2* co2);
 
-void TailsGrabAction(EntityData1* data, motionwk* mwp, CharObj2* co2, NJS_VECTOR offset, int animation, int fallaction, int fallanim);
+void TailsGrabAction(EntityData1* data, motionwk2* mwp, CharObj2* co2, NJS_VECTOR offset, int animation, int fallaction, int fallanim);
 
-void CommonSpinDash_Run(EntityData1* data, motionwk* mwp, CharObj2* co2, float maxspeed, float speedincrease, int rollanim, int uncurlanim, int rollaction);
+void CommonSpinDash_Run(EntityData1* data, motionwk2* mwp, CharObj2* co2, float maxspeed, float speedincrease, int rollanim, int uncurlanim, int rollaction);
 void CommonSpinDash_Check(EntityData1* data, CharObj2* co2, int jumpspinanim, int spindashact, float maxstartspeed);

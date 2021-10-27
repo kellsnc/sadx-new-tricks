@@ -13,7 +13,7 @@ static Trampoline* Tails_Render_t = nullptr;
 
 static void SetPlayerGrabbed(EntityData1* data, EntityData1* player)
 {
-	Characters character = (Characters)player->CharID;
+	auto character = (Characters)player->CharID;
 
 	// Launch the correct action per player because sadx is very arbitrary
 
@@ -73,7 +73,7 @@ static void SetPlayerGrabbed(EntityData1* data, EntityData1* player)
 	data->Status = 0; // Remove eventual hurt flag for grabbing player
 }
 
-static void Tails_FlyGrab(EntityData1* data, motionwk* mwp, CharObj2* co2)
+static void Tails_FlyGrab(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
 	// If Tails detaches the player
 	if (data->field_A == 1 && PressedButtons[data->CharIndex] & Buttons_B)
@@ -89,7 +89,7 @@ static void Tails_FlyGrab(EntityData1* data, motionwk* mwp, CharObj2* co2)
 			return;
 		}
 
-		EntityData1* entity = GetCollidingEntityA(data);
+		auto entity = GetCollidingEntityA(data);
 
 		if (entity)
 		{
@@ -106,7 +106,7 @@ static void Tails_CheckSpinDash(EntityData1* data, CharObj2* co2)
 	}
 }
 
-static void Tails_SpinDash(EntityData1* data, motionwk* mwp, CharObj2* co2)
+static void Tails_SpinDash(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
 	if (Tails_RunNextAction(co2, mwp, data))
 	{
@@ -116,7 +116,7 @@ static void Tails_SpinDash(EntityData1* data, motionwk* mwp, CharObj2* co2)
 	CommonSpinDash_Run(data, mwp, co2, TailsSpinDashMaxSpeed, TailsSpinDashSpeedIncrement, Anm_Tails_Roll, Anm_Tails_Uncurl, Act_Tails_Roll);
 }
 
-static void Tails_TailsGrab(EntityData1* data, motionwk* mwp, CharObj2* co2)
+static void Tails_TailsGrab(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
 	if (Tails_RunNextAction(co2, mwp, data))
 	{
@@ -128,7 +128,7 @@ static void Tails_TailsGrab(EntityData1* data, motionwk* mwp, CharObj2* co2)
 	TailsGrabAction(data, mwp, co2, { 0.0f, -5.8f, 0.0f }, Anm_Tails_RockVertHang, Act_Tails_Fall, Anm_Tails_Fall);
 }
 
-static void Tails_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2)
+static void Tails_NewActions(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
 	if (data->Action != Act_Tails_Init)
 	{
@@ -163,9 +163,9 @@ static void Tails_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2)
 
 static void Tails_Render_r(task* tsk)
 {
-	EntityData1* data = (EntityData1*)tsk->twp;
-	motionwk* mwp = tsk->mwp;
-	CharObj2* co2 = (CharObj2*)mwp->work.ptr;
+	auto data = (EntityData1*)tsk->twp;
+	auto mwp = (motionwk2*)tsk->mwp;
+	auto co2 = (CharObj2*)mwp->work.ptr;
 
 	TRAMPOLINE(Tails_Render)(tsk);
 
@@ -190,9 +190,9 @@ static void Tails_Render_r(task* tsk)
 
 static void Tails_Exec_r(task* tsk)
 {
-	EntityData1* data = (EntityData1*)tsk->twp; // main task containing position, rotation, scale
-	motionwk* mwp = tsk->mwp; // task containing movement information
-	CharObj2* co2 = (CharObj2*)mwp->work.ptr; // physics, animation info, and countless other things
+	auto data = (EntityData1*)tsk->twp; // main task containing position, rotation, scale
+	auto mwp = (motionwk2*)tsk->mwp; // task containing movement information
+	auto co2 = (CharObj2*)mwp->work.ptr; // physics, animation info, and countless other things
 
 	Tails_NewActions(data, mwp, co2);
 

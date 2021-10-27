@@ -2,19 +2,17 @@
 
 static constexpr int MaxPlayers = 8;
 
-FunctionPointer(void, DrawObject, (NJS_OBJECT*), 0x408530);
 FunctionPointer(Float, GetGroundYPosition, (Float x, Float y, Float z, Rotation3* rot), 0x49E920);
 FunctionPointer(Bool, IsEventPerforming, (), 0x42FB00);
 FunctionPointer(int, GetClosestPlayerID, (NJS_VECTOR* pos), 0x441B70);
 FunctionPointer(int, DetectDyncolCollision, (NJS_VECTOR* pos, NJS_VECTOR* output, Rotation3* rotation, ColFlags flagstoignore, float detectionradius), 0x439620);
 
-FunctionPointer(void, PlayerFunc_Move, (EntityData1* data, motionwk* mwp, CharObj2* co2), 0x44BB60);
-FunctionPointer(void, PlayerFunc_Acceleration, (EntityData1* data, motionwk* mwp, CharObj2* co2), 0x44C270);
-FunctionPointer(void, PlayerFunc_AnalogToDirection, (EntityData1* data, motionwk* mwp, CharObj2* co2), 0x443F50);
-FunctionPointer(int, PlayerFunc_RunDynamicCollision, (EntityData1* data, motionwk* mwp, CharObj2* co2), 0x44CDF0);
-FunctionPointer(void, PlayerFunc_UpdateSpeed, (EntityData1* data, motionwk* mwp, CharObj2* co2), 0x43EE70);
-FunctionPointer(void, PlayerFunc_RotateToGravity, (EntityData1* data, motionwk* mwp, CharObj2* co2), 0x443AD0);
-FunctionPointer(void, PlayerFunc_RollPhysics, (EntityData1* data, motionwk* mwp, CharObj2* co2), 0x448E50);
+FunctionPointer(void, PlayerUpdateSpeed, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x43EE70);
+FunctionPointer(void, PlayerRollPhysics, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x448E50);
+
+FunctionPointer(void, PGlideAcceleration, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x448000);
+FunctionPointer(void, PGlideGetSpeed, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x444580);
+FunctionPointer(int, PResetStuff, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x43EE70);
 
 FunctionPointer(void, PlayerDirectionToVector, (EntityData1* player, NJS_VECTOR* direction), 0x43EC90);
 
@@ -29,7 +27,7 @@ DataArray(AnimData, KnucklesAnimData, 0x3C532A0, 115);
 
 //signed int __usercall Knuckles_RunNextAction@<eax>(CharObj2 *co2@<edi>, EntityData1 *data@<esi>, EntityData2 *mwp)
 static const void* const Knuckles_RunNextActionPtr = (void*)0x476970;
-static inline signed int Knuckles_RunNextAction(CharObj2* co2, motionwk* mwp, EntityData1* data)
+static inline signed int Knuckles_RunNextAction(CharObj2* co2, motionwk2* mwp, EntityData1* data)
 {
     signed int result;
     __asm
@@ -46,7 +44,7 @@ static inline signed int Knuckles_RunNextAction(CharObj2* co2, motionwk* mwp, En
 
 //signed int __usercall Tails_RunNextAction@<eax>(CharObj2 *co2@<edi>, EntityData1 *data@<esi>, EntityData2 *mwp)
 static const void* const Tails_RunNextActionPtr = (void*)0x45C100;
-static inline signed int Tails_RunNextAction(CharObj2* co2, motionwk* mwp, EntityData1* data)
+static inline signed int Tails_RunNextAction(CharObj2* co2, motionwk2* mwp, EntityData1* data)
 {
     signed int result;
     __asm
@@ -61,9 +59,9 @@ static inline signed int Tails_RunNextAction(CharObj2* co2, motionwk* mwp, Entit
     return result;
 }
 
-//signed int __usercall Amy_RunNextAction@<eax>(CharObj2* co2@<ecx>, motionwk* mwp@<edi>, EntityData1 *data@<esi>)
+//signed int __usercall Amy_RunNextAction@<eax>(CharObj2* co2@<ecx>, motionwk2* mwp@<edi>, EntityData1 *data@<esi>)
 static const void* const Amy_RunNextActionPtr = (void*)0x487810;
-static inline signed int Amy_RunNextAction(CharObj2* co2, motionwk* mwp, EntityData1* data)
+static inline signed int Amy_RunNextAction(CharObj2* co2, motionwk2* mwp, EntityData1* data)
 {
     signed int result;
     __asm
@@ -89,6 +87,23 @@ static inline void PutPlayerBehind(NJS_VECTOR* pos, EntityData1* data, float dis
         call PutPlayerBehindPtr
         add esp, 4
     }
+}
+
+//signed int __usercall PGetColliInfo@<eax>(EntityData1* a1@<eax>, EntityData2* a2, CharObj2* a3)
+static const void* const PGetColliInfoPtr = (void*)0x4746C0;
+static inline signed int PGetColliInfo(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+{
+    signed int result;
+    __asm
+    {
+        push[pwp]
+        push[mwp]
+        mov eax, [twp]
+        call PGetColliInfoPtr
+        mov result, eax
+        add esp, 8
+    }
+    return result;
 }
 
 static inline void SetObjectStatusNotHeld(ObjectMaster* obj) {

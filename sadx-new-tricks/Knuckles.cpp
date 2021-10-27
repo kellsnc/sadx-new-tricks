@@ -21,8 +21,8 @@ static void Knuckles_AfterImages(task* tsk)
 {
 	if (!MissedFrames)
 	{
-		CharObj2* co2 = CharObj2Ptrs[tsk->twp->value.b[0]];
-		taskwk* wk = tsk->twp;
+		auto wk = tsk->twp;
+		auto co2 = CharObj2Ptrs[wk->value.b[0]];
 
 		if (IsGamePaused() == false)
 		{
@@ -70,10 +70,10 @@ static void Knuckles_AfterImages(task* tsk)
 
 static void LoadKnucklesAfterImages(EntityData1* data, CharObj2* co2)
 {
-	task* tsk = CreateElementalTask(LoadObj_Data1, tasklevel::LEV_4, Knuckles_AfterImages);
+	auto tsk = CreateElementalTask(LoadObj_Data1, tasklevel::LEV_4, Knuckles_AfterImages);
 	tsk->disp = Knuckles_AfterImages;
 
-	taskwk* wk = tsk->twp;
+	auto wk = tsk->twp;
 
 	wk->value.b[0] = data->CharIndex;
 	wk->scl.x = 1.0f;
@@ -111,7 +111,7 @@ static void Knuckles_CheckWallDig(EntityData1* data, CharObj2* co2)
 	}
 }
 
-static void Knuckles_DrillClaw(EntityData1* data, motionwk* mwp, CharObj2* co2)
+static void Knuckles_DrillClaw(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
 	if (Knuckles_RunNextAction(co2, mwp, data))
 	{
@@ -153,7 +153,7 @@ static void Knuckles_DrillClaw(EntityData1* data, motionwk* mwp, CharObj2* co2)
 		data->Action = Act_Knuckles_Stand;
 	}
 
-	PlayerFunc_RotateToGravity(data, mwp, co2);
+	PlayerResetAngle((taskwk*)data, mwp, (playerwk*)co2);
 	RunPhysics(data, mwp, co2);
 
 	co2->Speed.y = -KnucklesDrillSpeed;
@@ -175,7 +175,7 @@ static void Knuckles_DrillClaw(EntityData1* data, motionwk* mwp, CharObj2* co2)
 	}
 }
 
-static void Knuckles_SpinDash(EntityData1* data, motionwk* mwp, CharObj2* co2)
+static void Knuckles_SpinDash(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
 	if (Knuckles_RunNextAction(co2, mwp, data))
 	{
@@ -185,7 +185,7 @@ static void Knuckles_SpinDash(EntityData1* data, motionwk* mwp, CharObj2* co2)
 	CommonSpinDash_Run(data, mwp, co2, KnucklesSpinDashMaxSpeed, KnucklesSpinDashSpeedIncrement, Anm_Knuckles_Roll, Anm_Knuckles_Uncurl, Act_Knuckles_Roll);
 }
 
-static void Knuckles_TailsGrab(EntityData1* data, motionwk* mwp, CharObj2* co2)
+static void Knuckles_TailsGrab(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
 	if (Knuckles_RunNextAction(co2, mwp, data))
 	{
@@ -197,7 +197,7 @@ static void Knuckles_TailsGrab(EntityData1* data, motionwk* mwp, CharObj2* co2)
 	TailsGrabAction(data, mwp, co2, { 0.0f, -8.0f, -1.0f }, Anm_Knuckles_Hang, Act_Knuckles_Fall, Anm_Knuckles_Fall);
 }
 
-static void Knuckles_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2)
+static void Knuckles_NewActions(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
 	switch (data->Action)
 	{
@@ -246,9 +246,9 @@ static void Knuckles_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2)
 
 static void Knuckles_Exec_r(task* tsk)
 {
-	EntityData1* data = (EntityData1*)tsk->twp; // main task containing position, rotation, scale
-	motionwk* mwp = tsk->mwp; // task containing movement information
-	CharObj2* co2 = (CharObj2*)mwp->work.ptr; // physics, animation info, and countless other things
+	auto data = (EntityData1*)tsk->twp; // main task containing position, rotation, scale
+	auto mwp = (motionwk2*)tsk->mwp; // task containing movement information
+	auto co2 = (CharObj2*)mwp->work.ptr; // physics, animation info, and countless other things
 
 	Knuckles_NewActions(data, mwp, co2);
 

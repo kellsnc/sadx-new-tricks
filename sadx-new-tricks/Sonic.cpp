@@ -9,8 +9,8 @@ static void CheckRunInstantDash(EntityData1* data, CharObj2* co2)
 	if (InstantLightDashButton && PressedButtons[data->CharIndex] & InstantLightDashButton &&
 		HomingAttackTarget_Sonic_B_Index > 0 && co2->Upgrades & Upgrades_CrystalRing)
 	{
-		float distance = 10000000.0f;
-		HomingAttackTarget* closest = HomingAttackTarget_Sonic_B; // Target rings
+		auto distance = 10000000.0f;
+		auto closest = HomingAttackTarget_Sonic_B; // Target rings
 
 		for (int i = 0; i < HomingAttackTarget_Sonic_B_Index; ++i)
 		{
@@ -48,7 +48,7 @@ static void KnockSonic(EntityData1* data, CharObj2* co2)
 	sub_440790(data);
 }
 
-static void SonicInstantDash(EntityData1* data, motionwk* mwp, CharObj2* co2)
+static void SonicInstantDash(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
 	if (Sonic_NAct(co2, data, (EntityData2*)mwp))
 	{
@@ -75,22 +75,21 @@ static void SonicInstantDash(EntityData1* data, motionwk* mwp, CharObj2* co2)
 		}
 
 		Sonic_InitLightDash(data, (EntityData2*)mwp, co2);
-		int type = PlayerFunc_RunDynamicCollision(data, mwp, co2);
 
-		if (type == 2)
-		{ // colliding with wall
+		if (PlayerSetPosition((taskwk*)data, mwp, (playerwk*)co2) == 2) // colliding with wall
+		{ 
 			KnockSonic(data, co2);
 			co2->LightdashTime = 0;
 		}
 		else
 		{
-			PlayerFunc_UpdateSpeed(data, mwp, co2);
+			PlayerUpdateSpeed((taskwk*)data, mwp, (playerwk*)co2);
 			co2->SonicSpinTimeProbably |= 1u;
 		}
 	}
 }
 
-static void Sonic_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2)
+static void Sonic_NewActions(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
 	switch (data->Action)
 	{
@@ -110,9 +109,9 @@ static void Sonic_NewActions(EntityData1* data, motionwk* mwp, CharObj2* co2)
 
 static void Sonic_Exec_r(task* tsk)
 {
-	EntityData1* data = (EntityData1*)tsk->twp; // main task containing position, rotation, scale
-	motionwk* mwp = tsk->mwp; // task containing movement information
-	CharObj2* co2 = (CharObj2*)mwp->work.ptr; // physics, animation info, and countless other things
+	auto data = (EntityData1*)tsk->twp; // main task containing position, rotation, scale
+	auto mwp = (motionwk2*)tsk->mwp; // task containing movement information
+	auto co2 = (CharObj2*)mwp->work.ptr; // physics, animation info, and countless other things
 
 	Sonic_NewActions(data, mwp, co2);
 

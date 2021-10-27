@@ -1,12 +1,12 @@
 #include "pch.h"
 
-void RunPhysics(EntityData1* data, motionwk* mwp, CharObj2* co2)
+void RunPhysics(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
-	PlayerFunc_Move(data, mwp, co2);
-	PlayerFunc_Acceleration(data, mwp, co2);
-	PlayerFunc_AnalogToDirection(data, mwp, co2);
-	PlayerFunc_RunDynamicCollision(data, mwp, co2);
-	PlayerFunc_UpdateSpeed(data, mwp, co2);
+	PlayerGetRotation((taskwk*)data, mwp, (playerwk*)co2);
+	PlayerGetAcceleration((taskwk*)data, mwp, (playerwk*)co2);
+	PlayerGetSpeed((taskwk*)data, mwp, (playerwk*)co2);
+	PlayerSetPosition((taskwk*)data, mwp, (playerwk*)co2);
+	PlayerUpdateSpeed((taskwk*)data, mwp, (playerwk*)co2);
 }
 
 #pragma region TailsGrab
@@ -18,7 +18,7 @@ static void TailsGrabAction_Stop(EntityData1* data, CharObj2* co2, int endaction
 	co2->Powerups &= ~Powerups_Invincibility;
 }
 
-void TailsGrabAction_Run(EntityData1* grabplayer, EntityData1* data, motionwk* mwp, CharObj2* co2, NJS_VECTOR offset, int animation, int fallaction, int fallanim)
+void TailsGrabAction_Run(EntityData1* grabplayer, EntityData1* data, motionwk2* mwp, CharObj2* co2, NJS_VECTOR offset, int animation, int fallaction, int fallanim)
 {
 	// Release if grabbed player touches the ground
 	if (data->Status & (Status_Ground | Status_Unknown1))
@@ -63,10 +63,10 @@ void TailsGrabAction_Run(EntityData1* grabplayer, EntityData1* data, motionwk* m
 	co2->AnimationThing.Index = animation;
 
 	// Run ground check
-	PlayerFunc_RunDynamicCollision(data, mwp, co2);
+	PlayerSetPosition((taskwk*)data, mwp, (playerwk*)co2);
 }
 
-void TailsGrabAction(EntityData1* data, motionwk* mwp, CharObj2* co2, NJS_VECTOR offset, int animation, int fallaction, int fallanim)
+void TailsGrabAction(EntityData1* data, motionwk2* mwp, CharObj2* co2, NJS_VECTOR offset, int animation, int fallaction, int fallanim)
 {
 	EntityData1* grabplayer = (EntityData1*)data->LoopData;
 
@@ -89,7 +89,7 @@ void TailsGrabAction(EntityData1* data, motionwk* mwp, CharObj2* co2, NJS_VECTOR
 
 #pragma region SpinDash
 
-void CommonSpinDash_Run(EntityData1* data, motionwk* mwp, CharObj2* co2, float maxspeed, float speedincrease, int rollanim, int uncurlanim, int rollaction)
+void CommonSpinDash_Run(EntityData1* data, motionwk2* mwp, CharObj2* co2, float maxspeed, float speedincrease, int rollanim, int uncurlanim, int rollaction)
 {
 	++co2->SonicSpinTimer;
 
@@ -136,11 +136,11 @@ void CommonSpinDash_Run(EntityData1* data, motionwk* mwp, CharObj2* co2, float m
 		data->Status &= ~(Status_Ball | Status_Attack);
 	}
 
-	PlayerFunc_Move(data, mwp, co2);
-	PlayerFunc_RollPhysics(data, mwp, co2);
-	PlayerFunc_AnalogToDirection(data, mwp, co2);
-	PlayerFunc_RunDynamicCollision(data, mwp, co2);
-	PlayerFunc_UpdateSpeed(data, mwp, co2);
+	PlayerGetRotation((taskwk*)data, mwp, (playerwk*)co2);
+	PlayerRollPhysics((taskwk*)data, mwp, (playerwk*)co2);
+	PlayerGetSpeed((taskwk*)data, mwp, (playerwk*)co2);
+	PlayerSetPosition((taskwk*)data, mwp, (playerwk*)co2);
+	PlayerUpdateSpeed((taskwk*)data, mwp, (playerwk*)co2);
 }
 
 void CommonSpinDash_Check(EntityData1* data, CharObj2* co2, int jumpspinanim, int spindashact, float maxstartspeed)
