@@ -128,9 +128,8 @@ static void Knuckles_DrillClaw(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 	}
 
 	// Stop if touches the ground
-	if (data->Status & Status_Ground)
+	if (data->Status & STATUS_FLOOR)
 	{
-
 		// If Knuckles has the ShovelClaw and the floor is diggable, dig.
 		if (co2->Upgrades & Upgrades_ShovelClaw && (co2->SurfaceFlags & ColFlags_Dig))
 		{
@@ -295,15 +294,25 @@ void Knuckles_Init(const HelperFunctions& helperFunctions, const IniFile* config
 {
 	Knuckles_Exec_t = new Trampoline((int)Knuckles_Main, (int)Knuckles_Main + 0x7, Knuckles_Exec_r);
 
-	EnableKnucklesSpinDash = config->getBool("Knuckles", "EnableKnucklesSpinDash", true);
-	EnableKnucklesDrillClaw = config->getBool("Knuckles", "EnableKnucklesDrillClaw", true);
-	EnableKnucklesWallDig = config->getBool("Knuckles", "EnableKnucklesWallDig", true);
-	DiggableRMWalls = config->getBool("Knuckles", "DiggableRMWalls", true);
+	auto configgrp = config->getGroup("Knuckles");
 
-	KnucklesSpinDashMaxInitialSpeed = physics->getFloat("Knuckles", "SpinDashMaxInitialSpeed", 1.45f);
-	KnucklesSpinDashMaxSpeed = physics->getFloat("Knuckles", "SpinDashMaxSpeed", 8.0f);
-	KnucklesSpinDashSpeedIncrement = physics->getFloat("Knuckles", "SpinDashSpeedIncrement", 0.28f);
-	KnucklesDrillSpeed = physics->getFloat("Knuckles", "KnucklesDrillSpeed", 5.0f);
+	if (configgrp)
+	{
+		EnableKnucklesSpinDash = configgrp->getBool("EnableKnucklesSpinDash", EnableKnucklesSpinDash);
+		EnableKnucklesDrillClaw = configgrp->getBool("EnableKnucklesDrillClaw", EnableKnucklesDrillClaw);
+		EnableKnucklesWallDig = configgrp->getBool("EnableKnucklesWallDig", EnableKnucklesWallDig);
+		DiggableRMWalls = configgrp->getBool("DiggableRMWalls", DiggableRMWalls);
+	}
+	
+	auto physgrp = physics->getGroup("Knuckles");
+
+	if (physgrp)
+	{
+		KnucklesSpinDashMaxInitialSpeed = physgrp->getFloat("SpinDashMaxInitialSpeed", KnucklesSpinDashMaxInitialSpeed);
+		KnucklesSpinDashMaxSpeed = physgrp->getFloat("SpinDashMaxSpeed", KnucklesSpinDashMaxSpeed);
+		KnucklesSpinDashSpeedIncrement = physgrp->getFloat("SpinDashSpeedIncrement", KnucklesSpinDashSpeedIncrement);
+		KnucklesDrillSpeed = physgrp->getFloat("DrillSpeed", KnucklesDrillSpeed);
+	}
 
 	// Load custom Drill Claw animation
 	LoadAnimation(&DrillClawMotion, "drillclaw", helperFunctions);

@@ -10,30 +10,32 @@ extern "C"
 {
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
 	{
-		const IniFile* config = new IniFile(std::string(path) + "\\config.ini");
-		const IniFile* physics = new IniFile(std::string(path) + "\\physics.ini");
+		const auto config = new IniFile(std::string(path) + "\\config.ini");
+		const auto physics = new IniFile(std::string(path) + "\\physics.ini");
 
-		if (config->getBool("General", "EnableSonic", true))
+		auto configgrp = config->getGroup("General");
+
+		if (configgrp->getBool("EnableSonic", true))
 		{
 			Sonic_Init(helperFunctions, config);
 		}
 
-		if (config->getBool("General", "EnableTails", true))
+		if (configgrp->getBool("EnableTails", true))
 		{
 			Tails_Init(helperFunctions, config, physics);
 		}
 		
-		if (config->getBool("General", "EnableKnuckles", true))
+		if (configgrp->getBool("EnableKnuckles", true))
 		{
 			Knuckles_Init(helperFunctions, config, physics);
 		}
 
-		if (config->getBool("General", "EnableAmy", true))
+		if (configgrp->getBool("EnableAmy", true))
 		{
 			Amy_Init(helperFunctions, config, physics);
 		}
 		
-		if (config->getBool("General", "EnableTornado", true))
+		if (configgrp->getBool("EnableTornado", true))
 		{
 			Tornado_Init(helperFunctions, config);
 		}

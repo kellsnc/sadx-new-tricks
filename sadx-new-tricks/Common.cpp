@@ -21,7 +21,7 @@ static void TailsGrabAction_Stop(EntityData1* data, CharObj2* co2, int endaction
 void TailsGrabAction_Run(EntityData1* grabplayer, EntityData1* data, motionwk2* mwp, CharObj2* co2, NJS_VECTOR offset, int animation, int fallaction, int fallanim)
 {
 	// Release if grabbed player touches the ground
-	if (data->Status & (Status_Ground | Status_Unknown1))
+	if (data->Status & STATUS_FLOOR)
 	{
 		data->Action = 1;
 		data->LoopData = nullptr;

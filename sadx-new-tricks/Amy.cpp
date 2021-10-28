@@ -1,6 +1,7 @@
 #include "pch.h"
 
 static bool EnableDoubleJump = true;
+static bool MovingGroundSpin = true;
 static Buttons HammerPropButton = Buttons_X;
 
 static float PropellerGravity = 0.011f;
@@ -9,6 +10,7 @@ static float PropellerInitialAcc = 1.01f;
 static float PropellerAirAccTreshold = 7.0f;
 static float PropellerAirAcc = 1.005f;
 static float DoubleJumpAcc = 1.12f;
+static float MovingGroundSpinAccel = 0.025f;
 
 static bool BlockDoubleJump[MaxPlayers];
 
@@ -24,6 +26,35 @@ static void AmyDoubleJump(EntityData1* data, CharObj2* co2)
 		EnemyBounceThing(data->CharIndex, 0, DoubleJumpAcc, 0);
 		PlaySound(1286, 0, 0, 0);
 		co2->AnimationThing.Index = 74;
+	}
+}
+
+static void AmyMovingSpin(EntityData1* data, motionwk2* mwp, CharObj2* co2)
+{
+	if (!(data->Status & STATUS_FLOOR))
+	{
+		data->Action = Act_Amy_HammerProp;
+		return;
+	}
+
+	auto RestoreSpeed = co2->PhysicsData.GroundAccel;
+	co2->PhysicsData.GroundAccel = MovingGroundSpinAccel;
+
+	if (co2->AnimationThing.Index == Anm_Amy_HammerSpinAttack)
+	{
+		PlayerGetRotation((taskwk*)data, mwp, (playerwk*)co2);
+		PlayerResetAngle((taskwk*)data, mwp, (playerwk*)co2);
+		PlayerGetAcceleration((taskwk*)data, mwp, (playerwk*)co2);
+		PlayerGetSpeed((taskwk*)data, mwp, (playerwk*)co2);
+		PlayerSetPosition((taskwk*)data, mwp, (playerwk*)co2);
+		PlayerUpdateSpeed((taskwk*)data, mwp, (playerwk*)co2);
+	}
+
+	co2->PhysicsData.GroundAccel = RestoreSpeed;
+
+	if (!(data->Status & STATUS_FLOOR))
+	{
+		data->Action = Act_Amy_HammerProp;
 	}
 }
 
@@ -47,7 +78,7 @@ static void AmyProp_Run(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 	}
 
 	// If the player touches the ground, stop
-	if (data->Status & (Status_Ground | Status_Unknown1))
+	if (data->Status & STATUS_FLOOR)
 	{
 		PlaySound(33, 0, 0, 0);
 		co2->AnimationThing.Index = Anm_Amy_Stand;
@@ -99,7 +130,7 @@ static void AmyProp_Run(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 
 static inline void AmyProp_Check(EntityData1* data, CharObj2* co2)
 {
-	if (ControllerEnabled[data->CharIndex] && ControlEnabled && PressedButtons[data->CharIndex] & HammerPropButton && (data->Status & Status_Ground) != Status_Ground &&
+	if (ControllerEnabled[data->CharIndex] && ControlEnabled && PressedButtons[data->CharIndex] & HammerPropButton && !(data->Status & STATUS_FLOOR) &&
 		co2->field_A == 0 && co2->JumpTime > 5 && co2->ObjectHeld == nullptr)
 	{
 		data->Action = Act_Amy_HammerProp;
@@ -119,7 +150,7 @@ static inline void AmyProp_Check(EntityData1* data, CharObj2* co2)
 
 static void Amy_NewActions(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
-	if (EnableDoubleJump == true && data->Status & (Status_Ground | Status_Unknown1))
+	if (EnableDoubleJump == true && data->Status & STATUS_FLOOR)
 	{
 		BlockDoubleJump[data->CharIndex] = false; // can double jump
 	}
@@ -143,6 +174,9 @@ static void Amy_NewActions(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 	case Act_Amy_Spring:
 	case Act_Amy_Launch:
 		AmyProp_Check(data, co2);
+		break;
+	case Act_Amy_HammerSpin:
+		AmyMovingSpin(data, mwp, co2);
 		break;
 	case Act_Amy_HammerProp:
 		AmyProp_Run(data, mwp, co2);
@@ -173,13 +207,25 @@ void Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config, con
 {
 	Amy_Exec_t = new Trampoline((int)Amy_Main, (int)Amy_Main + 0x7, Amy_Exec_r);
 
-	EnableDoubleJump = config->getBool("Amy", "EnableDoubleJump", true);
-	HammerPropButton = (Buttons)config->getInt("Amy", "HammerPropButton", Buttons_X);
+	auto configgrp = config->getGroup("Amy");
 
-	PropellerGravity = physics->getFloat("Amy", "PropellerGravity", 0.011f);
-	PropellerInitialAccTreshold = physics->getFloat("Amy", "PropellerInitialAccTreshold", 1.0f);
-	PropellerInitialAcc = physics->getFloat("Amy", "PropellerInitialAcc", 1.01f);
-	PropellerAirAccTreshold = physics->getFloat("Amy", "PropellerAirAccTreshold", 7.0f);
-	PropellerAirAcc = physics->getFloat("Amy", "PropellerAirAcc", 1.005f);
-	DoubleJumpAcc = physics->getFloat("Amy", "DoubleJumpAcc", 1.12f);
+	if (configgrp)
+	{
+		EnableDoubleJump = configgrp->getBool("EnableDoubleJump", EnableDoubleJump);
+		MovingGroundSpin = configgrp->getBool("EnableMovingSpin", MovingGroundSpin);
+		HammerPropButton = (Buttons)configgrp->getInt("HammerPropButton", HammerPropButton);
+	}
+
+	auto physgrp = physics->getGroup("Amy");
+
+	if (physgrp)
+	{
+		PropellerGravity = physgrp->getFloat("PropellerGravity", PropellerGravity);
+		PropellerInitialAccTreshold = physgrp->getFloat("PropellerInitialAccTreshold", PropellerInitialAccTreshold);
+		PropellerInitialAcc = physgrp->getFloat("PropellerInitialAcc", PropellerInitialAcc);
+		PropellerAirAccTreshold = physgrp->getFloat("PropellerAirAccTreshold", PropellerAirAccTreshold);
+		PropellerAirAcc = physgrp->getFloat("PropellerAirAcc", PropellerAirAcc);
+		DoubleJumpAcc = physgrp->getFloat("DoubleJumpAcc", DoubleJumpAcc);
+		MovingGroundSpinAccel = physgrp->getFloat("MovingGroundSpinAccel", MovingGroundSpinAccel);
+	}
 }

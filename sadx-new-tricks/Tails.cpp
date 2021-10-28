@@ -134,7 +134,7 @@ static void Tails_NewActions(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 	{
 		// Note: data->field_A is capacity to hold player
 		// Tails' Grab restore capacity to hold player
-		if (data->field_A == 1 && data->Status & Status_Ground)
+		if (data->field_A == 1 && data->Status & STATUS_FLOOR)
 		{
 			data->field_A = 0; // can grab a player
 			co2->Powerups &= ~Powerups_Invincibility;
@@ -208,10 +208,20 @@ void Tails_Init(const HelperFunctions& helperFunctions, const IniFile* config, c
 		Tails_Render_t = new Trampoline((int)Tails_Display, (int)Tails_Display + 0x8, Tails_Render_r);
 	}
 
-	EnableTailsGrab = config->getBool("Tails", "EnableTailsGrab", true);
-	EnableTailsSpinDash = config->getBool("Tails", "EnableTailsSpinDash", true);
+	auto configgrp = config->getGroup("Tails");
 
-	TailsSpinDashMaxInitialSpeed = physics->getFloat("Tails", "SpinDashMaxInitialSpeed", 1.25f);
-	TailsSpinDashMaxSpeed = physics->getFloat("Tails", "SpinDashMaxSpeed", 7.0f);
-	TailsSpinDashSpeedIncrement = physics->getFloat("Tails", "SpinDashSpeedIncrement", 0.2f);
+	if (configgrp)
+	{
+		EnableTailsGrab = configgrp->getBool("EnableTailsGrab", EnableTailsGrab);
+		EnableTailsSpinDash = configgrp->getBool("EnableTailsSpinDash", EnableTailsSpinDash);
+	}
+	
+	auto physgrp = physics->getGroup("Tails");
+
+	if (physgrp)
+	{
+		TailsSpinDashMaxInitialSpeed = physgrp->getFloat("SpinDashMaxInitialSpeed", TailsSpinDashMaxInitialSpeed);
+		TailsSpinDashMaxSpeed = physgrp->getFloat("SpinDashMaxSpeed", TailsSpinDashMaxSpeed);
+		TailsSpinDashSpeedIncrement = physgrp->getFloat("SpinDashSpeedIncrement", TailsSpinDashSpeedIncrement);
+	}
 }

@@ -122,5 +122,5 @@ void Sonic_Init(const HelperFunctions& helperFunctions, const IniFile* config)
 {
 	Sonic_Exec_t = new Trampoline((int)Sonic_Main, (int)Sonic_Main + 0x7, Sonic_Exec_r);
 
-	InstantLightDashButton = (Buttons)config->getInt("Sonic", "InstantLSD", 0);
+	InstantLightDashButton = (Buttons)config->getInt("Sonic", "InstantLSD", InstantLightDashButton);
 }
