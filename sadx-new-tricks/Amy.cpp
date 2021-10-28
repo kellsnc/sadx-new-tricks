@@ -12,7 +12,7 @@ static float PropellerAirAcc = 1.005f;
 static float DoubleJumpAcc = 1.12f;
 static float MovingGroundSpinAccel = 0.025f;
 
-static bool BlockDoubleJump[MaxPlayers];
+static bool BlockDoubleJump[MaxPlayers]{};
 
 static AnimData DoubleJumpAnim = { nullptr, 78, 4, Anm_Amy_Jump, 1.12f, 1.0f };
 

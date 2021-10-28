@@ -11,6 +11,8 @@ static float TailsSpinDashSpeedIncrement = 0.2f;
 static Trampoline* Tails_Exec_t = nullptr;
 static Trampoline* Tails_Render_t = nullptr;
 
+static bool BlockPlayerGrab[MaxPlayers]{};
+
 static void SetPlayerGrabbed(EntityData1* data, EntityData1* player)
 {
 	auto character = (Characters)player->CharID;
@@ -69,21 +71,19 @@ static void SetPlayerGrabbed(EntityData1* data, EntityData1* player)
 
 	player->LoopData = (Loop*)data;
 	player->Status = 0; // Remove eventual hurt flag for grabbed player
-	data->field_A = 1; // Cannot grab another player
+	BlockPlayerGrab[data->CharIndex] = true; // Cannot grab another player
 	data->Status = 0; // Remove eventual hurt flag for grabbing player
 }
-
-
 
 static void Tails_FlyGrab(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
 	// If Tails detaches the player
-	if (data->field_A == 1 && PressedButtons[data->CharIndex] & Buttons_B)
+	if (BlockPlayerGrab[data->CharIndex] == true && PressedButtons[data->CharIndex] & Buttons_B)
 	{
-		data->field_A = 0; // TailsGrab flag here
+		BlockPlayerGrab[data->CharIndex] = false;
 	}
 
-	if (data->field_A == 0 && CheckControl(data->CharIndex) == true) // if can grab & not controlled by AI
+	if (BlockPlayerGrab[data->CharIndex] == false && CheckControl(data->CharIndex) == true) // if can grab & not controlled by AI
 	{
 		// Tails AI checks
 		if (data->CharIndex == 1 && TailsAI_ptr && (TailsAI_ptr->Data1->Action != 5))
@@ -134,11 +134,10 @@ static void Tails_NewActions(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
 	if (data->Action != Act_Tails_Init)
 	{
-		// Note: data->field_A is capacity to hold player
-		// Tails' Grab restore capacity to hold player
-		if (data->field_A == 1 && data->Status & STATUS_FLOOR)
+		// Restore capacity to hold player
+		if (BlockPlayerGrab[data->CharIndex] == true && data->Status & STATUS_FLOOR)
 		{
-			data->field_A = 0; // can grab a player
+			BlockPlayerGrab[data->CharIndex] = false;
 			co2->Powerups &= ~Powerups_Invincibility;
 		}
 	}
