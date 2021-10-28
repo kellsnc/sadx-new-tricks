@@ -10,6 +10,8 @@ void RunPhysics(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 }
 
 #pragma region TailsGrab
+extern bool BlockPlayerGrab[MaxPlayers];
+
 static void TailsGrabAction_Stop(EntityData1* data, CharObj2* co2, int endaction, int fallanim)
 {
 	data->Action = endaction;
@@ -32,7 +34,7 @@ void TailsGrabAction_Run(EntityData1* grabplayer, EntityData1* data, motionwk2* 
 	}
 
 	// Release if grabbing player not holding anymore
-	if (grabplayer->field_A == 0)
+	if (BlockPlayerGrab[grabplayer->CharIndex] == false)
 	{
 		TailsGrabAction_Stop(data, co2, fallaction, fallanim);
 		return;

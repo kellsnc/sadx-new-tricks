@@ -11,7 +11,7 @@ static float TailsSpinDashSpeedIncrement = 0.2f;
 static Trampoline* Tails_Exec_t = nullptr;
 static Trampoline* Tails_Render_t = nullptr;
 
-static bool BlockPlayerGrab[MaxPlayers]{};
+bool BlockPlayerGrab[MaxPlayers]{};
 
 static void SetPlayerGrabbed(EntityData1* data, EntityData1* player)
 {
