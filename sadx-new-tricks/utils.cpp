@@ -17,3 +17,18 @@ void LoadAnimation(AnimationFile** info, const char* name, const HelperFunctions
 		*info = anm;
 	}
 };
+
+bool CheckControl(int id)
+{
+	auto co2 = CharObj2Ptrs[id];
+
+	if (co2)
+	{
+		if (co2->field_A != 0)
+		{
+			return false;
+		}
+	}
+
+	return !EV_MainThread_ptr && ControlEnabled == 1 && ControllerEnabled[id] == 1;
+}

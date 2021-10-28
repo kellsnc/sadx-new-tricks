@@ -15,27 +15,27 @@ extern "C"
 
 		auto configgrp = config->getGroup("General");
 
-		if (configgrp->getBool("EnableSonic", true))
+		if (configgrp == nullptr || configgrp->getBool("EnableSonic", true))
 		{
 			Sonic_Init(helperFunctions, config);
 		}
 
-		if (configgrp->getBool("EnableTails", true))
+		if (configgrp == nullptr || configgrp->getBool("EnableTails", true))
 		{
 			Tails_Init(helperFunctions, config, physics);
 		}
 		
-		if (configgrp->getBool("EnableKnuckles", true))
+		if (configgrp == nullptr || configgrp->getBool("EnableKnuckles", true))
 		{
 			Knuckles_Init(helperFunctions, config, physics);
 		}
 
-		if (configgrp->getBool("EnableAmy", true))
+		if (configgrp == nullptr || configgrp->getBool("EnableAmy", true))
 		{
 			Amy_Init(helperFunctions, config, physics);
 		}
 		
-		if (configgrp->getBool("EnableTornado", true))
+		if (configgrp == nullptr || configgrp->getBool("EnableTornado", true))
 		{
 			Tornado_Init(helperFunctions, config);
 		}

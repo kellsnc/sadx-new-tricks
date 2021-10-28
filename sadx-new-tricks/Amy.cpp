@@ -20,7 +20,7 @@ static Trampoline* Amy_Exec_t = nullptr;
 
 static void AmyDoubleJump(EntityData1* data, CharObj2* co2)
 {
-	if (EnableDoubleJump == true && ControllerEnabled[data->CharIndex] && ControlEnabled && PressedButtons[data->CharIndex] & JumpButtons && BlockDoubleJump[data->CharIndex] == false && co2->JumpTime > 8)
+	if (EnableDoubleJump == true && CheckControl(data->CharIndex) && PressedButtons[data->CharIndex] & JumpButtons && BlockDoubleJump[data->CharIndex] == false && co2->JumpTime > 8)
 	{
 		BlockDoubleJump[data->CharIndex] = true;
 		EnemyBounceThing(data->CharIndex, 0, DoubleJumpAcc, 0);
@@ -130,8 +130,8 @@ static void AmyProp_Run(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 
 static inline void AmyProp_Check(EntityData1* data, CharObj2* co2)
 {
-	if (ControllerEnabled[data->CharIndex] && ControlEnabled && PressedButtons[data->CharIndex] & HammerPropButton && !(data->Status & STATUS_FLOOR) &&
-		co2->field_A == 0 && co2->JumpTime > 5 && co2->ObjectHeld == nullptr)
+	if (CheckControl(data->CharIndex) && PressedButtons[data->CharIndex] & HammerPropButton
+		&& !(data->Status & STATUS_FLOOR) && co2->JumpTime > 5 && co2->ObjectHeld == nullptr)
 	{
 		data->Action = Act_Amy_HammerProp;
 

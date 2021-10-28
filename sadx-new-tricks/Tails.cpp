@@ -73,6 +73,8 @@ static void SetPlayerGrabbed(EntityData1* data, EntityData1* player)
 	data->Status = 0; // Remove eventual hurt flag for grabbing player
 }
 
+
+
 static void Tails_FlyGrab(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
 	// If Tails detaches the player
@@ -81,7 +83,7 @@ static void Tails_FlyGrab(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 		data->field_A = 0; // TailsGrab flag here
 	}
 
-	if (data->field_A == 0 && ControllerEnabled[data->CharIndex] == true) // if can grab & not controlled by AI
+	if (data->field_A == 0 && CheckControl(data->CharIndex) == true) // if can grab & not controlled by AI
 	{
 		// Tails AI checks
 		if (data->CharIndex == 1 && TailsAI_ptr && (TailsAI_ptr->Data1->Action != 5))
@@ -138,7 +140,6 @@ static void Tails_NewActions(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 		{
 			data->field_A = 0; // can grab a player
 			co2->Powerups &= ~Powerups_Invincibility;
-			co2->gap16[0] = 0;
 		}
 	}
 

@@ -4,3 +4,4 @@
 #define STATUS_FLOOR (Status_Ground | Status_Unknown1)
 
 void LoadAnimation(AnimationFile** info, const char* name, const HelperFunctions& helperFunctions);
+bool CheckControl(int id);

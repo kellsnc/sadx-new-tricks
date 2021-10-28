@@ -145,7 +145,7 @@ void CommonSpinDash_Run(EntityData1* data, motionwk2* mwp, CharObj2* co2, float 
 
 void CommonSpinDash_Check(EntityData1* data, CharObj2* co2, int jumpspinanim, int spindashact, float maxstartspeed)
 {
-	if (ControllerEnabled[data->CharIndex] && ControlEnabled && PressedButtons[data->CharIndex] & Buttons_B)
+	if (CheckControl(data->CharIndex) && PressedButtons[data->CharIndex] & Buttons_B)
 	{
 		co2->AnimationThing.Index = jumpspinanim;
 		data->Action = spindashact;

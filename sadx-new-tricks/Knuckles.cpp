@@ -92,7 +92,7 @@ static void Knuckles_CheckSpinDash(EntityData1* data, CharObj2* co2)
 
 static void Knuckles_CheckDrillClaw(EntityData1* data, CharObj2* co2)
 {
-	if (EnableKnucklesDrillClaw == true && ControllerEnabled[data->CharIndex] && ControlEnabled && HeldButtons[data->CharIndex] & Buttons_B)
+	if (EnableKnucklesDrillClaw == true && CheckControl(data->CharIndex) && HeldButtons[data->CharIndex] & Buttons_B)
 	{
 		data->Action = Act_Knuckles_DrillClaw;
 		data->Status &= ~Status_Ball;
