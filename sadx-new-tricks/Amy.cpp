@@ -33,8 +33,11 @@ static void AmyMovingSpin(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
 	if (!(data->Status & STATUS_FLOOR))
 	{
-		data->Action = Act_Amy_HammerProp;
-		return;
+		if (HammerPropButton)
+		{
+			data->Action = Act_Amy_HammerProp;
+			return;
+		}
 	}
 
 	auto RestoreSpeed = co2->PhysicsData.GroundAccel;
@@ -54,7 +57,10 @@ static void AmyMovingSpin(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 
 	if (!(data->Status & STATUS_FLOOR))
 	{
-		data->Action = Act_Amy_HammerProp;
+		if (HammerPropButton)
+		{
+			data->Action = Act_Amy_HammerProp;
+		}
 	}
 }
 
