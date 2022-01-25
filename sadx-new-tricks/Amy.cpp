@@ -136,7 +136,7 @@ static void AmyProp_Run(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 static inline void AmyProp_Check(EntityData1* data, CharObj2* co2)
 {
 	if (CheckControl(data->CharIndex) && PressedButtons[data->CharIndex] & HammerPropButton
-		&& !(data->Status & STATUS_FLOOR) && co2->JumpTime > 5 && co2->ObjectHeld == nullptr)
+		&& !(data->Status & STATUS_FLOOR) && co2->ObjectHeld == nullptr)
 	{
 		data->Action = Act_Amy_HammerProp;
 
@@ -163,9 +163,8 @@ static void Amy_NewActions(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 		break;
 	case Act_Amy_HammerJump:
 	case Act_Amy_DashSpeedPanel:
-		AmyProp_Check(data, co2);
-		break;
 	case Act_Amy_Spring:
+	case Act_Amy_Fall:
 	case Act_Amy_Launch:
 		AmyProp_Check(data, co2);
 		break;
