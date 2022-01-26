@@ -10,7 +10,7 @@ static void CheckRunInstantDash(EntityData1* data, CharObj2* co2)
 		HomingAttackTarget_Sonic_B_Index > 0 && co2->Upgrades & Upgrades_CrystalRing)
 	{
 		auto distance = 10000000.0f;
-		auto closest = HomingAttackTarget_Sonic_B; // Target rings
+		auto closest = &HomingAttackTarget_Sonic_B; // Target rings
 
 		for (int i = 0; i < HomingAttackTarget_Sonic_B_Index; ++i)
 		{

@@ -28,7 +28,10 @@ void TailsGrabAction_Run(EntityData1* grabplayer, EntityData1* data, motionwk2* 
 		data->Action = 1;
 		data->LoopData = nullptr;
 		PlaySound(33, 0, 0, 0);
-		co2->Powerups &= ~Powerups_Invincibility;
+
+		if ((co2->Upgrades & Upgrades_SuperSonic) == 0)
+			co2->Powerups &= ~Powerups_Invincibility;
+
 		PutPlayerBehind(&data->Position, grabplayer, 15.0f);
 		return;
 	}
@@ -49,8 +52,7 @@ void TailsGrabAction_Run(EntityData1* grabplayer, EntityData1* data, motionwk2* 
 
 	// Some adjustements
 	co2->Powerups |= Powerups_Invincibility;
-	co2->Speed =
-	{ 0, 0, 0 };
+	co2->Speed = { 0, 0, 0 };
 	NullifyVelocity((EntityData2*)mwp, co2);
 
 	// Move the player to the grabbing player

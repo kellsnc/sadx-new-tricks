@@ -115,3 +115,7 @@ enum CollisionShapes {
     CollisionShape_Capsule,
     CollisionShape_Capsule2
 };
+
+FunctionPointer(bool, CheckCollisionForPanelJump, (EntityData1* data), 0x4B83C0);
+FunctionPointer(signed int, CanIMakeJumpPanel, (EntityData1* data), 0x4B83F0);
+FunctionPointer(void, StartPlayerPanelJump, (EntityData1* data), 0x4B8470);
