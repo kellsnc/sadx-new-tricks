@@ -148,7 +148,14 @@ static inline void AmyProp_Check(EntityData1* data, CharObj2* co2)
 		data->Rotation.x = GravityAngle_X;
 		data->Rotation.z = GravityAngle_Z;
 
-		PlaySound(1279, 0, 0, 0);
+		if (co2->Speed.x >= 5.0)
+		{
+			PlayVoice(1743);
+		}
+		else 
+		{
+			PlaySound(1279, 0, 0, 0);
+		}
 	}
 }
 #pragma endregion
