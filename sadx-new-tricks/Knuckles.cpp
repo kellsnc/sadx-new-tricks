@@ -378,8 +378,6 @@ void Knuckles_Init(const HelperFunctions& helperFunctions, const IniFile* config
 	DrillClawAnim.Animation = new NJS_ACTION;
 	DrillClawAnim.Animation->motion = DrillClawMotion->getmotion();
 
-
-	JumpPanel_Collision_[3].a = 10.0f;
-	JumpPanel_Collision_[3].center.y = 15.0f;
-	JumpPanel_Collision_[3].center.z -= 2.0f;
+	JumpPanel_Collision_[3].center.y = 2.0f;
+	JumpPanel_Collision_[3].a = 7.0f;
 }
