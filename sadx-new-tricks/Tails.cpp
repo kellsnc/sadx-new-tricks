@@ -123,7 +123,10 @@ static void Tails_TailsGrab(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 	if (Tails_RunNextAction(co2, mwp, data))
 	{
 		data->LoopData = nullptr;
-		co2->Powerups &= ~Powerups_Invincibility;
+
+		if ( (co2->Upgrades & Upgrades_SuperSonic) == 0)
+			co2->Powerups &= ~Powerups_Invincibility;
+
 		return;
 	}
 

@@ -11,11 +11,15 @@ static float KnucklesSpinDashSpeedIncrement = 0.28f;
 static float KnucklesDrillSpeed = 7.0f;
 
 static Trampoline* Knuckles_Exec_t = nullptr;
+static Trampoline* Knux_runsActions_t = nullptr;
 
 static AnimData DrillClawAnim = { nullptr, 78, 3, Anm_Knuckles_CustomDrillClaw, 0.5f, 2.0f };
 static AnimData DrillDigAnim = { nullptr, 78, 4, Anm_Knuckles_Dig, 1.0f, 1.5f };
 
 static AnimationFile* DrillClawMotion = nullptr;
+
+
+DataArray(CollisionData, JumpPanel_Collision_, 0x97DF68, 4);
 
 static void Knuckles_AfterImages(task* tsk)
 {
@@ -147,7 +151,7 @@ static void Knuckles_DrillClaw(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 	}
 
 	// Stop if colliding with solid object collision
-	if (data->Status & Status_Unknown1)
+	if (data->Status & Status_OnColli)
 	{
 		data->Action = Act_Knuckles_Stand;
 	}
@@ -189,11 +193,65 @@ static void Knuckles_TailsGrab(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 	if (Knuckles_RunNextAction(co2, mwp, data))
 	{
 		data->LoopData = nullptr;
-		co2->Powerups &= ~Powerups_Invincibility;
+		if ((co2->Upgrades & Upgrades_SuperSonic) == 0)
+			co2->Powerups &= ~Powerups_Invincibility;
 		return;
 	}
 
 	TailsGrabAction(data, mwp, co2, { 0.0f, -8.0f, -1.0f }, Anm_Knuckles_Hang, Act_Knuckles_Fall, Anm_Knuckles_Fall);
+}
+
+static void Knux_RunsActions_r(EntityData1* data, motionwk2* data2, CharObj2* co2)
+{
+	switch (data->Action)
+	{
+	case Act_Knuckles_JumpPanel:
+
+		if (KnucklesCheckInput((taskwk*)data, data2, (playerwk*)co2))
+		{
+			return;
+		}
+		if (CheckCollisionForPanelJump(data))
+		{
+			PlaySound(33, 0, 0, 0);
+			PlayerClearSpeed((EntityData2*)data2, co2);
+			data->Action = Act_Knuckles_JumpPanelOn;
+			co2->AnimationThing.Index = 106;
+		}
+		else if ((data->Status & (Status_OnColli | Status_Ground)) != 0)
+		{
+			PlaySound(33, 0, 0, 0);
+			PlayerClearSpeed((EntityData2*)data2, co2);
+			data->Action = 1;
+			co2->IdleTime = 0;
+			co2->AnimationThing.Index = 2;
+		}
+		return;
+	case Act_Knuckles_JumpPanelOn:
+		if (KnucklesCheckInput((taskwk*)data, data2, (playerwk*)co2))
+		{
+			return;
+		}
+		if (CanIMakeJumpPanel(data) <= 0)
+		{
+			data->Action = 1;
+			co2->IdleTime = 0;
+			co2->AnimationThing.Index = 2;
+			return;
+		}
+		if (JumpAllowed(data) != 2)
+		{
+			return;
+		}
+		StartPlayerPanelJump(data);
+		data->Action = Act_Knuckles_JumpPanel;
+		co2->AnimationThing.Index = 106;
+		PlaySound(17, 0, 0, 0);
+		return;
+	}
+
+	FunctionPointer(void, original, (EntityData1 * data, motionwk2 * data2, CharObj2 * co2), Knux_runsActions_t->Target());
+	return original(data, data2, co2);
 }
 
 static void Knuckles_NewActions(EntityData1* data, motionwk2* mwp, CharObj2* co2)
@@ -293,6 +351,7 @@ static void Knuckles_Exec_r(task* tsk)
 void Knuckles_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics)
 {
 	Knuckles_Exec_t = new Trampoline((int)Knuckles_Main, (int)Knuckles_Main + 0x7, Knuckles_Exec_r);
+	Knux_runsActions_t = new Trampoline(0x478020, 0x478025, Knux_RunsActions_r);
 
 	auto configgrp = config->getGroup("Knuckles");
 
@@ -303,7 +362,7 @@ void Knuckles_Init(const HelperFunctions& helperFunctions, const IniFile* config
 		EnableKnucklesWallDig = configgrp->getBool("EnableKnucklesWallDig", EnableKnucklesWallDig);
 		DiggableRMWalls = configgrp->getBool("DiggableRMWalls", DiggableRMWalls);
 	}
-	
+
 	auto physgrp = physics->getGroup("Knuckles");
 
 	if (physgrp)
@@ -318,4 +377,7 @@ void Knuckles_Init(const HelperFunctions& helperFunctions, const IniFile* config
 	LoadAnimation(&DrillClawMotion, "drillclaw", helperFunctions);
 	DrillClawAnim.Animation = new NJS_ACTION;
 	DrillClawAnim.Animation->motion = DrillClawMotion->getmotion();
+
+	JumpPanel_Collision_[3].center.y = 2.0f;
+	JumpPanel_Collision_[3].a = 7.0f;
 }
