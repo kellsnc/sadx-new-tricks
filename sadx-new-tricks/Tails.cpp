@@ -9,7 +9,7 @@ static float TailsSpinDashMaxSpeed = 7.0f;
 static float TailsSpinDashSpeedIncrement = 0.2f;
 
 static Trampoline* Tails_Exec_t = nullptr;
-static Trampoline* Tails_Render_t = nullptr;
+static Trampoline* Tails_Display_t = nullptr;
 
 bool BlockPlayerGrab[MaxPlayers]{};
 
@@ -164,13 +164,13 @@ static void Tails_NewActions(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 	}
 }
 
-static void Tails_Render_r(task* tsk)
+static void Tails_Display_r(task* tsk)
 {
 	auto data = (EntityData1*)tsk->twp;
 	auto mwp = (motionwk2*)tsk->mwp;
 	auto co2 = (CharObj2*)mwp->work.ptr;
 
-	TRAMPOLINE(Tails_Render)(tsk);
+	TRAMPOLINE(Tails_Display)(tsk);
 
 	// Draw tails out of the ball if enabled in the config (otherwise the trampoline is not enabled)
 	if (data->Action == Act_Tails_SpinDash || data->Action == Act_Tails_Roll)
@@ -208,7 +208,7 @@ void Tails_Init(const HelperFunctions& helperFunctions, const IniFile* config, c
 
 	if (config->getBool("Tails", "EnableTailsSpinTails", false))
 	{
-		Tails_Render_t = new Trampoline((int)Tails_Display, (int)Tails_Display + 0x8, Tails_Render_r);
+		Tails_Display_t = new Trampoline((int)Tails_Display, (int)Tails_Display + 0x8, Tails_Display_r);
 	}
 
 	auto configgrp = config->getGroup("Tails");

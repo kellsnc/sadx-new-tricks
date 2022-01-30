@@ -33,18 +33,19 @@ bool CheckControl(int id)
 	return !EV_MainThread_ptr && ControlEnabled == 1 && ControllerEnabled[id] == 1;
 }
 
-void __cdecl PlayerClearSpeed(EntityData2* a1, CharObj2* a2)
+void PlayerClearSpeed(motionwk2* mwp, playerwk* pwp)
 {
-	if (a2)
+	if (pwp)
 	{
-		a2->Speed.z = 0.0;
-		a2->Speed.y = 0.0;
-		a2->Speed.x = 0.0;
+		pwp->spd.z = 0.0;
+		pwp->spd.y = 0.0;
+		pwp->spd.x = 0.0;
 	}
-	if (a1)
+
+	if (mwp)
 	{
-		a1->VelocityDirection.z = 0.0;
-		a1->VelocityDirection.y = 0.0;
-		a1->VelocityDirection.x = 0.0;
+		mwp->spd.z = 0.0;
+		mwp->spd.y = 0.0;
+		mwp->spd.x = 0.0;
 	}
 }

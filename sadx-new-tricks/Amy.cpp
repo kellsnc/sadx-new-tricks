@@ -17,7 +17,7 @@ static bool BlockDoubleJump[MaxPlayers]{};
 static AnimData DoubleJumpAnim = { nullptr, 78, 4, Anm_Amy_Jump, 1.12f, 1.0f };
 
 static Trampoline* Amy_Exec_t = nullptr;
-static Trampoline* Amy_RunsActions_t = nullptr;
+static Trampoline* Amy_RunActions_t = nullptr;
 
 static void AmyDoubleJump(EntityData1* data, CharObj2* co2)
 {
@@ -32,13 +32,9 @@ static void AmyDoubleJump(EntityData1* data, CharObj2* co2)
 
 static void AmyMovingSpin(EntityData1* data)
 {
-	if (!(data->Status & STATUS_FLOOR))
+	if (HammerPropButton && !(data->Status & STATUS_FLOOR))
 	{
-		if (HammerPropButton)
-		{
-			data->Action = Act_Amy_HammerProp;
-			return;
-		}
+		data->Action = Act_Amy_HammerProp;
 	}
 }
 
@@ -63,7 +59,6 @@ static void AmyMovingSpin_Physics(EntityData1* data, motionwk2* mwp, CharObj2* c
 #pragma region Propeller
 static void AmyProp_Physics(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
-	// Handle physics
 	auto RestoreGravity = co2->PhysicsData.Gravity;
 	co2->PhysicsData.Gravity = PropellerGravity;
 
@@ -160,7 +155,7 @@ static inline void AmyProp_Check(EntityData1* data, CharObj2* co2)
 }
 #pragma endregion
 
-static void Amy_NewActions(EntityData1* data, motionwk2* mwp, CharObj2* co2)
+static void __cdecl Amy_RunActions_r(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 {
 	switch (data->Action)
 	{
@@ -190,18 +185,16 @@ static void Amy_NewActions(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 		TailsGrabAction(data, mwp, co2, { 0.0f, -6.8f, 0.0f }, Anm_Amy_HangHook, Act_Amy_Fall, Anm_Amy_Fall);
 		break;
 	}
+
+	TRAMPOLINE(Amy_RunActions)(data, mwp, co2);
 }
 
-static void Amy_RunsActions_r(EntityData1* data, motionwk2* data2, CharObj2* co2)
+static void __cdecl Amy_Exec_r(task* tsk)
 {
-	Amy_NewActions(data, data2, co2);
-	
-	FunctionPointer(void, original, (EntityData1 * data, motionwk2* data2, CharObj2 * co2), Amy_RunsActions_t->Target());
-	return original(data, data2, co2);
-}
+	auto data = (EntityData1*)tsk->twp; // main task containing position, rotation, scale
+	auto mwp = (motionwk2*)tsk->mwp; // task containing movement information
+	auto co2 = (CharObj2*)mwp->work.ptr; // physics, animation info, and countless other things
 
-static void Amy_NewMovesPhysics(EntityData1* data, motionwk2* mwp, CharObj2* co2)
-{
 	if (EnableDoubleJump == true && data->Status & STATUS_FLOOR)
 	{
 		BlockDoubleJump[data->CharIndex] = false; // can double jump
@@ -220,17 +213,7 @@ static void Amy_NewMovesPhysics(EntityData1* data, motionwk2* mwp, CharObj2* co2
 	case Act_Amy_HammerProp:
 		AmyProp_Physics(data, mwp, co2);
 		break;
-
 	}
-}
-
-static void Amy_Exec_r(task* tsk)
-{
-	auto data = (EntityData1*)tsk->twp; // main task containing position, rotation, scale
-	auto mwp = (motionwk2*)tsk->mwp; // task containing movement information
-	auto co2 = (CharObj2*)mwp->work.ptr; // physics, animation info, and countless other things
-
-	Amy_NewMovesPhysics(data, mwp, co2);
 
 	TRAMPOLINE(Amy_Exec)(tsk);
 }
@@ -238,7 +221,7 @@ static void Amy_Exec_r(task* tsk)
 void Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics)
 {
 	Amy_Exec_t = new Trampoline((int)Amy_Main, (int)Amy_Main + 0x7, Amy_Exec_r);
-	Amy_RunsActions_t = new Trampoline(0x488880, 0x488888, Amy_RunsActions_r);
+	Amy_RunActions_t = new Trampoline(0x488880, 0x488888, Amy_RunActions_r);
 
 	auto configgrp = config->getGroup("Amy");
 

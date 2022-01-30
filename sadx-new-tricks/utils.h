@@ -5,4 +5,4 @@
 
 void LoadAnimation(AnimationFile** info, const char* name, const HelperFunctions& helperFunctions);
 bool CheckControl(int id);
-void __cdecl PlayerClearSpeed(EntityData2* a1, CharObj2* a2);
+void PlayerClearSpeed(motionwk2* mwp, playerwk* pwp);
