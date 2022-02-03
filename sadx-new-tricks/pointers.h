@@ -18,8 +18,8 @@ ObjectFunc(ObjectCrash, 0x5A95B0); // position is position, scale is direction, 
 ObjectFunc(UpdateSetDataAndDelete, 0x46C150);
 ObjectFunc(DeleteGammaMissileIfNoTarget, 0x4CEFE0);
 
-DataArray(AnimData, AmyAnimData, 0x3C54880, 102);
-DataArray(AnimData, KnucklesAnimData, 0x3C532A0, 115);
+DataArray(PL_ACTION, AmyAnimData, 0x3C54880, 102);
+DataArray(PL_ACTION, KnucklesAnimData, 0x3C532A0, 115);
 
 DataArray(CollisionData, JumpPanel_Collision_, 0x97DF68, 4);
 
@@ -59,14 +59,14 @@ static inline signed int Tails_RunNextAction(CharObj2* co2, motionwk2* mwp, Enti
 
 //signed int __usercall Amy_RunNextAction@<eax>(CharObj2* co2@<ecx>, motionwk2* mwp@<edi>, EntityData1 *data@<esi>)
 static const void* const Amy_RunNextActionPtr = (void*)0x487810;
-static inline signed int Amy_RunNextAction(CharObj2* co2, motionwk2* mwp, EntityData1* data)
+static inline signed int Amy_RunNextAction(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
     signed int result;
     __asm
     {
-        mov ecx, [co2]
+        mov ecx, [pwp]
         mov edi, [mwp]
-        mov esi, [data]
+        mov esi, [twp]
         call Amy_RunNextActionPtr
         mov result, eax
     }

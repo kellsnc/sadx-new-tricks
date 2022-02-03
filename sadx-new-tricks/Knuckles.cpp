@@ -13,8 +13,8 @@ static float KnucklesDrillSpeed = 7.0f;
 static Trampoline* Knuckles_Exec_t = nullptr;
 static Trampoline* Knuckles_RunActions_t = nullptr;
 
-static AnimData DrillClawAnim = { nullptr, 78, 3, Anm_Knuckles_CustomDrillClaw, 0.5f, 2.0f };
-static AnimData DrillDigAnim = { nullptr, 78, 4, Anm_Knuckles_Dig, 1.0f, 1.5f };
+static PL_ACTION DrillClawAnim = { nullptr, 78, 3, Anm_Knuckles_CustomDrillClaw, 0.5f, 2.0f };
+static PL_ACTION DrillDigAnim = { nullptr, 78, 4, Anm_Knuckles_Dig, 1.0f, 1.5f };
 
 static AnimationFile* DrillClawMotion = nullptr;
 
@@ -56,7 +56,7 @@ static void Knuckles_AfterImages(task* tsk)
 			njRotateZ_(wk->ang.z);
 			njRotateX_(wk->ang.x);
 			njRotateY_(-0x8000 - LOWORD(wk->ang.y));
-			njAction_Queue(DrillClawAnim.Animation, wk->scl.y, (QueuedModelFlagsB)0);
+			njAction_Queue(DrillClawAnim.actptr, wk->scl.y, (QueuedModelFlagsB)0);
 			njPopMatrixEx();
 
 			njControl3D_Restore();
@@ -259,11 +259,11 @@ static void Knuckles_Exec_r(task* tsk)
 	{
 	case Act_Knuckles_Init:
 		// Set up the fast transition dig from drill:
-		DrillDigAnim.Animation = KnucklesAnimData[Anm_Knuckles_DigStart].Animation;
+		DrillDigAnim.actptr = KnucklesAnimData[Anm_Knuckles_DigStart].actptr;
 		KnucklesAnimData[Anm_Knuckles_CustomDrillDig] = DrillDigAnim;
 
 		// Set up the model for the custom animation:
-		DrillClawAnim.Animation->object = KNUCKLES_OBJECTS[0];
+		DrillClawAnim.actptr->object = KNUCKLES_OBJECTS[0];
 		KnucklesAnimData[Anm_Knuckles_CustomDrillClaw] = DrillClawAnim;
 		break;
 	case Act_Knuckles_Stand:
@@ -361,8 +361,8 @@ void Knuckles_Init(const HelperFunctions& helperFunctions, const IniFile* config
 
 	// Load custom Drill Claw animation
 	LoadAnimation(&DrillClawMotion, "drillclaw", helperFunctions);
-	DrillClawAnim.Animation = new NJS_ACTION;
-	DrillClawAnim.Animation->motion = DrillClawMotion->getmotion();
+	DrillClawAnim.actptr = new NJS_ACTION;
+	DrillClawAnim.actptr->motion = DrillClawMotion->getmotion();
 
 	JumpPanel_Collision_[3].center.y = 2.0f;
 	JumpPanel_Collision_[3].a = 7.0f;

@@ -1,5 +1,7 @@
 #include "pch.h"
 
+#define HammerScl pwp->free.f[7]
+
 static bool EnableDoubleJump = true;
 static bool MovingGroundSpin = true;
 static Buttons HammerPropButton = Buttons_X;
@@ -14,204 +16,199 @@ static float MovingGroundSpinAccel = 0.025f;
 
 static bool BlockDoubleJump[MaxPlayers]{};
 
-static AnimData DoubleJumpAnim = { nullptr, 78, 4, Anm_Amy_Jump, 1.12f, 1.0f };
+static PL_ACTION DoubleJumpAnim = { nullptr, 78, 4, Anm_Amy_Jump, 1.12f, 1.0f };
 
 static Trampoline* Amy_Exec_t = nullptr;
 static Trampoline* Amy_RunActions_t = nullptr;
 
-static void AmyDoubleJump(EntityData1* data, CharObj2* co2)
+static void AmyDoubleJump(taskwk* twp, playerwk* pwp)
 {
-	if (EnableDoubleJump == true && CheckControl(data->CharIndex) && PressedButtons[data->CharIndex] & JumpButtons && BlockDoubleJump[data->CharIndex] == false && co2->JumpTime > 8)
+	auto pnum = TASKWK_PLAYERID(twp);
+
+	if (EnableDoubleJump == true && CheckControl(pnum) && PressedButtons[pnum] & JumpButtons && BlockDoubleJump[pnum] == false && pwp->jumptimer > 8i16)
 	{
-		BlockDoubleJump[data->CharIndex] = true;
-		EnemyBounceThing(data->CharIndex, 0, DoubleJumpAcc, 0);
-		PlaySound(1286, 0, 0, 0);
-		co2->AnimationThing.Index = 74;
+		BlockDoubleJump[pnum] = true;
+		EnemyBounceThing(pnum, 0, DoubleJumpAcc, 0);
+		dsPlay_oneshot(1286, 0, 0, 0);
+		pwp->mj.reqaction = 74;
 	}
 }
 
-static void AmyMovingSpin(EntityData1* data)
+static void AmyProp_Physics(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
-	if (HammerPropButton && !(data->Status & STATUS_FLOOR))
-	{
-		data->Action = Act_Amy_HammerProp;
-	}
+	auto RestoreGravity = pwp->p.weight;
+	pwp->p.weight = PropellerGravity;
+
+	PlayerGetRotation(twp, mwp, pwp);
+	PlayerResetAngle(twp, mwp, pwp);
+	PlayerGetAcceleration(twp, mwp, pwp);
+	PlayerGetSpeed(twp, mwp, pwp);
+	PlayerSetPosition(twp, mwp, pwp);
+	PlayerUpdateSpeed(twp, mwp, pwp);
+
+	pwp->p.weight = RestoreGravity;
 }
 
-static void AmyMovingSpin_Physics(EntityData1* data, motionwk2* mwp, CharObj2* co2)
+static void AmyProp_Run(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
-	auto RestoreSpeed = co2->PhysicsData.GroundAccel;
-	co2->PhysicsData.GroundAccel = MovingGroundSpinAccel;
+	auto pnum = TASKWK_PLAYERID(twp);
 
-	if (co2->AnimationThing.Index == Anm_Amy_HammerSpinAttack)
-	{
-		PlayerGetRotation((taskwk*)data, mwp, (playerwk*)co2);
-		PlayerResetAngle((taskwk*)data, mwp, (playerwk*)co2);
-		PlayerGetAcceleration((taskwk*)data, mwp, (playerwk*)co2);
-		PlayerGetSpeed((taskwk*)data, mwp, (playerwk*)co2);
-		PlayerSetPosition((taskwk*)data, mwp, (playerwk*)co2);
-		PlayerUpdateSpeed((taskwk*)data, mwp, (playerwk*)co2);
-	}
-
-	co2->PhysicsData.GroundAccel = RestoreSpeed;
-}
-
-#pragma region Propeller
-static void AmyProp_Physics(EntityData1* data, motionwk2* mwp, CharObj2* co2)
-{
-	auto RestoreGravity = co2->PhysicsData.Gravity;
-	co2->PhysicsData.Gravity = PropellerGravity;
-
-	PlayerGetRotation((taskwk*)data, mwp, (playerwk*)co2);
-	PlayerResetAngle((taskwk*)data, mwp, (playerwk*)co2);
-	PlayerGetAcceleration((taskwk*)data, mwp, (playerwk*)co2);
-	PlayerGetSpeed((taskwk*)data, mwp, (playerwk*)co2);
-	PlayerSetPosition((taskwk*)data, mwp, (playerwk*)co2);
-	PlayerUpdateSpeed((taskwk*)data, mwp, (playerwk*)co2);
-
-	co2->PhysicsData.Gravity = RestoreGravity;
-}
-
-static void AmyProp_Run(EntityData1* data, motionwk2* mwp, CharObj2* co2)
-{
 	// If an object overrides the player action, stop
-	if (Amy_RunNextAction(co2, mwp, data))
+	if (Amy_RunNextAction(twp, mwp, pwp))
 	{
-		co2->TailsFlightTime = 0.0f;
+		HammerScl = 0.0f;
 		return;
 	}
 
 	// If the player stops holding the button, stop
-	if (!(HeldButtons[data->CharIndex] & HammerPropButton))
+	if (!(HeldButtons[pnum] & HammerPropButton))
 	{
-		data->Action = Act_Amy_Fall;
-		co2->AnimationThing.Index = Anm_Amy_Fall;
-		co2->TailsFlightTime = 0.0f;
+		twp->mode = Act_Amy_Fall;
+		pwp->mj.reqaction = Anm_Amy_Fall;
+		HammerScl = 0.0f;
 		return;
 	}
 
 	// If the player touches the ground, stop
-	if (data->Status & STATUS_FLOOR)
+	if (twp->flag & STATUS_FLOOR)
 	{
-		PlaySound(33, 0, 0, 0);
-		co2->AnimationThing.Index = Anm_Amy_Stand;
-		data->Action = Act_Amy_Walk;
-		co2->TailsFlightTime = 0.0f;
+		dsPlay_oneshot(33, 0, 0, 0);
+		twp->mode = Act_Amy_Walk;
+		pwp->mj.reqaction = Anm_Amy_Stand;
+		HammerScl = 0.0f;
 		return;
 	}
 
 	// Initial acceleration if close to no input speed
-	if (co2->Speed.x < PropellerInitialAccTreshold)
+	if (pwp->spd.x < PropellerInitialAccTreshold)
 	{
-		co2->Speed.x *= PropellerInitialAcc;
+		pwp->spd.x *= PropellerInitialAcc;
 	}
 
 	// Hammer Air acceleration
-	if (co2->Speed.x < PropellerAirAccTreshold)
+	if (pwp->spd.x < PropellerAirAccTreshold)
 	{
-		co2->Speed.x *= PropellerAirAcc;
+		pwp->spd.x *= PropellerAirAcc;
 	}
 
 	// Fix velocity bug
-	if (njScalor(&co2->Speed) == 0)
+	if (njScalor(&pwp->spd) == 0.0f)
 	{
-		co2->Speed.y -= 0.1f;
+		pwp->spd.y -= 0.1f;
 	}
 
 	// Hammer Spin Animation
-	co2->AnimationThing.Index = Anm_Amy_HammerSpinAttack;
+	pwp->mj.reqaction = Anm_Amy_HammerSpinAttack;
 
 	// This is the hammer scale
-	co2->TailsFlightTime = 1.2f;
+	HammerScl = 1.2f;
 
 	// Attack status
-	data->Status |= Status_Attack;
+	twp->flag |= Status_Attack;
 }
 
-static inline void AmyProp_Check(EntityData1* data, CharObj2* co2)
+static void AmyProp_Check(taskwk* twp, playerwk* pwp)
 {
-	if (CheckControl(data->CharIndex) && PressedButtons[data->CharIndex] & HammerPropButton
-		&& !(data->Status & STATUS_FLOOR) && co2->ObjectHeld == nullptr)
-	{
-		data->Action = Act_Amy_HammerProp;
+	auto pnum = TASKWK_PLAYERID(twp);
 
-		if (data->Rotation.x || data->Rotation.z)
+	if (CheckControl(pnum) && PressedButtons[pnum] & HammerPropButton
+		&& !(twp->flag & STATUS_FLOOR) && pwp->htp == nullptr)
+	{
+		twp->mode = Act_Amy_HammerProp;
+
+		if (twp->ang.x || twp->ang.z)
 		{
-			PConvertVector_P2G((taskwk*)data, &co2->Speed);
+			PConvertVector_P2G(twp, &pwp->spd);
 		}
 
-		data->Rotation.x = GravityAngle_X;
-		data->Rotation.z = GravityAngle_Z;
+		twp->ang.x = GravityAngle_X;
+		twp->ang.z = GravityAngle_Z;
 
-		if (co2->Speed.x >= 5.0)
+		if (pwp->spd.x >= 5.0f)
 		{
+			
 			PlayVoice(1743);
 		}
 		else 
 		{
-			PlaySound(1279, 0, 0, 0);
+			dsPlay_oneshot(1279, 0, 0, 0);
 		}
 	}
 }
-#pragma endregion
 
-static void __cdecl Amy_RunActions_r(EntityData1* data, motionwk2* mwp, CharObj2* co2)
+static void AmyMovingSpin(taskwk* twp)
 {
-	switch (data->Action)
+	if (HammerPropButton && !(twp->flag & STATUS_FLOOR))
+	{
+		twp->mode = Act_Amy_HammerProp;
+	}
+}
+
+static void AmyMovingSpin_Physics(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+{
+	if (pwp->mj.reqaction == Anm_Amy_HammerSpinAttack)
+	{
+		AmyProp_Physics(twp, mwp, pwp);
+	}
+}
+
+static void __cdecl Amy_RunActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+{
+	switch (twp->mode)
 	{
 	case Act_Amy_Jump:
-		AmyProp_Check(data, co2);
-		AmyDoubleJump(data, co2);
+		AmyProp_Check(twp, pwp);
+		AmyDoubleJump(twp, pwp);
 		break;
 	case Act_Amy_HammerJump:
 	case Act_Amy_DashSpeedPanel:
 	case Act_Amy_Spring:
 	case Act_Amy_Fall:
 	case Act_Amy_Launch:
-		AmyProp_Check(data, co2);
+		AmyProp_Check(twp, pwp);
 		break;
 	case Act_Amy_HammerSpin:
-		AmyMovingSpin(data);
+		AmyMovingSpin(twp);
 		break;
 	case Act_Amy_HammerProp:
-		AmyProp_Run(data, mwp, co2);
+		AmyProp_Run(twp, mwp, pwp);
 		break;
 	case Act_Amy_TailsGrab:
-		if (Amy_RunNextAction(co2, mwp, data))
+		if (Amy_RunNextAction(twp, mwp, pwp))
 		{
 			return;
 		}
 
-		TailsGrabAction(data, mwp, co2, { 0.0f, -6.8f, 0.0f }, Anm_Amy_HangHook, Act_Amy_Fall, Anm_Amy_Fall);
+		TailsGrabAction((EntityData1*)twp, mwp, (CharObj2*)pwp, { 0.0f, -6.8f, 0.0f }, Anm_Amy_HangHook, Act_Amy_Fall, Anm_Amy_Fall);
 		break;
 	}
 
-	TRAMPOLINE(Amy_RunActions)(data, mwp, co2);
+	TRAMPOLINE(Amy_RunActions)(twp, mwp, pwp);
 }
 
 static void __cdecl Amy_Exec_r(task* tsk)
 {
-	auto data = (EntityData1*)tsk->twp; // main task containing position, rotation, scale
-	auto mwp = (motionwk2*)tsk->mwp; // task containing movement information
-	auto co2 = (CharObj2*)mwp->work.ptr; // physics, animation info, and countless other things
+	auto twp = tsk->twp; // main task info containing position, rotation, scale
+	auto mwp = (motionwk2*)tsk->mwp; // contains movement information
+	auto pwp = (playerwk*)mwp->work.ptr; // player-specific information (like physics, animation, etc.)
 
-	if (EnableDoubleJump == true && data->Status & STATUS_FLOOR)
+	if (EnableDoubleJump == true && twp->flag & STATUS_FLOOR)
 	{
-		BlockDoubleJump[data->CharIndex] = false; // can double jump
+		BlockDoubleJump[TASKWK_PLAYERID(twp)] = false; // can double jump
 	}
-
-	switch (data->Action)
+	
+	switch (twp->mode)
 	{
 	case Act_Amy_Init:
 		// Initialize the double jump animation
-		DoubleJumpAnim.Animation = AmyAnimData[Anm_Amy_HammerSomerTrickA].Animation;
+		DoubleJumpAnim.actptr = AmyAnimData[Anm_Amy_HammerSomerTrickA].actptr;
 		AmyAnimData[74] = DoubleJumpAnim;
 		break;
 	case Act_Amy_HammerSpin:
-		AmyMovingSpin_Physics(data, mwp, co2);
+		AmyMovingSpin_Physics(twp, mwp, pwp);
 		break;
 	case Act_Amy_HammerProp:
-		AmyProp_Physics(data, mwp, co2);
+		AmyProp_Physics(twp, mwp, pwp);
 		break;
 	}
 
