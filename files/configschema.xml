@@ -59,6 +59,10 @@
       <Property name="HammerPropButton" type="Buttons" defaultvalue="1024" display="Hammer Propeller">
         <HelpText>Hold the specified button while in air to do the Hammer Propeller.</HelpText>
       </Property>
+      <Property name="InstantGroundSpin" type="bool" defaultvalue="False" display="Instant Ground Spin">
+        <HelpText>Press the hammer button while running to instantly trigger ground spin.</HelpText>
+      </Property>
+      <Property name="RemoveDizziness" type="bool" defaultvalue="False" display="Remove Dizziness" />
     </Group>
     <Group name="Sonic">
       <Property name="InstantLSD" type="Buttons" defaultvalue="0" display="Instant Light Dash">

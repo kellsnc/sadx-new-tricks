@@ -2,8 +2,10 @@
 
 #define HammerScl pwp->free.f[7]
 
-static bool EnableDoubleJump = true;
-static bool MovingGroundSpin = true;
+static bool EnableDoubleJump  = true;
+static bool MovingGroundSpin  = true;
+static bool InstantGroundSpin = false;
+static bool RemoveDizziness   = false;
 static Buttons HammerPropButton = Buttons_X;
 
 static float PropellerGravity = 0.011f;
@@ -126,7 +128,6 @@ static void AmyProp_Check(taskwk* twp, playerwk* pwp)
 
 		if (pwp->spd.x >= 5.0f)
 		{
-			
 			PlayVoice(1743);
 		}
 		else 
@@ -152,6 +153,17 @@ static void AmyMovingSpin_Physics(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 	}
 }
 
+static void AmyInstantHammerSpin(taskwk* twp, playerwk* pwp)
+{
+	if (InstantGroundSpin && PressedButtons[TASKWK_PLAYERID(twp)] & HammerPropButton && pwp->spd.x > 0.5f)
+	{
+		pwp->free.sw[4] = 0; // reset dizziness timer
+		dsPlay_oneshot(798, 0, 0, 0);
+		twp->mode = Act_Amy_HammerSpin;
+		pwp->mj.reqaction = 90; // hammer spin state is managed with animation IDs
+	}
+}
+
 static void __cdecl Amy_RunActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
 	switch (twp->mode)
@@ -168,6 +180,11 @@ static void __cdecl Amy_RunActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 		AmyProp_Check(twp, pwp);
 		break;
 	case Act_Amy_HammerSpin:
+		if (RemoveDizziness)
+		{
+			pwp->free.sw[4] = 0; // dizziness timer
+		}
+
 		AmyMovingSpin(twp);
 		break;
 	case Act_Amy_HammerProp:
@@ -204,6 +221,9 @@ static void __cdecl Amy_Exec_r(task* tsk)
 		DoubleJumpAnim.actptr = AmyAnimData[Anm_Amy_HammerSomerTrickA].actptr;
 		AmyAnimData[74] = DoubleJumpAnim;
 		break;
+	case Act_Amy_Walk:
+		AmyInstantHammerSpin(twp, pwp);
+		break;
 	case Act_Amy_HammerSpin:
 		AmyMovingSpin_Physics(twp, mwp, pwp);
 		break;
@@ -224,9 +244,11 @@ void Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config, con
 
 	if (configgrp)
 	{
-		EnableDoubleJump = configgrp->getBool("EnableDoubleJump", EnableDoubleJump);
-		MovingGroundSpin = configgrp->getBool("EnableMovingSpin", MovingGroundSpin);
-		HammerPropButton = (Buttons)configgrp->getInt("HammerPropButton", HammerPropButton);
+		EnableDoubleJump  = configgrp->getBool("EnableDoubleJump", EnableDoubleJump);
+		MovingGroundSpin  = configgrp->getBool("EnableMovingSpin", MovingGroundSpin);
+		InstantGroundSpin = configgrp->getBool("InstantGroundSpin", InstantGroundSpin);
+		RemoveDizziness   = configgrp->getBool("RemoveDizziness", RemoveDizziness);
+		HammerPropButton  = (Buttons)configgrp->getInt("HammerPropButton", HammerPropButton);
 	}
 
 	auto physgrp = physics->getGroup("Amy");
