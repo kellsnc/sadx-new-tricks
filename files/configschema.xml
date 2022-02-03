@@ -63,6 +63,9 @@
         <HelpText>Press the hammer button while running to instantly trigger ground spin.</HelpText>
       </Property>
       <Property name="RemoveDizziness" type="bool" defaultvalue="False" display="Remove Dizziness" />
+      <Property name="UpgradeRequired" type="bool" defaultvalue="False" display="Long Hammer Required">
+        <HelpText>Makes the long hammer required to initiate the Hammer Propeller or the Instant Ground Spin.</HelpText>
+      </Property>
     </Group>
     <Group name="Sonic">
       <Property name="InstantLSD" type="Buttons" defaultvalue="0" display="Instant Light Dash">

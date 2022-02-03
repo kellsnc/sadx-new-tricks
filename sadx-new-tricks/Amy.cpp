@@ -6,6 +6,7 @@ static bool EnableDoubleJump  = true;
 static bool MovingGroundSpin  = true;
 static bool InstantGroundSpin = false;
 static bool RemoveDizziness   = false;
+static bool UpgradeRequired   = false;
 static Buttons HammerPropButton = Buttons_X;
 
 static float PropellerGravity = 0.011f;
@@ -34,6 +35,11 @@ static void AmyDoubleJump(taskwk* twp, playerwk* pwp)
 		dsPlay_oneshot(1286, 0, 0, 0);
 		pwp->mj.reqaction = 74;
 	}
+}
+
+static bool CheckUpgrade(playerwk* pwp)
+{
+	return UpgradeRequired == false || pwp->equipment & Upgrades_LongHammer;
 }
 
 static void AmyProp_Physics(taskwk* twp, motionwk2* mwp, playerwk* pwp)
@@ -113,7 +119,7 @@ static void AmyProp_Check(taskwk* twp, playerwk* pwp)
 {
 	auto pnum = TASKWK_PLAYERID(twp);
 
-	if (CheckControl(pnum) && PressedButtons[pnum] & HammerPropButton
+	if (CheckUpgrade(pwp) && CheckControl(pnum) && PressedButtons[pnum] & HammerPropButton
 		&& !(twp->flag & STATUS_FLOOR) && pwp->htp == nullptr)
 	{
 		twp->mode = Act_Amy_HammerProp;
@@ -155,7 +161,7 @@ static void AmyMovingSpin_Physics(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 
 static void AmyInstantHammerSpin(taskwk* twp, playerwk* pwp)
 {
-	if (InstantGroundSpin && PressedButtons[TASKWK_PLAYERID(twp)] & HammerPropButton && pwp->spd.x > 0.5f)
+	if (InstantGroundSpin && CheckUpgrade(pwp) && PressedButtons[TASKWK_PLAYERID(twp)] & HammerPropButton && pwp->spd.x > 0.5f)
 	{
 		pwp->free.sw[4] = 0; // reset dizziness timer
 		dsPlay_oneshot(798, 0, 0, 0);
@@ -248,6 +254,7 @@ void Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config, con
 		MovingGroundSpin  = configgrp->getBool("EnableMovingSpin", MovingGroundSpin);
 		InstantGroundSpin = configgrp->getBool("InstantGroundSpin", InstantGroundSpin);
 		RemoveDizziness   = configgrp->getBool("RemoveDizziness", RemoveDizziness);
+		UpgradeRequired   = configgrp->getBool("UpgradeRequired", UpgradeRequired);
 		HammerPropButton  = (Buttons)configgrp->getInt("HammerPropButton", HammerPropButton);
 	}
 
