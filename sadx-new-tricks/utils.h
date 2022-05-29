@@ -9,3 +9,4 @@ void LoadAnimation(AnimationFile** info, const char* name, const HelperFunctions
 bool CheckControl(int id);
 void PlayerClearSpeed(motionwk2* mwp, playerwk* pwp);
 bool isSuper(uint8_t pnum);
+bool isTailsAI(uint8_t pnum);

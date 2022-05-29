@@ -57,3 +57,13 @@ bool isSuper(uint8_t pnum)
 
 	return false;
 }
+
+bool isTailsAI(uint8_t pnum)
+{
+	if (EntityData1Ptrs[pnum] && EntityData1Ptrs[pnum]->CharID == Characters_Tails && TailsAI_ptr)
+	{
+		return true;
+	}
+
+	return false;
+}

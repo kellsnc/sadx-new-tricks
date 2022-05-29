@@ -97,6 +97,8 @@ void CommonSpinDash_Run(EntityData1* data, motionwk2* mwp, CharObj2* co2, float 
 {
 	++co2->SonicSpinTimer;
 
+	char pnum = data->CharIndex;
+
 	if (co2->SonicSpinTimer < 300)
 	{
 		data->Status |= Status_Attack | Status_Ball;
@@ -112,7 +114,7 @@ void CommonSpinDash_Run(EntityData1* data, motionwk2* mwp, CharObj2* co2, float 
 		{
 
 			// Only Sonic and Tails have the spindash sound in their soundbank
-			if (data->CharID != Characters_Knuckles)
+			if (data->CharID != Characters_Knuckles && !isTailsAI(pnum))
 			{
 				PlaySound(768, 0, 0, 0);
 				DoSoundQueueThing(767);
@@ -128,7 +130,7 @@ void CommonSpinDash_Run(EntityData1* data, motionwk2* mwp, CharObj2* co2, float 
 	}
 	else
 	{
-		if (data->CharID != Characters_Knuckles)
+		if (data->CharID != Characters_Knuckles && !isTailsAI(pnum))
 		{
 			DoSoundQueueThing(767);
 			DoSoundQueueThing(763);
@@ -155,7 +157,7 @@ void CommonSpinDash_Check(EntityData1* data, CharObj2* co2, int jumpspinanim, in
 		data->Action = spindashact;
 		co2->SpindashSpeed = fmin(maxstartspeed, co2->Speed.x);
 
-		if (data->CharID != Characters_Knuckles)
+		if (data->CharID != Characters_Knuckles && !isTailsAI(data->CharIndex))
 		{
 			QueueSound_DualEntity(767, data, 1, 0, 2);
 		}
