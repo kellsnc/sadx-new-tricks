@@ -49,3 +49,11 @@ void PlayerClearSpeed(motionwk2* mwp, playerwk* pwp)
 		mwp->spd.x = 0.0;
 	}
 }
+
+bool isSuper(uint8_t pnum)
+{
+	if (CharObj2Ptrs[pnum] && CharObj2Ptrs[pnum]->Upgrades & Upgrades_SuperSonic)
+		return true;
+
+	return false;
+}
