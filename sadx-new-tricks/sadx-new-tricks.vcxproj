@@ -124,6 +124,7 @@
     <Xml Include="..\files\configschema.xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\files\mod.ini" />
     <None Include="..\files\physics.ini" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

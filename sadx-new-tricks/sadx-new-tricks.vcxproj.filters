@@ -102,5 +102,8 @@
     <None Include="..\files\physics.ini">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\files\mod.ini">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
