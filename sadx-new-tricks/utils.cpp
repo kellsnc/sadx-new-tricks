@@ -50,20 +50,17 @@ void PlayerClearSpeed(motionwk2* mwp, playerwk* pwp)
 	}
 }
 
-bool isSuper(uint8_t pnum)
+bool isSuper(playerwk* pwp)
 {
-	if (CharObj2Ptrs[pnum] && CharObj2Ptrs[pnum]->Upgrades & Upgrades_SuperSonic)
-		return true;
-
-	return false;
+	return pwp->equipment & Upgrades_SuperSonic;
 }
 
-bool isTailsAI(uint8_t pnum)
+bool isSuper(int pnum)
 {
-	if (EntityData1Ptrs[pnum] && EntityData1Ptrs[pnum]->CharID == Characters_Tails && TailsAI_ptr)
-	{
-		return true;
-	}
+	return playerpwp[pnum] && isSuper(playerpwp[pnum]);
+}
 
-	return false;
+bool isTailsAI(int pnum)
+{
+	return playertwp[pnum] && TASKWK_CHARID(playertwp[pnum]) == Characters_Tails && TailsAI_ptr;
 }

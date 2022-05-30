@@ -1,20 +1,20 @@
 #include "pch.h"
 
-static bool EnableKnucklesSpinDash = true;
+static bool EnableKnucklesSpinDash  = true;
 static bool EnableKnucklesDrillClaw = true;
-static bool EnableKnucklesWallDig = true;
-static bool DiggableRMWalls = true;
+static bool EnableKnucklesWallDig   = true;
+static bool DiggableRMWalls         = true;
 
 static float KnucklesSpinDashMaxInitialSpeed = 1.45f;
-static float KnucklesSpinDashMaxSpeed = 8.0f;
-static float KnucklesSpinDashSpeedIncrement = 0.28f;
-static float KnucklesDrillSpeed = 7.0f;
+static float KnucklesSpinDashMaxSpeed        = 8.0f;
+static float KnucklesSpinDashSpeedIncrement  = 0.28f;
+static float KnucklesDrillSpeed              = 7.0f;
 
-static Trampoline* Knuckles_Exec_t = nullptr;
+static Trampoline* Knuckles_Exec_t       = nullptr;
 static Trampoline* Knuckles_RunActions_t = nullptr;
 
 static PL_ACTION DrillClawAnim = { nullptr, 78, 3, Anm_Knuckles_CustomDrillClaw, 0.5f, 2.0f };
-static PL_ACTION DrillDigAnim = { nullptr, 78, 4, Anm_Knuckles_Dig, 1.0f, 1.5f };
+static PL_ACTION DrillDigAnim  = { nullptr, 78, 4, Anm_Knuckles_Dig, 1.0f, 1.5f };
 
 static AnimationFile* DrillClawMotion = nullptr;
 
@@ -71,6 +71,7 @@ static void Knuckles_AfterImages(task* tsk)
 
 static void LoadKnucklesAfterImages(EntityData1* data, CharObj2* co2)
 {
+	// Hyper Knuckles compatibility
 	if (!isSuper(data->CharIndex)) {
 		auto tsk = CreateElementalTask(LoadObj_Data1, tasklevel::LEV_4, Knuckles_AfterImages);
 		tsk->disp = Knuckles_AfterImages;
@@ -158,7 +159,7 @@ static void Knuckles_DrillClaw(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 	PlayerResetAngle((taskwk*)data, mwp, (playerwk*)co2);
 	RunPhysics(data, mwp, co2);
 
-
+	// Hyper Knuckles compatibility
 	if (!isSuper(data->CharIndex))
 		co2->Speed.y = -KnucklesDrillSpeed;
 
@@ -194,7 +195,9 @@ static void Knuckles_TailsGrab(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 	if (Knuckles_RunNextAction(co2, mwp, data))
 	{
 		data->LoopData = nullptr;
-		if ((co2->Upgrades & Upgrades_SuperSonic) == 0)
+
+		// Hyper Knuckles compatibility
+		if (!isSuper(data->CharIndex))
 			co2->Powerups &= ~Powerups_Invincibility;
 		return;
 	}

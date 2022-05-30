@@ -60,7 +60,7 @@ enum AmyActions : Uint8 {
 
 	Act_Amy_HammerProp,
 	Act_Amy_TailsGrab,
-	Act_Amy_SpinR = 67
+	Act_Amy_SpinR = 67 // From Powerful Amy
 };
 
 enum AmyAnimations {
@@ -68,6 +68,8 @@ enum AmyAnimations {
 	Anm_Amy_Jump = 14,
 	Anm_Amy_Fall = 18,
 	Anm_Amy_HangHook = 55,
+	Anm_Amy_HammerSpinStill = 88,
+	Anm_Amy_HammerSpinTurn,
 	Anm_Amy_HammerSpinAttack = 90,
 	Anm_Amy_HammerSomerTrickA = 95,
 	Anm_Amy_HammerSomerTrickB,
