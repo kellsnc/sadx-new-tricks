@@ -141,7 +141,9 @@ static void Tails_NewActions(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 		if (BlockPlayerGrab[data->CharIndex] == true && data->Status & STATUS_FLOOR)
 		{
 			BlockPlayerGrab[data->CharIndex] = false;
-			co2->Powerups &= ~Powerups_Invincibility;
+
+			if ((co2->Upgrades & Upgrades_SuperSonic) == 0)
+				co2->Powerups &= ~Powerups_Invincibility;
 		}
 	}
 

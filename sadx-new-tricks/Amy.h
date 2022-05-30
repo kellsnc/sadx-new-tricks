@@ -59,7 +59,8 @@ enum AmyActions : Uint8 {
 	// Custom Ones
 
 	Act_Amy_HammerProp,
-	Act_Amy_TailsGrab
+	Act_Amy_TailsGrab,
+	Act_Amy_SpinR = 67
 };
 
 enum AmyAnimations {

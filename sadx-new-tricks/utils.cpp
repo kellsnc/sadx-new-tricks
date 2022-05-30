@@ -49,3 +49,21 @@ void PlayerClearSpeed(motionwk2* mwp, playerwk* pwp)
 		mwp->spd.x = 0.0;
 	}
 }
+
+bool isSuper(uint8_t pnum)
+{
+	if (CharObj2Ptrs[pnum] && CharObj2Ptrs[pnum]->Upgrades & Upgrades_SuperSonic)
+		return true;
+
+	return false;
+}
+
+bool isTailsAI(uint8_t pnum)
+{
+	if (EntityData1Ptrs[pnum] && EntityData1Ptrs[pnum]->CharID == Characters_Tails && TailsAI_ptr)
+	{
+		return true;
+	}
+
+	return false;
+}

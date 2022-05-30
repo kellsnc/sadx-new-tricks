@@ -71,16 +71,18 @@ static void Knuckles_AfterImages(task* tsk)
 
 static void LoadKnucklesAfterImages(EntityData1* data, CharObj2* co2)
 {
-	auto tsk = CreateElementalTask(LoadObj_Data1, tasklevel::LEV_4, Knuckles_AfterImages);
-	tsk->disp = Knuckles_AfterImages;
+	if (!isSuper(data->CharIndex)) {
+		auto tsk = CreateElementalTask(LoadObj_Data1, tasklevel::LEV_4, Knuckles_AfterImages);
+		tsk->disp = Knuckles_AfterImages;
 
-	auto wk = tsk->twp;
+		auto wk = tsk->twp;
 
-	wk->value.b[0] = data->CharIndex;
-	wk->scl.x = 1.0f;
-	wk->scl.y = co2->AnimationThing.Frame;
-	wk->pos = data->Position;
-	wk->ang = *(Angle3*)&data->Rotation;
+		wk->value.b[0] = data->CharIndex;
+		wk->scl.x = 1.0f;
+		wk->scl.y = co2->AnimationThing.Frame;
+		wk->pos = data->Position;
+		wk->ang = *(Angle3*)&data->Rotation;
+	}
 }
 
 static void Knuckles_CheckSpinDash(EntityData1* data, CharObj2* co2)
@@ -156,7 +158,9 @@ static void Knuckles_DrillClaw(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 	PlayerResetAngle((taskwk*)data, mwp, (playerwk*)co2);
 	RunPhysics(data, mwp, co2);
 
-	co2->Speed.y = -KnucklesDrillSpeed;
+
+	if (!isSuper(data->CharIndex))
+		co2->Speed.y = -KnucklesDrillSpeed;
 
 	// All that to hurt enemies
 	data->Status |= Status_Attack;
