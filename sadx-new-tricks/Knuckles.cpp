@@ -160,8 +160,7 @@ static void Knuckles_DrillClaw(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 	RunPhysics(data, mwp, co2);
 
 	// Hyper Knuckles compatibility
-	if (!isSuper(data->CharIndex))
-		co2->Speed.y = -KnucklesDrillSpeed;
+	co2->Speed.y = -KnucklesDrillSpeed;
 
 	// All that to hurt enemies
 	data->Status |= Status_Attack;
