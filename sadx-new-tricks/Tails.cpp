@@ -86,7 +86,7 @@ static void Tails_FlyGrab(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 	if (BlockPlayerGrab[data->CharIndex] == false && CheckControl(data->CharIndex) == true) // if can grab & not controlled by AI
 	{
 		// Tails AI checks
-		if (data->CharIndex == 1 && TailsAI_ptr && (TailsAI_ptr->Data1->Action != 5))
+		if (isTailsAI(data->CharIndex) && (TailsAI_ptr->Data1->Action != 5))
 		{
 			return;
 		}
@@ -210,7 +210,7 @@ void Tails_Init(const HelperFunctions& helperFunctions, const IniFile* config, c
 
 	if (config->getBool("Tails", "EnableTailsSpinTails", false))
 	{
-		Tails_Display_t = new Trampoline((int)Tails_Display, (int)Tails_Display + 0x8, Tails_Display_r);
+		Tails_Display_t = new Trampoline((int)Tails_Display, (int)Tails_Display + 0x7, Tails_Display_r);
 	}
 
 	auto configgrp = config->getGroup("Tails");
