@@ -1,12 +1,12 @@
 #include "pch.h"
 
-void RunPhysics(EntityData1* data, motionwk2* mwp, CharObj2* co2)
+void RunPhysics(taskwk* data, motionwk2* mwp, playerwk* co2)
 {
-	PlayerGetRotation((taskwk*)data, mwp, (playerwk*)co2);
-	PlayerGetAcceleration((taskwk*)data, mwp, (playerwk*)co2);
-	PlayerGetSpeed((taskwk*)data, mwp, (playerwk*)co2);
-	PlayerSetPosition((taskwk*)data, mwp, (playerwk*)co2);
-	PlayerUpdateSpeed((taskwk*)data, mwp, (playerwk*)co2);
+	PGetRotation((taskwk*)data, mwp, (playerwk*)co2);
+	PGetAcceleration((taskwk*)data, mwp, (playerwk*)co2);
+	PGetSpeed((taskwk*)data, mwp, (playerwk*)co2);
+	PSetPosition((taskwk*)data, mwp, (playerwk*)co2);
+	PresetPosition((taskwk*)data, mwp, (playerwk*)co2);
 }
 
 #pragma region TailsGrab
@@ -67,7 +67,7 @@ void TailsGrabAction_Run(EntityData1* grabplayer, EntityData1* data, motionwk2* 
 	co2->AnimationThing.Index = animation;
 
 	// Run ground check
-	PlayerSetPosition((taskwk*)data, mwp, (playerwk*)co2);
+	PSetPosition((taskwk*)data, mwp, (playerwk*)co2);
 }
 
 void TailsGrabAction(EntityData1* data, motionwk2* mwp, CharObj2* co2, NJS_VECTOR offset, int animation, int fallaction, int fallanim)
@@ -142,11 +142,11 @@ void CommonSpinDash_Run(EntityData1* data, motionwk2* mwp, CharObj2* co2, float 
 		data->Status &= ~(Status_Ball | Status_Attack);
 	}
 
-	PlayerGetRotation((taskwk*)data, mwp, (playerwk*)co2);
-	PlayerRollPhysics((taskwk*)data, mwp, (playerwk*)co2);
-	PlayerGetSpeed((taskwk*)data, mwp, (playerwk*)co2);
-	PlayerSetPosition((taskwk*)data, mwp, (playerwk*)co2);
-	PlayerUpdateSpeed((taskwk*)data, mwp, (playerwk*)co2);
+	PGetRotation((taskwk*)data, mwp, (playerwk*)co2);
+	PGetBreak((taskwk*)data, mwp, (playerwk*)co2);
+	PGetSpeed((taskwk*)data, mwp, (playerwk*)co2);
+	PSetPosition((taskwk*)data, mwp, (playerwk*)co2);
+	PresetPosition((taskwk*)data, mwp, (playerwk*)co2);
 }
 
 void CommonSpinDash_Check(EntityData1* data, CharObj2* co2, int jumpspinanim, int spindashact, float maxstartspeed)

@@ -54,7 +54,7 @@ enum TransitionActions : Uint8 {
 	NextAction_Death
 };
 
-void RunPhysics(EntityData1* data, motionwk2* mwp, CharObj2* co2);
+void RunPhysics(taskwk* data, motionwk2* mwp, playerwk* co2);
 
 void TailsGrabAction(EntityData1* data, motionwk2* mwp, CharObj2* co2, NJS_VECTOR offset, int animation, int fallaction, int fallanim);
 

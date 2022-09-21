@@ -47,12 +47,12 @@ static void AmyProp_Physics(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 	auto RestoreGravity = pwp->p.weight;
 	pwp->p.weight = PropellerGravity;
 
-	PlayerGetRotation(twp, mwp, pwp);
-	PlayerResetAngle(twp, mwp, pwp);
-	PlayerGetAcceleration(twp, mwp, pwp);
-	PlayerGetSpeed(twp, mwp, pwp);
-	PlayerSetPosition(twp, mwp, pwp);
-	PlayerUpdateSpeed(twp, mwp, pwp);
+	PGetRotation(twp, mwp, pwp);
+	PResetAngle(twp, mwp, pwp);
+	PGetAcceleration(twp, mwp, pwp);
+	PGetSpeed(twp, mwp, pwp);
+	PSetPosition(twp, mwp, pwp);
+	PresetPosition(twp, mwp, pwp);
 
 	pwp->p.weight = RestoreGravity;
 }
@@ -159,14 +159,14 @@ static void AmyMovingSpin_Physics(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 
 		if (curAnim == Anm_Amy_HammerSpinStill || curAnim == Anm_Amy_HammerSpinTurn)
 		{
-			PlayerGetRotation(twp, mwp, pwp);
+			PGetRotation(twp, mwp, pwp);
 		}
 
-		PlayerResetAngle(twp, mwp, pwp);
-		PlayerGetAcceleration(twp, mwp, pwp);
-		PlayerGetSpeed(twp, mwp, pwp);
-		PlayerSetPosition(twp, mwp, pwp);
-		PlayerUpdateSpeed(twp, mwp, pwp);
+		PResetAngle(twp, mwp, pwp);
+		PGetAcceleration(twp, mwp, pwp);
+		PGetSpeed(twp, mwp, pwp);
+		PSetPosition(twp, mwp, pwp);
+		PresetPosition(twp, mwp, pwp);
 	}
 }
 

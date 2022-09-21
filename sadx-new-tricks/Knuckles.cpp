@@ -69,20 +69,21 @@ static void Knuckles_AfterImages(task* tsk)
 	}
 }
 
-static void LoadKnucklesAfterImages(EntityData1* data, CharObj2* co2)
+static void LoadKnucklesAfterImages(taskwk* data, playerwk* co2)
 {
+	char pnum = TASKWK_PLAYERID(data);
 	// Hyper Knuckles compatibility
-	if (!isSuper(data->CharIndex)) {
+	if (!isSuper(pnum)) {
 		auto tsk = CreateElementalTask(LoadObj_Data1, tasklevel::LEV_4, Knuckles_AfterImages);
 		tsk->disp = Knuckles_AfterImages;
 
 		auto wk = tsk->twp;
 
-		wk->value.b[0] = data->CharIndex;
+		wk->value.b[0] = pnum;
 		wk->scl.x = 1.0f;
-		wk->scl.y = co2->AnimationThing.Frame;
-		wk->pos = data->Position;
-		wk->ang = *(Angle3*)&data->Rotation;
+		wk->scl.y = co2->mj.nframe;
+		wk->pos = data->pos;
+		wk->ang = data->ang;
 	}
 }
 
@@ -94,12 +95,14 @@ static void Knuckles_CheckSpinDash(EntityData1* data, CharObj2* co2)
 	}
 }
 
-static void Knuckles_CheckDrillClaw(EntityData1* data, CharObj2* co2)
+static void Knuckles_CheckDrillClaw(taskwk* data, playerwk* co2)
 {
-	if (EnableKnucklesDrillClaw == true && CheckControl(data->CharIndex) && HeldButtons[data->CharIndex] & Buttons_B)
+	char pnum = TASKWK_PLAYERID(data);
+
+	if (EnableKnucklesDrillClaw == true && CheckControl(pnum) && HeldButtons[pnum] & Buttons_B)
 	{
-		data->Action = Act_Knuckles_DrillClaw;
-		data->Status &= ~Status_Ball;
+		data->mode = Act_Knuckles_DrillClaw;
+		data->flag &= ~Status_Ball;
 		LoadKnucklesAfterImages(data, co2);
 	}
 }
@@ -115,63 +118,63 @@ static void Knuckles_CheckWallDig(EntityData1* data, CharObj2* co2)
 	}
 }
 
-static void Knuckles_DrillClaw(EntityData1* data, motionwk2* mwp, CharObj2* co2)
+static void Knuckles_DrillClaw(taskwk* data, motionwk2* mwp, playerwk* co2)
 {
-	if (Knuckles_RunNextAction(co2, mwp, data))
+	if (Knuckles_RunNextAction((CharObj2*)co2, mwp, (EntityData1*)data))
 	{
 		return;
 	}
 
 	// Stop if B is not held anymore
-	if ((HeldButtons[data->CharIndex] & Buttons_B) != Buttons_B)
+	if ((HeldButtons[data->counter.b[0]] & Buttons_B) != Buttons_B)
 	{
-		data->Status |= Status_Ball;
-		data->Action = Act_Knuckles_Jump;
-		co2->AnimationThing.Index = Anm_Knuckles_GlideCancelRoll;
+		data->flag |= Status_Ball;
+		data->mode = Act_Knuckles_Jump;
+		co2->mj.reqaction = Anm_Knuckles_GlideCancelRoll;
 		return;
 	}
 
 	// Stop if touches the ground
-	if (data->Status & STATUS_FLOOR)
+	if (data->flag & STATUS_FLOOR)
 	{
 		// If Knuckles has the ShovelClaw and the floor is diggable, dig.
-		if (co2->Upgrades & Upgrades_ShovelClaw && (co2->SurfaceFlags & ColFlags_Dig))
+		if (co2->equipment & Upgrades_ShovelClaw && (co2->attr & ColFlags_Dig))
 		{
-			co2->Speed.y = 0;
-			NullifyVelocity((EntityData2*)mwp, co2);
-			co2->AnimationThing.Index = Anm_Knuckles_CustomDrillDig;
-			data->Action = Act_Knuckles_Dig;
+			co2->spd.y = 0;
+			NullifyVelocity((EntityData2*)mwp, (CharObj2*)co2);
+			co2->mj.reqaction = Anm_Knuckles_CustomDrillDig;
+			data->mode = Act_Knuckles_Dig;
 		}
 		else
 		{
-			data->Action = Act_Knuckles_Stand;
+			data->mode = Act_Knuckles_Stand;
 		}
 
 		return;
 	}
 
 	// Stop if colliding with solid object collision
-	if (data->Status & Status_OnColli)
+	if (data->flag & Status_OnColli)
 	{
-		data->Action = Act_Knuckles_Stand;
+		data->mode = Act_Knuckles_Stand;
 	}
 
-	PlayerResetAngle((taskwk*)data, mwp, (playerwk*)co2);
+	PResetAngle(data, mwp, co2);
 	RunPhysics(data, mwp, co2);
 
 	// Hyper Knuckles compatibility
-	co2->Speed.y = -KnucklesDrillSpeed;
+	co2->spd.y = -KnucklesDrillSpeed;
 
 	// All that to hurt enemies
-	data->Status |= Status_Attack;
-	data->CollisionInfo->CollisionArray[0].damage &= 0xFCu;
-	data->CollisionInfo->CollisionArray[0].damage |= 0xCu;
-	data->CollisionInfo->CollisionArray[0].damage |= 0xEF;
-	data->CollisionInfo->CollisionArray[1].center = data->Position;
-	data->CollisionInfo->CollisionArray[1].attr &= 0xFFFFFFEF;
+	data->flag |= Status_Attack;
+	data->cwp->info[0].damage &= 0xFCu;
+	data->cwp->info[0].damage |= 0xCu;
+	data->cwp->info[0].damage |= 0xEF;
+	data->cwp->info[1].center = data->pos;
+	data->cwp->info[1].attr &= 0xFFFFFFEF;
 
 	// Custom animation
-	co2->AnimationThing.Index = Anm_Knuckles_CustomDrillClaw;
+	co2->mj.reqaction = Anm_Knuckles_CustomDrillClaw;
 
 	if (FrameCounterUnpaused % 2 == 0)
 	{
@@ -288,7 +291,7 @@ static void Knuckles_Exec_r(task* tsk)
 		break;
 	case Act_Knuckles_Jump:
 	case Act_Knuckles_Glide:
-		Knuckles_CheckDrillClaw(data, co2);
+		Knuckles_CheckDrillClaw((taskwk*)data, (playerwk*)co2);
 		break;
 	case Act_Knuckles_TailsGrab:
 		Knuckles_TailsGrab(data, mwp, co2);
@@ -297,7 +300,7 @@ static void Knuckles_Exec_r(task* tsk)
 		Knuckles_SpinDash(data, mwp, co2);
 		break;
 	case Act_Knuckles_DrillClaw:
-		Knuckles_DrillClaw(data, mwp, co2);
+		Knuckles_DrillClaw((taskwk*)data, mwp, (playerwk*)co2);
 		break;
 	}
 

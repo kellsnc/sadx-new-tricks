@@ -76,14 +76,14 @@ static void SonicInstantDash(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 
 		Sonic_InitLightDash(data, (EntityData2*)mwp, co2);
 
-		if (PlayerSetPosition((taskwk*)data, mwp, (playerwk*)co2) == 2) // colliding with wall
+		if (PSetPosition((taskwk*)data, mwp, (playerwk*)co2) == 2) // colliding with wall
 		{ 
 			KnockSonic(data, co2);
 			co2->LightdashTime = 0;
 		}
 		else
 		{
-			PlayerUpdateSpeed((taskwk*)data, mwp, (playerwk*)co2);
+			PresetPosition((taskwk*)data, mwp, (playerwk*)co2);
 			co2->SonicSpinTimeProbably |= 1u;
 		}
 	}
