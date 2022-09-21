@@ -68,7 +68,7 @@
       </Property>
     </Group>
     <Group name="Sonic">
-      <Property name="InstantLSD" type="Buttons" defaultvalue="0" display="Instant Light Dash">
+      <Property name="InstantLSD" type="Buttons" defaultvalue="512" display="Instant Light Dash">
         <HelpText>Press the specified button near rings (while standing, walking or jumping) to follow rings. You will need the Crystal Ring.</HelpText>
       </Property>
     </Group>
