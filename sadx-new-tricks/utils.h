@@ -4,6 +4,7 @@
 #define STATUS_FLOOR (Status_Ground | Status_OnColli)
 #define TASKWK_PLAYERID(a) a->counter.b[0]
 #define TASKWK_CHARID(a) a->counter.b[1]
+#define TaskHook FunctionHook<void, task*>
 
 void LoadAnimation(AnimationFile** info, const char* name, const HelperFunctions& helperFunctions);
 bool CheckControl(int id);

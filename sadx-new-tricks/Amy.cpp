@@ -21,8 +21,9 @@ static bool BlockDoubleJump[MaxPlayers]{};
 
 static PL_ACTION DoubleJumpAnim = { nullptr, 78, 4, Anm_Amy_Jump, 1.12f, 1.0f };
 
-static Trampoline* Amy_Exec_t       = nullptr;
-static Trampoline* Amy_RunActions_t = nullptr;
+TaskHook Amy_Exec_t(AmyRose);
+FunctionHook<void, taskwk*, motionwk2*, playerwk*> Amy_RunActions_t((intptr_t)0x488880);
+
 
 static void AmyDoubleJump(taskwk* twp, playerwk* pwp)
 {
@@ -218,7 +219,7 @@ static void __cdecl Amy_RunActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 		break;
 	}
 
-	TRAMPOLINE(Amy_RunActions)(twp, mwp, pwp);
+	Amy_RunActions_t.Original(twp, mwp, pwp);
 }
 
 static void __cdecl Amy_Exec_r(task* tsk)
@@ -250,13 +251,13 @@ static void __cdecl Amy_Exec_r(task* tsk)
 		break;
 	}
 
-	TRAMPOLINE(Amy_Exec)(tsk);
+	Amy_Exec_t.Original(tsk);
 }
 
 void Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics)
 {
-	Amy_Exec_t = new Trampoline((int)Amy_Main, (int)Amy_Main + 0x7, Amy_Exec_r);
-	Amy_RunActions_t = new Trampoline(0x488880, 0x488888, Amy_RunActions_r);
+	Amy_Exec_t.Hook(Amy_Exec_r);
+	Amy_RunActions_t.Hook(Amy_RunActions_r);
 
 	auto configgrp = config->getGroup("Amy");
 

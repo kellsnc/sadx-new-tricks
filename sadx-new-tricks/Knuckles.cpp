@@ -10,8 +10,8 @@ static float KnucklesSpinDashMaxSpeed        = 8.0f;
 static float KnucklesSpinDashSpeedIncrement  = 0.28f;
 static float KnucklesDrillSpeed              = 7.0f;
 
-static Trampoline* Knuckles_Exec_t       = nullptr;
-static Trampoline* Knuckles_RunActions_t = nullptr;
+TaskHook Knuckles_Exec_t(KnucklesTheEchidna);
+FunctionHook<void, taskwk*, motionwk2*, playerwk*> Knuckles_RunActions_t((intptr_t)0x478020);
 
 static PL_ACTION DrillClawAnim = { nullptr, 78, 3, Anm_Knuckles_CustomDrillClaw, 0.5f, 2.0f };
 static PL_ACTION DrillDigAnim  = { nullptr, 78, 4, Anm_Knuckles_Dig, 1.0f, 1.5f };
@@ -207,29 +207,29 @@ static void Knuckles_TailsGrab(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 	TailsGrabAction(data, mwp, co2, { 0.0f, -8.0f, -1.0f }, Anm_Knuckles_Hang, Act_Knuckles_Fall, Anm_Knuckles_Fall);
 }
 
-static void Knuckles_RunActions_r(EntityData1* data, motionwk2* mwp, CharObj2* co2)
+static void Knuckles_RunActions_r(taskwk* data, motionwk2* mwp, playerwk* co2)
 {
-	switch (data->Action)
+	switch (data->mode)
 	{
 	case Act_Knuckles_JumpPanel:
-		if (KnucklesCheckInput((taskwk*)data, mwp, (playerwk*)co2))
+		if (KnucklesCheckInput(data, mwp, co2))
 		{
 			return;
 		}
-		if (CheckCollisionForPanelJump(data))
+		if (CheckCollisionForPanelJump((EntityData1*)data))
 		{
 			PlaySound(33, 0, 0, 0);
 			PlayerClearSpeed(mwp, (playerwk*)co2);
-			data->Action = Act_Knuckles_JumpPanelOn;
-			co2->AnimationThing.Index = 106;
+			data->mode = Act_Knuckles_JumpPanelOn;
+			co2->mj.reqaction = 106;
 		}
-		else if ((data->Status & (Status_OnColli | Status_Ground)) != 0)
+		else if ((data->flag & (Status_OnColli | Status_Ground)) != 0)
 		{
 			PlaySound(33, 0, 0, 0);
 			PlayerClearSpeed(mwp, (playerwk*)co2);
-			data->Action = 1;
-			co2->IdleTime = 0;
-			co2->AnimationThing.Index = 2;
+			data->mode = 1;
+			co2->waittimer = 0,
+			co2->mj.reqaction = 2;
 		}
 		return;
 	case Act_Knuckles_JumpPanelOn:
@@ -237,25 +237,25 @@ static void Knuckles_RunActions_r(EntityData1* data, motionwk2* mwp, CharObj2* c
 		{
 			return;
 		}
-		if (CanIMakeJumpPanel(data) <= 0)
+		if (CanIMakeJumpPanel((EntityData1*)data) <= 0)
 		{
-			data->Action = 1;
-			co2->IdleTime = 0;
-			co2->AnimationThing.Index = 2;
+			data->mode = 1;
+			co2->waittimer = 0,
+			co2->mj.reqaction = 2;
 			return;
 		}
-		if (JumpAllowed(data) != 2)
+		if (JumpAllowed((EntityData1*)data) != 2)
 		{
 			return;
 		}
-		StartPlayerPanelJump(data);
-		data->Action = Act_Knuckles_JumpPanel;
-		co2->AnimationThing.Index = 106;
+		StartPlayerPanelJump((EntityData1*)data);
+		data->mode = Act_Knuckles_JumpPanel;
+		co2->mj.reqaction = 106;
 		PlaySound(17, 0, 0, 0);
 		return;
 	}
 
-	TRAMPOLINE(Knuckles_RunActions)(data, mwp, co2);
+	Knuckles_RunActions_t.Original((taskwk*)data, mwp, (playerwk*)co2);
 }
 
 static void Knuckles_Exec_r(task* tsk)
@@ -340,13 +340,13 @@ static void Knuckles_Exec_r(task* tsk)
 		}
 	}
 
-	TRAMPOLINE(Knuckles_Exec)(tsk);
+	Knuckles_Exec_t.Original(tsk);
 }
 
 void Knuckles_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics)
 {
-	Knuckles_Exec_t = new Trampoline((int)Knuckles_Main, (int)Knuckles_Main + 0x7, Knuckles_Exec_r);
-	Knuckles_RunActions_t = new Trampoline(0x478020, 0x478025, Knuckles_RunActions_r);
+	Knuckles_Exec_t.Hook(Knuckles_Exec_r);
+	Knuckles_RunActions_t.Hook(Knuckles_RunActions_r);
 
 	auto configgrp = config->getGroup("Knuckles");
 

@@ -5,7 +5,7 @@
 
 #include "SADXModLoader.h"
 #include "AnimationFile.h"
-#include "Trampoline.h"
+#include "FunctionHook.h"
 #include "IniFile.hpp"
 
 #include "pointers.h"

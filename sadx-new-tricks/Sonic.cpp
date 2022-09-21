@@ -1,6 +1,6 @@
 #include "pch.h"
 
-Trampoline* Sonic_Exec_t = nullptr;
+TaskHook Sonic_Exec_t(SonicTheHedgehog);
 
 static Buttons InstantLightDashButton = Buttons_Y;
 
@@ -115,13 +115,12 @@ void Sonic_Exec_r(task* tsk)
 
 	Sonic_NewActions(data, mwp, co2);
 
-	TaskFunc(origin, Sonic_Exec_t->Target());
-	origin(tsk);
+	Sonic_Exec_t.Original(tsk);
 }
 
 void Sonic_Init(const HelperFunctions& helperFunctions, const IniFile* config)
 {
 
-	Sonic_Exec_t = new Trampoline((int)Sonic_Main, (int)Sonic_Main + 0x7, Sonic_Exec_r);
+	Sonic_Exec_t.Hook(Sonic_Exec_r);
 	InstantLightDashButton = (Buttons)config->getInt("Sonic", "InstantLSD", InstantLightDashButton);
 }
