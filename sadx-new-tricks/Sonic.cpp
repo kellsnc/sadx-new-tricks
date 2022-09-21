@@ -1,6 +1,6 @@
 #include "pch.h"
 
-static Trampoline* Sonic_Exec_t = nullptr;
+Trampoline* Sonic_Exec_t = nullptr;
 
 static Buttons InstantLightDashButton = Buttons_Y;
 
@@ -107,7 +107,7 @@ static void Sonic_NewActions(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 	}
 }
 
-static void Sonic_Exec_r(task* tsk)
+void Sonic_Exec_r(task* tsk)
 {
 	auto data = (EntityData1*)tsk->twp; // main task containing position, rotation, scale
 	auto mwp = (motionwk2*)tsk->mwp; // task containing movement information
@@ -115,13 +115,13 @@ static void Sonic_Exec_r(task* tsk)
 
 	Sonic_NewActions(data, mwp, co2);
 
-	TRAMPOLINE(Sonic_Exec)(tsk);
+	TaskFunc(origin, Sonic_Exec_t->Target());
+	origin(tsk);
 }
 
 void Sonic_Init(const HelperFunctions& helperFunctions, const IniFile* config)
 {
 
 	Sonic_Exec_t = new Trampoline((int)Sonic_Main, (int)Sonic_Main + 0x7, Sonic_Exec_r);
-
 	InstantLightDashButton = (Buttons)config->getInt("Sonic", "InstantLSD", InstantLightDashButton);
 }
