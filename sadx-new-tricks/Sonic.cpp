@@ -134,6 +134,7 @@ void Sonic_Init(const HelperFunctions& helperFunctions, const IniFile* config)
 	if (InstantLightDashButton) 
 	{
 		Sonic_Exec_t.Hook(Sonic_Exec_r);
-		Sonic_RunActions_t.Hook(Sonic_RunActions_r);
 	}
+
+	Sonic_RunActions_t.Hook(Sonic_RunActions_r);
 }
