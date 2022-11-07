@@ -76,6 +76,12 @@
       <Property name="Free Cursor" type="bool" defaultvalue="True" display="Free Cursor">
         <HelpText>The fishing cursor is now free, you can change the height with L/R.</HelpText>
       </Property>
+      <Property name="EnableJumpAttack" type="bool" defaultvalue="True" display="Jump Attack">
+        <HelpText>Press X/B while in the air to attack with the fishing rod.</HelpText>
+      </Property>
+      <Property name="EnableAimCancel" type="bool" defaultvalue="True" display="Aim cancel">
+        <HelpText>Press jump to cancel aiming.</HelpText>
+      </Property>
     </Group>
   </Groups>
   <Enums>

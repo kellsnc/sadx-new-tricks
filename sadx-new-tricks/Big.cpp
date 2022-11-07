@@ -7,6 +7,8 @@
 #include "Big.h"
 
 static bool EnableFreeCursor = true;
+static bool EnableJumpAttack = true;
+static bool EnableAimCancel = true;
 
 TaskHook BigTheCat_h(0x490A00);
 UsercallFuncVoid(MoveFishingCursor, (task* tp), (tp), 0x46F850, rEAX);
@@ -79,18 +81,46 @@ static void __cdecl MoveFishingCursor_r(task* tp)
 
 static void __cdecl BigTheCat_r(task* tp)
 {
+	auto twp = tp->twp;
+	auto pwp = (playerwk*)tp->mwp->work.ptr;
+	auto pnum = twp->counter.b[0];
+
+	switch (twp->mode)
+	{
+	case MD_BIG_JUMP:
+		if (EnableJumpAttack && perG[pnum].press & AttackButtons)
+		{
+			pwp->mj.reqaction = 49;
+			twp->mode = MD_BIG_ATCK;
+			twp->flag |= Status_Attack;
+		}
+
+		break;
+	case MD_BIG_CAS1:
+		if (EnableAimCancel && perG[pnum].press & JumpButtons)
+		{
+			CameraReleaseEventCamera();
+			Big_Fish_Flag |= 0x4000;
+			twp->mode = MD_BIG_STND;
+		}
+
+		break;
+	}
+
 	BigTheCat_h.Original(tp);
 }
 
 void Big_Init(const HelperFunctions& helperFunctions, const IniFile* config)
 {
-	//BigTheCat_h.Hook(BigTheCat_r);
+	BigTheCat_h.Hook(BigTheCat_r);
 
 	auto configgrp = config->getGroup("Big");
 
 	if (configgrp)
 	{
-		EnableFreeCursor = configgrp->getBool("EnableDoubleJump", EnableFreeCursor);
+		EnableFreeCursor = configgrp->getBool("EnableFreeCursor", EnableFreeCursor);
+		EnableJumpAttack = configgrp->getBool("EnableJumpAttack", EnableJumpAttack);
+		EnableAimCancel = configgrp->getBool("EnableAimCancel", EnableAimCancel);
 	}
 
 	if (EnableFreeCursor)
