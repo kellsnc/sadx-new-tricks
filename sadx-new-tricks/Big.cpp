@@ -106,6 +106,9 @@ static void __cdecl BigTheCat_r(task* tp)
 		}
 
 		break;
+	case MD_BIG_TGRB:
+		TailsGrabAction((EntityData1*)twp, (motionwk2*)tp->mwp, (CharObj2*)pwp, {0.0f, -19.5f, 0.0f}, 37, MD_BIG_FALL, 14);
+		break;
 	}
 
 	BigTheCat_h.Original(tp);

@@ -8,6 +8,7 @@
 #include "Tails.h"
 #include "Knuckles.h"
 #include "Amy.h"
+#include "Big.h"
 
 static bool EnableTailsGrab = true;
 static bool EnableTailsSpinDash = true;
@@ -67,6 +68,17 @@ static void SetPlayerGrabbed(EntityData1* data, EntityData1* player)
 		if (player->Action == Act_Amy_Jump)
 		{
 			player->Action = Act_Amy_TailsGrab;
+		}
+		else
+		{
+			return;
+		}
+
+		break;
+	case Characters_Big:
+		if (player->Action == MD_BIG_JUMP)
+		{
+			player->Action = MD_BIG_TGRB;
 		}
 		else
 		{
