@@ -57,6 +57,9 @@
     <ClInclude Include="camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Big.h">
+      <Filter>Header Files\Characters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -90,6 +93,9 @@
       <Filter>Source Files\Characters</Filter>
     </ClCompile>
     <ClCompile Include="Tornado.cpp">
+      <Filter>Source Files\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Big.cpp">
       <Filter>Source Files\Characters</Filter>
     </ClCompile>
   </ItemGroup>

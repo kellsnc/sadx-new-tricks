@@ -92,6 +92,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Amy.h" />
+    <ClInclude Include="Big.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="framework.h" />
@@ -106,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Amy.cpp" />
+    <ClCompile Include="Big.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="entry.cpp" />

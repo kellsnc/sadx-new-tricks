@@ -24,6 +24,11 @@
         <HelpText>Enable custom actions for the Tornado planes.</HelpText>
       </Property>
     </Group>
+    <Group name="Sonic">
+      <Property name="InstantLSD" type="Buttons" defaultvalue="0" display="Instant Light Dash">
+        <HelpText>Press the specified button near rings (while standing, walking or jumping) to follow rings. You will need the Crystal Ring.</HelpText>
+      </Property>
+    </Group>
     <Group name="Tails">
       <Property name="EnableTailsGrab" type="bool" defaultvalue="True" display="Enable Player Grab">
         <HelpText>Tails can hold another player if he is flying, and the other player jumps on him. Use the 2nd controller to control Tails AI.</HelpText>
@@ -67,9 +72,9 @@
         <HelpText>Makes the long hammer required to initiate the Hammer Propeller or the Instant Ground Spin.</HelpText>
       </Property>
     </Group>
-    <Group name="Sonic">
-      <Property name="InstantLSD" type="Buttons" defaultvalue="0" display="Instant Light Dash">
-        <HelpText>Press the specified button near rings (while standing, walking or jumping) to follow rings. You will need the Crystal Ring.</HelpText>
+	<Group name="Big">
+      <Property name="Free Cursor" type="bool" defaultvalue="True" display="Free Cursor">
+        <HelpText>The fishing cursor is now free, you can change the height with L/R.</HelpText>
       </Property>
     </Group>
   </Groups>

@@ -6,12 +6,14 @@
 #include "Tails.h"
 #include "Knuckles.h"
 #include "Amy.h"
+#include "Big.h"
 #include "Tornado.h"
 
 static bool EnableSonic = true;
 static bool EnableTails = true;
 static bool EnableKnuckles = true;
 static bool EnableAmy = true;
+static bool EnableBig = true;
 static bool EnableTornado = false;
 
 extern "C"
@@ -49,6 +51,11 @@ extern "C"
 		if (EnableAmy)
 		{
 			Amy_Init(helperFunctions, config, physics);
+		}
+
+		if (EnableBig)
+		{
+			Big_Init(helperFunctions, config);
 		}
 		
 		if (EnableTornado)
