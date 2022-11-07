@@ -86,3 +86,5 @@ enum KnucklesAnimations {
 	Anm_Knuckles_CustomDrillDig,
 	Anm_Knuckles_Drill
 };
+
+void Knuckles_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics);

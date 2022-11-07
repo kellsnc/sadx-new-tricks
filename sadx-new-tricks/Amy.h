@@ -75,3 +75,5 @@ enum AmyAnimations {
 	Anm_Amy_HammerSomerTrickB,
 	Anm_Amy_HammerSomerTrickC
 };
+
+void Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics);

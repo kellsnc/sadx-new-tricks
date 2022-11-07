@@ -1,12 +1,6 @@
 #pragma once
 
-// SADX definitions thanks to ItsEasyActually
-
-
-
 typedef void(__cdecl* CameraFuncPtr)(_OBJ_CAMERAPARAM*);
-
-
 
 #define CameraAdjustFunc(NAME, ADDRESS) FunctionPointer(void, NAME, (EntityData1* current_camdata, EntityData1* previous_camdata, _OBJ_ADJUSTPARAM* pParam), ADDRESS)
 #define CameraFunc(NAME, ADDRESS) FunctionPointer(void, NAME, (_OBJ_CAMERAPARAM *pParam), ADDRESS)

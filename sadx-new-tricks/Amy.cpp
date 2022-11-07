@@ -1,4 +1,9 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FunctionHook.h"
+#include "IniFile.hpp"
+#include "utils.h"
+#include "Amy.h"
 
 #define HammerScl pwp->free.f[7]
 
@@ -23,7 +28,6 @@ static PL_ACTION DoubleJumpAnim = { nullptr, 78, 4, Anm_Amy_Jump, 1.12f, 1.0f };
 
 TaskHook Amy_Exec_t(AmyRose);
 FunctionHook<void, taskwk*, motionwk2*, playerwk*> Amy_RunActions_t((intptr_t)0x488880);
-
 
 static void AmyDoubleJump(taskwk* twp, playerwk* pwp)
 {
@@ -284,4 +288,3 @@ void Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config, con
 		MovingGroundSpinAccel = physgrp->getFloat("MovingGroundSpinAccel", MovingGroundSpinAccel);
 	}
 }
-

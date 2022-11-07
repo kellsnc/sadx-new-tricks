@@ -245,3 +245,5 @@ enum SonicAnimations : Uint16 {
 	Anm_SuperSonic_Jump,
 	Anm_MetalSonic_Hover
 };
+
+void Sonic_Init(const HelperFunctions& helperFunctions, const IniFile* config);

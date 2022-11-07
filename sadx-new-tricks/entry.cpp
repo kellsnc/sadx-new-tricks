@@ -1,10 +1,18 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "IniFile.hpp"
 
-void Sonic_Init(const HelperFunctions& helperFunctions, const IniFile* config);
-void Tails_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics);
-void Knuckles_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics);
-void Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics);
-void Tornado_Init(const HelperFunctions& helperFunctions, const IniFile* config);
+#include "Sonic.h"
+#include "Tails.h"
+#include "Knuckles.h"
+#include "Amy.h"
+#include "Tornado.h"
+
+static bool EnableSonic = true;
+static bool EnableTails = true;
+static bool EnableKnuckles = true;
+static bool EnableAmy = true;
+static bool EnableTornado = false;
 
 extern "C"
 {
@@ -13,29 +21,37 @@ extern "C"
 		const auto config = new IniFile(std::string(path) + "\\config.ini");
 		const auto physics = new IniFile(std::string(path) + "\\physics.ini");
 
-		auto configgrp = config->getGroup("General");
+		IniGroup* configgrp;
+		if (configgrp = config->getGroup("General"))
+		{
+			EnableSonic = configgrp->getBool("EnableSonic", EnableSonic);
+			EnableTails = configgrp->getBool("EnableTails", EnableTails);
+			EnableKnuckles = configgrp->getBool("EnableKnuckles", EnableKnuckles);
+			EnableAmy = configgrp->getBool("EnableAmy", EnableAmy);
+			EnableTornado = configgrp->getBool("EnableTornado", EnableTornado);
+		}
 
-		if (configgrp == nullptr || configgrp->getBool("EnableSonic", true))
+		if (EnableSonic)
 		{
 			Sonic_Init(helperFunctions, config);
 		}
 
-		if (configgrp == nullptr || configgrp->getBool("EnableTails", true))
+		if (EnableTails)
 		{
 			Tails_Init(helperFunctions, config, physics);
 		}
 		
-		if (configgrp == nullptr || configgrp->getBool("EnableKnuckles", true))
+		if (EnableKnuckles)
 		{
 			Knuckles_Init(helperFunctions, config, physics);
 		}
 
-		if (configgrp == nullptr || configgrp->getBool("EnableAmy", true))
+		if (EnableAmy)
 		{
 			Amy_Init(helperFunctions, config, physics);
 		}
 		
-		if (configgrp == nullptr || configgrp->getBool("EnableTornado", true))
+		if (EnableTornado)
 		{
 			Tornado_Init(helperFunctions, config);
 		}

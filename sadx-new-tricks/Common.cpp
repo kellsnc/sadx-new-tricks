@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "utils.h"
 
 void RunPhysics(taskwk* data, motionwk2* mwp, playerwk* co2)
 {

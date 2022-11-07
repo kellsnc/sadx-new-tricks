@@ -88,3 +88,5 @@ enum TailsAnimations {
 	Anm_Tails_FlyLimit = 42,
 	Anm_Tails_RockVertHang = 100
 };
+
+void Tails_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics);

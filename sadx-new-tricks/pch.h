@@ -2,6 +2,7 @@
 #define PCH_H
 
 #include "framework.h"
+#include <math.h>
 
 #include "SADXModLoader.h"
 #include "AnimationFile.h"
@@ -14,9 +15,5 @@
 #include "utils.h"
 
 #include "Common.h"
-#include "Sonic.h";
-#include "Tails.h";
-#include "Knuckles.h"
-#include "Amy.h";
 
 #endif
