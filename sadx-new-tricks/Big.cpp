@@ -56,7 +56,8 @@ static void __cdecl MoveFishingCursor_r(task* tp)
 	}
 
 	// Additional height limit
-	Float ylimit = njSin(0x4000) * (tp->awp->work.f[0] / 2);
+	Angle maxang = (playerpwp[pnum]->equipment & Upgrades_PowerRod ? 0x4000 : 0x2000);
+	Float ylimit = njSin(maxang) * (tp->awp->work.f[0] / 2);
 	if (pos.y - ptwp->pos.y > ylimit)
 	{
 		pos.y = ptwp->pos.y + ylimit;
