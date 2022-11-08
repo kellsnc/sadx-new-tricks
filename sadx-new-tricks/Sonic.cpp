@@ -7,11 +7,12 @@
 
 TaskHook Sonic_Exec_t(SonicTheHedgehog);
 
+static bool EnableInstantLightDash    = true;
 static Buttons InstantLightDashButton = Buttons_Y;
 
 static void CheckRunInstantDash(EntityData1* data, CharObj2* co2)
 {
-	if (InstantLightDashButton && PressedButtons[data->CharIndex] & InstantLightDashButton &&
+	if (EnableInstantLightDash == true && (PressedButtons[data->CharIndex] & InstantLightDashButton) &&
 		HomingAttackTarget_Sonic_B_Index > 0 && co2->Upgrades & 3)
 	{
 		auto distance = 10000000.0f;
@@ -125,7 +126,8 @@ void Sonic_Exec_r(task* tsk)
 
 void Sonic_Init(const HelperFunctions& helperFunctions, const IniFile* config)
 {
-
 	Sonic_Exec_t.Hook(Sonic_Exec_r);
-	InstantLightDashButton = (Buttons)config->getInt("Sonic", "InstantLSD", InstantLightDashButton);
+
+	EnableInstantLightDash = config->getBool("Sonic", "EnableInstantLightDash", EnableInstantLightDash);
+	InstantLightDashButton = (Buttons)config->getInt("Sonic", "InstantLightDashButton", InstantLightDashButton);
 }

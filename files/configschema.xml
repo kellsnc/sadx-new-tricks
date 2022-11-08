@@ -25,9 +25,10 @@
       </Property>
     </Group>
     <Group name="Sonic">
-      <Property name="InstantLSD" type="Buttons" defaultvalue="0" display="Instant Light Dash">
+      <Property name="EnableInstantLightDash" type="bool" defaultvalue="False" display="Enable Instant Light Dash">
         <HelpText>Press the specified button near rings (while standing, walking or jumping) to follow rings. You will need the Crystal Ring.</HelpText>
       </Property>
+      <Property name="InstantLightDashButton" type="Buttons" defaultvalue="512" display="Instant Light Dash Button" />
     </Group>
     <Group name="Tails">
       <Property name="EnableTailsGrab" type="bool" defaultvalue="True" display="Enable Player Grab">
