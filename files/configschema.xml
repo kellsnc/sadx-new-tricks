@@ -69,7 +69,7 @@
       <Property name="EnableDash" type="bool" defaultvalue="True" display="Enable Dash">
         <HelpText>Hold the dash button to charge a dash.</HelpText>
       </Property>
-      <Property name="DashButton" type="Buttons" defaultvalue="1024" display="Dash Button" />
+      <Property name="DashButton" type="Buttons" defaultvalue="512" display="Dash Button" />
       <Property name="InstantGroundSpin" type="bool" defaultvalue="False" display="Instant Ground Spin">
         <HelpText>Press the hammer button while running to instantly trigger ground spin.</HelpText>
       </Property>
