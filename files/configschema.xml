@@ -61,9 +61,10 @@
       <Property name="EnableMovingSpin" type="bool" defaultvalue="True" display="Enable Moving Hammer Spin">
         <HelpText>Allows Amy to move while ground spinning.</HelpText>
       </Property>
-      <Property name="HammerPropButton" type="Buttons" defaultvalue="1024" display="Hammer Propeller">
-        <HelpText>Hold the specified button while in air to do the Hammer Propeller.</HelpText>
+      <Property name="EnableHammerProp" type="bool" defaultvalue="True" display="Enable Hammer Propeller">
+        <HelpText>Hold the propeller button while in the air to glide.</HelpText>
       </Property>
+      <Property name="HammerPropButton" type="Buttons" defaultvalue="1024" display="Hammer Propeller Button" />
       <Property name="EnableDash" type="bool" defaultvalue="True" display="Enable Dash">
         <HelpText>Hold the dash button to charge a dash.</HelpText>
       </Property>
@@ -90,7 +91,6 @@
   </Groups>
   <Enums>
     <Enum name="Buttons">
-      <EnumMember name="0" display="Disabled" />
       <EnumMember name="512" display="Y Button" />
       <EnumMember name="2" display="B Button" />
       <EnumMember name="1024" display="X Button" />

@@ -9,6 +9,7 @@
 #define SpinTimer pwp->free.uw[10]
 #define SpinSpeed pwp->free.f[4]
 
+static bool EnableHammerProp    = true;
 static bool EnableDoubleJump    = true;
 static bool MovingGroundSpin    = true;
 static bool EnableDash          = true;
@@ -132,8 +133,8 @@ static void AmyProp_Check(taskwk* twp, playerwk* pwp)
 {
 	auto pnum = TASKWK_PLAYERID(twp);
 
-	if (CheckUpgrade(pwp) && CheckControl(pnum) && PressedButtons[pnum] & HammerPropButton
-		&& !(twp->flag & STATUS_FLOOR) && pwp->htp == nullptr)
+	if (EnableHammerProp == true && CheckUpgrade(pwp) && CheckControl(pnum) &&
+		perG[pnum].press & HammerPropButton && !(twp->flag & STATUS_FLOOR) && pwp->htp == nullptr)
 	{
 		twp->mode = Act_Amy_HammerProp;
 
@@ -199,7 +200,7 @@ static void ChangeMotionDash(playerwk* pwp)
 	pwp->mj.reqaction = Anm_Amy_Run;
 }
 
-Bool AmyCheckStartDash(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+static Bool AmyCheckStartDash(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
 	if (EnableDash == true && perG[TASKWK_PLAYERID(twp)].on & DashButton)
 	{
@@ -215,7 +216,7 @@ Bool AmyCheckStartDash(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 	return 0;
 }
 
-void AmyCheckChargeDash(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+static void AmyCheckChargeDash(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
 	if (SpinTimer < 300)
 	{
@@ -268,7 +269,7 @@ void AmyCheckChargeDash(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 	}
 }
 
-void Dash(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+static void Dash(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
 	if (pwp->spd.x >= pwp->p.run_speed)
 	{
@@ -435,6 +436,7 @@ void Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config, con
 
 	if (configgrp)
 	{
+		EnableHammerProp  = configgrp->getBool("EnableHammerProp", EnableHammerProp);
 		EnableDoubleJump  = configgrp->getBool("EnableDoubleJump", EnableDoubleJump);
 		MovingGroundSpin  = configgrp->getBool("EnableMovingSpin", MovingGroundSpin);
 		EnableDash        = configgrp->getBool("EnableDash", EnableDash);
