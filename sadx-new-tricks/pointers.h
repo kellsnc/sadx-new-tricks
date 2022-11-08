@@ -56,9 +56,9 @@ static inline signed int Tails_RunNextAction(CharObj2* co2, motionwk2* mwp, Enti
     return result;
 }
 
-//signed int __usercall Amy_RunNextAction@<eax>(CharObj2* co2@<ecx>, motionwk2* mwp@<edi>, EntityData1 *data@<esi>)
-static const void* const Amy_RunNextActionPtr = (void*)0x487810;
-static inline signed int Amy_RunNextAction(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+//signed int __usercall AmyCheckInput@<eax>(CharObj2* co2@<ecx>, motionwk2* mwp@<edi>, EntityData1 *data@<esi>)
+static const void* const AmyCheckInputPtr = (void*)0x487810;
+static inline signed int AmyCheckInput(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
     signed int result;
     __asm
@@ -66,10 +66,38 @@ static inline signed int Amy_RunNextAction(taskwk* twp, motionwk2* mwp, playerwk
         mov ecx, [pwp]
         mov edi, [mwp]
         mov esi, [twp]
-        call Amy_RunNextActionPtr
+        call AmyCheckInputPtr
         mov result, eax
     }
     return result;
+}
+
+static const void* const AmyCheckBeInTheAirPtr = (void*)0x485730;
+static inline Bool AmyCheckBeInTheAir(taskwk* twp, playerwk* pwp)
+{
+	Bool result;
+	__asm
+	{
+		mov eax, [pwp]
+		mov ecx, [twp]
+		call AmyCheckBeInTheAirPtr
+		mov result, eax
+	}
+	return result;
+}
+
+static const void* const AmyCheckJumpPtr = (void*)0x487640;
+static inline Bool AmyCheckJump(taskwk* twp, playerwk* pwp)
+{
+	Bool result;
+	__asm
+	{
+		mov eax, [pwp]
+		mov ecx, [twp]
+		call AmyCheckJumpPtr
+		mov result, eax
+	}
+	return result;
 }
 
 //void __usercall PutPlayerBehind(NJS_VECTOR* pos@<edi>, EntityData1* data@<esi>, float dist)
