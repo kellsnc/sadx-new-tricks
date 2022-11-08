@@ -7,7 +7,7 @@ FunctionPointer(Bool, IsEventPerforming, (), 0x42FB00);
 FunctionPointer(int, GetClosestPlayerID, (NJS_VECTOR* pos), 0x441B70);
 FunctionPointer(int, DetectDyncolCollision, (NJS_VECTOR* pos, NJS_VECTOR* output, Rotation3* rotation, ColFlags flagstoignore, float detectionradius), 0x439620);
 
-FunctionPointer(void, PresetPosition, (taskwk* a1, motionwk2* a2, playerwk* a3), 0x43EE70);
+FunctionPointer(int, PResetPosition, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x43EE70);
 FunctionPointer(void, PGlideAcceleration, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x448000);
 FunctionPointer(void, PGlideGetSpeed, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x444580);
 

@@ -57,7 +57,7 @@ static void AmyProp_Physics(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 	PGetAcceleration(twp, mwp, pwp);
 	PGetSpeed(twp, mwp, pwp);
 	PSetPosition(twp, mwp, pwp);
-	PresetPosition(twp, mwp, pwp);
+	PResetPosition(twp, mwp, pwp);
 
 	pwp->p.weight = RestoreGravity;
 }
@@ -171,7 +171,7 @@ static void AmyMovingSpin_Physics(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 		PGetAcceleration(twp, mwp, pwp);
 		PGetSpeed(twp, mwp, pwp);
 		PSetPosition(twp, mwp, pwp);
-		PresetPosition(twp, mwp, pwp);
+		PResetPosition(twp, mwp, pwp);
 	}
 }
 

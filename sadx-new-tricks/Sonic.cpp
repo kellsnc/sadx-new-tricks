@@ -88,7 +88,7 @@ static void SonicInstantDash(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 		}
 		else
 		{
-			PresetPosition((taskwk*)data, mwp, (playerwk*)co2);
+			PResetPosition((taskwk*)data, mwp, (playerwk*)co2);
 			co2->SonicSpinTimeProbably |= 1u;
 		}
 	}
