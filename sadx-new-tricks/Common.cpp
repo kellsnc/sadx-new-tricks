@@ -157,7 +157,7 @@ void CommonSpinDash_Check(EntityData1* data, CharObj2* co2, int jumpspinanim, in
 	{
 		co2->AnimationThing.Index = jumpspinanim;
 		data->Action = spindashact;
-		co2->SpindashSpeed = fmin(maxstartspeed, co2->Speed.x);
+		co2->SpindashSpeed = fmax(maxstartspeed, co2->Speed.x);
 
 		if (data->CharID != Characters_Knuckles && !isTailsAI(data->CharIndex))
 		{
