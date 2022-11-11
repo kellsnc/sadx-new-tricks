@@ -197,7 +197,7 @@ static void AmyInstantHammerSpin(taskwk* twp, playerwk* pwp)
 
 static void ChangeMotionDash(playerwk* pwp)
 {
-	pwp->mj.reqaction = Anm_Amy_Run;
+	pwp->mj.reqaction = Anm_Amy_Run2;
 }
 
 static Bool AmyCheckStartDash(taskwk* twp, motionwk2* mwp, playerwk* pwp)
@@ -276,7 +276,7 @@ static void Dash(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 		if (perG[TASKWK_PLAYERID(twp)].press & DashButton)
 		{
 			twp->mode = MD_AMY_WALK;
-			pwp->mj.reqaction = Anm_Amy_Run;
+			//pwp->mj.reqaction = Anm_Amy_Run;
 			twp->flag &= ~(Status_Ball | Status_Attack);
 		}
 	}
@@ -291,7 +291,7 @@ static void Dash(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 			twp->mode = MD_AMY_STND;
 			pwp->waittimer = 0;
 		}
-		pwp->mj.reqaction = Anm_Amy_Run;
+		//pwp->mj.reqaction = Anm_Amy_Run;
 		twp->flag &= ~(Status_Ball | Status_Attack);
 	}
 
@@ -360,7 +360,7 @@ static void __cdecl Amy_RunActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 			return;
 		}
 
-		if (AmyCheckJump(twp, pwp))
+		if (AmyCheckJump(twp, pwp) || AmyCheckHammerJump(twp, mwp, pwp))
 		{
 			twp->flag &= ~Status_OnPath;
 			return;

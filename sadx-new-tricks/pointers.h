@@ -100,6 +100,36 @@ static inline Bool AmyCheckJump(taskwk* twp, playerwk* pwp)
 	return result;
 }
 
+static const void* const AmyCheckStartHammerPtr = (void*)0x485800;
+static inline Bool AmyCheckStartHammer(taskwk* twp, playerwk* pwp)
+{
+	Bool result;
+	__asm
+	{
+		mov esi, [pwp]
+		mov edi, [twp]
+		call AmyCheckStartHammerPtr
+		mov result, eax
+	}
+	return result;
+}
+
+static const void* const AmyCheckHammerJumpPtr = (void*)0x4857B0;
+static inline Bool AmyCheckHammerJump(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+{
+	Bool result;
+	__asm
+	{
+		push[pwp]
+		push[mwp]
+		mov eax, [twp]
+		call AmyCheckHammerJumpPtr
+		mov result, eax
+		add esp, 8
+	}
+	return result;
+}
+
 //void __usercall PutPlayerBehind(NJS_VECTOR* pos@<edi>, EntityData1* data@<esi>, float dist)
 static const void* const PutPlayerBehindPtr = (void*)0x47DD50;
 static inline void PutPlayerBehind(NJS_VECTOR* pos, EntityData1* data, float dist)

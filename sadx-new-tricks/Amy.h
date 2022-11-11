@@ -68,6 +68,7 @@ enum AmyActions : Uint8 {
 enum AmyAnimations {
 	Anm_Amy_Stand,
 	Anm_Amy_Run = 11,
+	Anm_Amy_Run2,
 	Anm_Amy_Jump = 14,
 	Anm_Amy_Fall = 18,
 	Anm_Amy_HangHook = 55,
