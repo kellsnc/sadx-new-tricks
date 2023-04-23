@@ -1,9 +1,18 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FunctionHook.h"
+#include "IniFile.hpp"
+#include "utils.h"
+#include "Amy.h"
 
 #define HammerScl pwp->free.f[7]
+#define SpinTimer pwp->free.uw[10]
+#define SpinSpeed pwp->free.f[4]
 
+static bool EnableHammerProp    = true;
 static bool EnableDoubleJump    = true;
 static bool MovingGroundSpin    = true;
+static bool EnableDash          = true;
 static bool InstantGroundSpin   = false;
 static bool RemoveDizziness     = false;
 static bool UpgradeRequired     = false;
@@ -17,13 +26,17 @@ static float PropellerAirAcc             = 1.005f;
 static float DoubleJumpAcc               = 1.12f;
 static float MovingGroundSpinAccel       = 0.025f;
 
+static float DashhMaxSpeed      = 8.0f;
+static float DashSpeedIncrement = 0.1f;
+static float DashInitialSpeed   = 2.5f;
+static Buttons DashButton       = Buttons_Y;
+
 static bool BlockDoubleJump[MaxPlayers]{};
 
 static PL_ACTION DoubleJumpAnim = { nullptr, 78, 4, Anm_Amy_Jump, 1.12f, 1.0f };
 
 TaskHook Amy_Exec_t(AmyRose);
 FunctionHook<void, taskwk*, motionwk2*, playerwk*> Amy_RunActions_t((intptr_t)0x488880);
-
 
 static void AmyDoubleJump(taskwk* twp, playerwk* pwp)
 {
@@ -53,7 +66,7 @@ static void AmyProp_Physics(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 	PGetAcceleration(twp, mwp, pwp);
 	PGetSpeed(twp, mwp, pwp);
 	PSetPosition(twp, mwp, pwp);
-	PresetPosition(twp, mwp, pwp);
+	PResetPosition(twp, mwp, pwp);
 
 	pwp->p.weight = RestoreGravity;
 }
@@ -63,7 +76,7 @@ static void AmyProp_Run(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 	auto pnum = TASKWK_PLAYERID(twp);
 
 	// If an object overrides the player action, stop
-	if (Amy_RunNextAction(twp, mwp, pwp))
+	if (AmyCheckInput(twp, mwp, pwp))
 	{
 		HammerScl = 0.0f;
 		return;
@@ -120,8 +133,8 @@ static void AmyProp_Check(taskwk* twp, playerwk* pwp)
 {
 	auto pnum = TASKWK_PLAYERID(twp);
 
-	if (CheckUpgrade(pwp) && CheckControl(pnum) && PressedButtons[pnum] & HammerPropButton
-		&& !(twp->flag & STATUS_FLOOR) && pwp->htp == nullptr)
+	if (EnableHammerProp == true && CheckUpgrade(pwp) && CheckControl(pnum) &&
+		perG[pnum].press & HammerPropButton && !(twp->flag & STATUS_FLOOR) && pwp->htp == nullptr)
 	{
 		twp->mode = Act_Amy_HammerProp;
 
@@ -167,7 +180,7 @@ static void AmyMovingSpin_Physics(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 		PGetAcceleration(twp, mwp, pwp);
 		PGetSpeed(twp, mwp, pwp);
 		PSetPosition(twp, mwp, pwp);
-		PresetPosition(twp, mwp, pwp);
+		PResetPosition(twp, mwp, pwp);
 	}
 }
 
@@ -182,10 +195,117 @@ static void AmyInstantHammerSpin(taskwk* twp, playerwk* pwp)
 	}
 }
 
+static void ChangeMotionDash(playerwk* pwp)
+{
+	pwp->mj.reqaction = Anm_Amy_Run2;
+}
+
+static Bool AmyCheckStartDash(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+{
+	if (EnableDash == true && perG[TASKWK_PLAYERID(twp)].on & DashButton)
+	{
+		twp->mode = MD_AMY_CDSH;
+		ChangeMotionDash(pwp);
+		
+		twp->flag |= Status_Ball | Status_Attack;
+
+		SpinSpeed = 0.0f;
+
+		return 1;
+	}
+	return 0;
+}
+
+static void AmyCheckChargeDash(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+{
+	if (SpinTimer < 300)
+	{
+		++SpinTimer;
+		twp->flag |= Status_Attack;
+		
+		if (HeldButtons[TASKWK_PLAYERID(twp)] & DashButton)
+		{
+			if (SpinSpeed < DashhMaxSpeed)
+			{
+				SpinSpeed += DashSpeedIncrement;
+			}
+
+			if (SpinSpeed > DashInitialSpeed)
+			{
+				pwp->mj.nframe += 1.0f + (SpinSpeed / DashhMaxSpeed) * 2.0f;
+			}
+		}
+		else
+		{
+			if (SpinSpeed < DashInitialSpeed)
+			{
+				twp->mode = Act_Amy_Stand;
+				pwp->mj.reqaction = Anm_Amy_Stand;
+				SpinTimer = 0;
+				SpinSpeed = 0;
+				return;
+			}
+			else
+			{
+				twp->mode = MD_AMY_DASH;
+				ChangeMotionDash(pwp);
+				pwp->spd.x = SpinSpeed;
+				mwp->accel = SpinSpeed;
+				SpinTimer = 0;
+				SpinSpeed = 0;
+				HammerScl = 1.0f;
+				dsPlay_oneshot(26, 0, 0, 0);
+				return;
+			}
+		}
+	}
+	else
+	{
+		twp->mode = Act_Amy_Stand;
+		pwp->mj.reqaction = Anm_Amy_Stand;
+		SpinTimer = 0;
+		SpinSpeed = 0;
+		return;
+	}
+}
+
+static void Dash(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+{
+	if (pwp->spd.x >= pwp->p.run_speed)
+	{
+		if (perG[TASKWK_PLAYERID(twp)].press & DashButton)
+		{
+			twp->mode = MD_AMY_WALK;
+			//pwp->mj.reqaction = Anm_Amy_Run;
+			twp->flag &= ~(Status_Ball | Status_Attack);
+		}
+	}
+	else
+	{
+		if (pwp->spd.x > 0.0f)
+		{
+			twp->mode = MD_AMY_WALK;
+		}
+		else
+		{
+			twp->mode = MD_AMY_STND;
+			pwp->waittimer = 0;
+		}
+		//pwp->mj.reqaction = Anm_Amy_Run;
+		twp->flag &= ~(Status_Ball | Status_Attack);
+	}
+
+	HammerScl = 1.0f;
+}
+
 static void __cdecl Amy_RunActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
 	switch (twp->mode)
 	{
+	case MD_AMY_STND:
+	case MD_AMY_WALK:
+		AmyCheckStartDash(twp, mwp, pwp);
+		break;
 	case Act_Amy_Jump:
 		AmyProp_Check(twp, pwp);
 		AmyDoubleJump(twp, pwp);
@@ -209,8 +329,47 @@ static void __cdecl Amy_RunActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 	case Act_Amy_HammerProp:
 		AmyProp_Run(twp, mwp, pwp);
 		break;
+	case MD_AMY_CDSH:
+		if (AmyCheckInput(twp, mwp, pwp))
+		{
+			return;
+		}
+
+		if (AmyCheckBeInTheAir(twp, pwp))
+		{
+			pwp->mj.reqaction = Anm_Amy_Fall;
+			SpinSpeed = 5.0f;
+			twp->flag = twp->flag & ~Status_OnPath | (Status_Ball | Status_Attack);
+			return;
+		}
+
+		AmyCheckChargeDash(twp, mwp, pwp);
+		break;
+	case MD_AMY_DASH:
+		if (AmyCheckInput(twp, mwp, pwp))
+		{
+			HammerScl = 0.0f;
+			return;
+		}
+
+		if (AmyCheckBeInTheAir(twp, pwp))
+		{
+			pwp->mj.reqaction = Anm_Amy_Fall;
+			SpinSpeed = 5.0f;
+			twp->flag |= (Status_Ball | Status_Attack);
+			return;
+		}
+
+		if (AmyCheckJump(twp, pwp) || AmyCheckHammerJump(twp, mwp, pwp))
+		{
+			twp->flag &= ~Status_OnPath;
+			return;
+		}
+
+		Dash(twp, mwp, pwp);
+		break;
 	case Act_Amy_TailsGrab:
-		if (Amy_RunNextAction(twp, mwp, pwp))
+		if (AmyCheckInput(twp, mwp, pwp))
 		{
 			return;
 		}
@@ -249,6 +408,20 @@ static void __cdecl Amy_Exec_r(task* tsk)
 	case Act_Amy_HammerProp:
 		AmyProp_Physics(twp, mwp, pwp);
 		break;
+	case MD_AMY_CDSH:
+		PGetRotation(twp, mwp, pwp);
+		PGetBreak(twp, mwp, pwp);
+		PGetSpeed(twp, mwp, pwp);
+		PSetPosition(twp, mwp, pwp);
+		PResetPosition(twp, mwp, pwp);
+		break;
+	case MD_AMY_DASH:
+		PGetRotation(twp, mwp, pwp);
+		PGetInertia(twp, mwp, pwp);
+		PGetSpeed(twp, mwp, pwp);
+		PSetPosition(twp, mwp, pwp);
+		PResetPosition(twp, mwp, pwp);
+		break;
 	}
 
 	Amy_Exec_t.Original(tsk);
@@ -263,12 +436,15 @@ void Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config, con
 
 	if (configgrp)
 	{
+		EnableHammerProp  = configgrp->getBool("EnableHammerProp", EnableHammerProp);
 		EnableDoubleJump  = configgrp->getBool("EnableDoubleJump", EnableDoubleJump);
 		MovingGroundSpin  = configgrp->getBool("EnableMovingSpin", MovingGroundSpin);
+		EnableDash        = configgrp->getBool("EnableDash", EnableDash);
 		InstantGroundSpin = configgrp->getBool("InstantGroundSpin", InstantGroundSpin);
 		RemoveDizziness   = configgrp->getBool("RemoveDizziness", RemoveDizziness);
 		UpgradeRequired   = configgrp->getBool("UpgradeRequired", UpgradeRequired);
 		HammerPropButton  = (Buttons)configgrp->getInt("HammerPropButton", HammerPropButton);
+		DashButton = (Buttons)configgrp->getInt("DashButton", DashButton);
 	}
 
 	auto physgrp = physics->getGroup("Amy");
@@ -282,6 +458,8 @@ void Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config, con
 		PropellerAirAcc = physgrp->getFloat("PropellerAirAcc", PropellerAirAcc);
 		DoubleJumpAcc = physgrp->getFloat("DoubleJumpAcc", DoubleJumpAcc);
 		MovingGroundSpinAccel = physgrp->getFloat("MovingGroundSpinAccel", MovingGroundSpinAccel);
+		DashhMaxSpeed = physgrp->getFloat("DashhMaxSpeed", DashhMaxSpeed);
+		DashSpeedIncrement = physgrp->getFloat("DashSpeedIncrement", DashSpeedIncrement);
+		DashInitialSpeed = physgrp->getFloat("DashInitialSpeed", DashInitialSpeed);
 	}
 }
-

@@ -1,4 +1,14 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FunctionHook.h"
+#include "IniFile.hpp"
+#include "utils.h"
+
+#include "Sonic.h"
+#include "Tails.h"
+#include "Knuckles.h"
+#include "Amy.h"
+#include "Big.h"
 
 static bool EnableTailsGrab = true;
 static bool EnableTailsSpinDash = true;
@@ -65,6 +75,17 @@ static void SetPlayerGrabbed(EntityData1* data, EntityData1* player)
 		}
 
 		break;
+	case Characters_Big:
+		if (player->Action == MD_BIG_JUMP)
+		{
+			player->Action = MD_BIG_TGRB;
+		}
+		else
+		{
+			return;
+		}
+
+		break;
 	default:
 		return;
 	}
@@ -124,7 +145,7 @@ static void Tails_TailsGrab(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 	{
 		data->LoopData = nullptr;
 
-		if ( (co2->Upgrades & Upgrades_SuperSonic) == 0)
+		if (!isSuper((playerwk*)co2))
 			co2->Powerups &= ~Powerups_Invincibility;
 
 		return;
@@ -142,7 +163,7 @@ static void Tails_NewActions(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 		{
 			BlockPlayerGrab[data->CharIndex] = false;
 
-			if ((co2->Upgrades & Upgrades_SuperSonic) == 0)
+			if (!isSuper((playerwk*)co2))
 				co2->Powerups &= ~Powerups_Invincibility;
 		}
 	}

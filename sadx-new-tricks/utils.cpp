@@ -1,4 +1,7 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "AnimationFile.h"
+#include "utils.h"
 
 void LoadAnimation(AnimationFile** info, const char* name, const HelperFunctions& helperFunctions)
 {

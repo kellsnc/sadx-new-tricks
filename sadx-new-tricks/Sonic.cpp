@@ -1,13 +1,18 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FunctionHook.h"
+#include "IniFile.hpp"
+#include "utils.h"
+#include "Sonic.h"
 
 TaskHook Sonic_Exec_t(SonicTheHedgehog);
-FunctionHook<void, taskwk*, motionwk2*, playerwk*> Sonic_RunActions_t((intptr_t)Sonic_Act1);
 
+static bool EnableInstantLightDash    = true;
 static Buttons InstantLightDashButton = Buttons_Y;
 
 static void CheckRunInstantDash(EntityData1* data, CharObj2* co2)
 {
-	if (InstantLightDashButton && PressedButtons[data->CharIndex] & InstantLightDashButton &&
+	if (EnableInstantLightDash == true && (PressedButtons[data->CharIndex] & InstantLightDashButton) &&
 		HomingAttackTarget_Sonic_B_Index > 0 && co2->Upgrades & 3)
 	{
 		auto distance = 10000000.0f;
@@ -74,6 +79,19 @@ static void SonicInstantDash(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 			co2->LightdashTime = 0;
 			DoSoundQueueThing(764);
 		}
+
+		Sonic_InitLightDash(data, (EntityData2*)mwp, co2);
+
+		if (PSetPosition((taskwk*)data, mwp, (playerwk*)co2) == 2) // colliding with wall
+		{ 
+			KnockSonic(data, co2);
+			co2->LightdashTime = 0;
+		}
+		else
+		{
+			PResetPosition((taskwk*)data, mwp, (playerwk*)co2);
+			co2->SonicSpinTimeProbably |= 1u;
+		}
 	}
 }
 
@@ -95,46 +113,21 @@ static void Sonic_NewActions(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 	}
 }
 
-void __cdecl Sonic_RunActions_r(taskwk* data, motionwk2* mwp, playerwk* co2)
-{
-	Sonic_NewActions((EntityData1*)data, mwp, (CharObj2*)co2);
-
-	Sonic_RunActions_t.Original(data, mwp, co2);
-}
-
 void Sonic_Exec_r(task* tsk)
 {
-	auto data = tsk->twp;
+	auto data = (EntityData1*)tsk->twp; // main task containing position, rotation, scale
 	auto mwp = (motionwk2*)tsk->mwp; // task containing movement information
 	auto co2 = (CharObj2*)mwp->work.ptr; // physics, animation info, and countless other things
 
-	if (data->mode == Act_Sonic_InstantDash)
-	{
-		Sonic_InitLightDash((EntityData1*)data, (EntityData2*)mwp, co2);
-
-		if (PSetPosition(data, mwp, (playerwk*)co2) == 2) // colliding with wall
-		{
-			KnockSonic((EntityData1*)data, co2);
-			co2->LightdashTime = 0;
-		}
-		else
-		{
-			PresetPosition((taskwk*)data, mwp, (playerwk*)co2);
-			co2->SonicSpinTimeProbably |= 1u;
-		}
-	}
+	Sonic_NewActions(data, mwp, co2);
 
 	Sonic_Exec_t.Original(tsk);
 }
 
 void Sonic_Init(const HelperFunctions& helperFunctions, const IniFile* config)
 {
-	InstantLightDashButton = (Buttons)config->getInt("Sonic", "InstantLSD", InstantLightDashButton);
+	Sonic_Exec_t.Hook(Sonic_Exec_r);
 
-	if (InstantLightDashButton) 
-	{
-		Sonic_Exec_t.Hook(Sonic_Exec_r);
-	}
-
-	Sonic_RunActions_t.Hook(Sonic_RunActions_r);
+	EnableInstantLightDash = config->getBool("Sonic", "EnableInstantLightDash", EnableInstantLightDash);
+	InstantLightDashButton = (Buttons)config->getInt("Sonic", "InstantLightDashButton", InstantLightDashButton);
 }

@@ -19,3 +19,5 @@ struct tornadewk
 	int RapidCnt;
 	int LockTame;
 };
+
+void Tornado_Init(const HelperFunctions& helperFunctions, const IniFile* config);

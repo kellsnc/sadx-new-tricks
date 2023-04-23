@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "ninja-utils.h"
 
 void njTranslateX(float f)
 {

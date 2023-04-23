@@ -1,4 +1,9 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FunctionHook.h"
+#include "IniFile.hpp"
+#include "utils.h"
+#include "Knuckles.h"
 
 static bool EnableKnucklesSpinDash  = true;
 static bool EnableKnucklesDrillClaw = true;

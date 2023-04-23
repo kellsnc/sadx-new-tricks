@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "utils.h"
 
 void RunPhysics(taskwk* data, motionwk2* mwp, playerwk* co2)
 {
@@ -6,7 +8,7 @@ void RunPhysics(taskwk* data, motionwk2* mwp, playerwk* co2)
 	PGetAcceleration((taskwk*)data, mwp, (playerwk*)co2);
 	PGetSpeed((taskwk*)data, mwp, (playerwk*)co2);
 	PSetPosition((taskwk*)data, mwp, (playerwk*)co2);
-	PresetPosition((taskwk*)data, mwp, (playerwk*)co2);
+	PResetPosition((taskwk*)data, mwp, (playerwk*)co2);
 }
 
 #pragma region TailsGrab
@@ -146,7 +148,7 @@ void CommonSpinDash_Run(EntityData1* data, motionwk2* mwp, CharObj2* co2, float 
 	PGetBreak((taskwk*)data, mwp, (playerwk*)co2);
 	PGetSpeed((taskwk*)data, mwp, (playerwk*)co2);
 	PSetPosition((taskwk*)data, mwp, (playerwk*)co2);
-	PresetPosition((taskwk*)data, mwp, (playerwk*)co2);
+	PResetPosition((taskwk*)data, mwp, (playerwk*)co2);
 }
 
 void CommonSpinDash_Check(EntityData1* data, CharObj2* co2, int jumpspinanim, int spindashact, float maxstartspeed)
@@ -155,7 +157,7 @@ void CommonSpinDash_Check(EntityData1* data, CharObj2* co2, int jumpspinanim, in
 	{
 		co2->AnimationThing.Index = jumpspinanim;
 		data->Action = spindashact;
-		co2->SpindashSpeed = fmin(maxstartspeed, co2->Speed.x);
+		co2->SpindashSpeed = fmax(maxstartspeed, co2->Speed.x);
 
 		if (data->CharID != Characters_Knuckles && !isTailsAI(data->CharIndex))
 		{

@@ -1,4 +1,8 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FunctionHook.h"
+#include "IniFile.hpp"
+#include "utils.h"
 #include "Tornado.h"
 
 TaskHook Tornado_Exec_t((intptr_t)Tornado_Main);

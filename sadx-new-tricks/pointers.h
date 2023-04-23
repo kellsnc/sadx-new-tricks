@@ -7,7 +7,7 @@ FunctionPointer(Bool, IsEventPerforming, (), 0x42FB00);
 FunctionPointer(int, GetClosestPlayerID, (NJS_VECTOR* pos), 0x441B70);
 FunctionPointer(int, DetectDyncolCollision, (NJS_VECTOR* pos, NJS_VECTOR* output, Rotation3* rotation, ColFlags flagstoignore, float detectionradius), 0x439620);
 
-FunctionPointer(void, PresetPosition, (taskwk* a1, motionwk2* a2, playerwk* a3), 0x43EE70);
+FunctionPointer(int, PResetPosition, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x43EE70);
 FunctionPointer(void, PGlideAcceleration, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x448000);
 FunctionPointer(void, PGlideGetSpeed, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x444580);
 
@@ -56,9 +56,9 @@ static inline signed int Tails_RunNextAction(CharObj2* co2, motionwk2* mwp, Enti
     return result;
 }
 
-//signed int __usercall Amy_RunNextAction@<eax>(CharObj2* co2@<ecx>, motionwk2* mwp@<edi>, EntityData1 *data@<esi>)
-static const void* const Amy_RunNextActionPtr = (void*)0x487810;
-static inline signed int Amy_RunNextAction(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+//signed int __usercall AmyCheckInput@<eax>(CharObj2* co2@<ecx>, motionwk2* mwp@<edi>, EntityData1 *data@<esi>)
+static const void* const AmyCheckInputPtr = (void*)0x487810;
+static inline signed int AmyCheckInput(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
     signed int result;
     __asm
@@ -66,10 +66,68 @@ static inline signed int Amy_RunNextAction(taskwk* twp, motionwk2* mwp, playerwk
         mov ecx, [pwp]
         mov edi, [mwp]
         mov esi, [twp]
-        call Amy_RunNextActionPtr
+        call AmyCheckInputPtr
         mov result, eax
     }
     return result;
+}
+
+static const void* const AmyCheckBeInTheAirPtr = (void*)0x485730;
+static inline Bool AmyCheckBeInTheAir(taskwk* twp, playerwk* pwp)
+{
+	Bool result;
+	__asm
+	{
+		mov eax, [pwp]
+		mov ecx, [twp]
+		call AmyCheckBeInTheAirPtr
+		mov result, eax
+	}
+	return result;
+}
+
+static const void* const AmyCheckJumpPtr = (void*)0x487640;
+static inline Bool AmyCheckJump(taskwk* twp, playerwk* pwp)
+{
+	Bool result;
+	__asm
+	{
+		mov eax, [pwp]
+		mov ecx, [twp]
+		call AmyCheckJumpPtr
+		mov result, eax
+	}
+	return result;
+}
+
+static const void* const AmyCheckStartHammerPtr = (void*)0x485800;
+static inline Bool AmyCheckStartHammer(taskwk* twp, playerwk* pwp)
+{
+	Bool result;
+	__asm
+	{
+		mov esi, [pwp]
+		mov edi, [twp]
+		call AmyCheckStartHammerPtr
+		mov result, eax
+	}
+	return result;
+}
+
+static const void* const AmyCheckHammerJumpPtr = (void*)0x4857B0;
+static inline Bool AmyCheckHammerJump(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+{
+	Bool result;
+	__asm
+	{
+		push[pwp]
+		push[mwp]
+		mov eax, [twp]
+		call AmyCheckHammerJumpPtr
+		mov result, eax
+		add esp, 8
+	}
+	return result;
 }
 
 //void __usercall PutPlayerBehind(NJS_VECTOR* pos@<edi>, EntityData1* data@<esi>, float dist)

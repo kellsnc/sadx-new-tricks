@@ -60,11 +60,15 @@ enum AmyActions : Uint8 {
 
 	Act_Amy_HammerProp,
 	Act_Amy_TailsGrab,
+	MD_AMY_CDSH,
+	MD_AMY_DASH,
 	Act_Amy_SpinR = 67 // From Powerful Amy
 };
 
 enum AmyAnimations {
 	Anm_Amy_Stand,
+	Anm_Amy_Run = 11,
+	Anm_Amy_Run2,
 	Anm_Amy_Jump = 14,
 	Anm_Amy_Fall = 18,
 	Anm_Amy_HangHook = 55,
@@ -75,3 +79,5 @@ enum AmyAnimations {
 	Anm_Amy_HammerSomerTrickB,
 	Anm_Amy_HammerSomerTrickC
 };
+
+void Amy_Init(const HelperFunctions& helperFunctions, const IniFile* config, const IniFile* physics);
