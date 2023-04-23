@@ -4,22 +4,25 @@
 #include "IniFile.hpp"
 #include "utils.h"
 #include "Knuckles.h"
+#include "UsercallFunctionHandler.h"
 
-static bool EnableKnucklesSpinDash  = true;
+static bool EnableKnucklesSpinDash = true;
 static bool EnableKnucklesDrillClaw = true;
-static bool EnableKnucklesWallDig   = true;
-static bool DiggableRMWalls         = true;
+static bool EnableKnucklesWallDig = true;
+static bool DiggableRMWalls = true;
 
 static float KnucklesSpinDashMaxInitialSpeed = 1.45f;
-static float KnucklesSpinDashMaxSpeed        = 8.0f;
-static float KnucklesSpinDashSpeedIncrement  = 0.28f;
-static float KnucklesDrillSpeed              = 7.0f;
+static float KnucklesSpinDashMaxSpeed = 8.0f;
+static float KnucklesSpinDashSpeedIncrement = 0.28f;
+static float KnucklesDrillSpeed = 7.0f;
 
 TaskHook Knuckles_Exec_t(KnucklesTheEchidna);
 FunctionHook<void, taskwk*, motionwk2*, playerwk*> Knuckles_RunActions_t((intptr_t)0x478020);
 
+static UsercallFuncVoid(KnucklesSetAttackColli_t, (taskwk* a1, playerwk* a2), (a1, a2), 0x474BA0, rESI, stack4);
+
 static PL_ACTION DrillClawAnim = { nullptr, 78, 3, Anm_Knuckles_CustomDrillClaw, 0.5f, 2.0f };
-static PL_ACTION DrillDigAnim  = { nullptr, 78, 4, Anm_Knuckles_Dig, 1.0f, 1.5f };
+static PL_ACTION DrillDigAnim = { nullptr, 78, 4, Anm_Knuckles_Dig, 1.0f, 1.5f };
 
 static AnimationFile* DrillClawMotion = nullptr;
 
@@ -170,14 +173,6 @@ static void Knuckles_DrillClaw(taskwk* data, motionwk2* mwp, playerwk* co2)
 	// Hyper Knuckles compatibility
 	co2->spd.y = -KnucklesDrillSpeed;
 
-	// All that to hurt enemies
-	data->flag |= Status_Attack;
-	data->cwp->info[0].damage &= 0xFCu;
-	data->cwp->info[0].damage |= 0xCu;
-	data->cwp->info[0].damage |= 0xEF;
-	data->cwp->info[1].center = data->pos;
-	data->cwp->info[1].attr &= 0xFFFFFFEF;
-
 	// Custom animation
 	co2->mj.reqaction = Anm_Knuckles_CustomDrillClaw;
 
@@ -212,6 +207,28 @@ static void Knuckles_TailsGrab(EntityData1* data, motionwk2* mwp, CharObj2* co2)
 	TailsGrabAction(data, mwp, co2, { 0.0f, -8.0f, -1.0f }, Anm_Knuckles_Hang, Act_Knuckles_Fall, Anm_Knuckles_Fall);
 }
 
+void KnucklesSetAttackColli_r(taskwk* twp, playerwk* pwp)
+{
+	auto cwp = twp->cwp;
+	int flagA = 0;
+	int flagB = 0;
+
+	if (cwp && twp->mode == Act_Knuckles_DrillClaw)
+	{
+		auto colInfo = cwp->info;
+		colInfo[1].attr |= 0x10u;
+		twp->cwp->info[2].attr |= 0x10u;
+		twp->cwp->info[3].attr |= 0x10u;
+		flagA = 3;
+		flagB = 3;
+
+		colInfo->damage = flagA & 3 | colInfo->damage & 0xF0 | (4 * (flagB & 3));
+		return;
+	}
+
+	KnucklesSetAttackColli_t.Original(twp, pwp);
+}
+
 static void Knuckles_RunActions_r(taskwk* data, motionwk2* mwp, playerwk* co2)
 {
 	switch (data->mode)
@@ -234,7 +251,7 @@ static void Knuckles_RunActions_r(taskwk* data, motionwk2* mwp, playerwk* co2)
 			PlayerClearSpeed(mwp, (playerwk*)co2);
 			data->mode = 1;
 			co2->waittimer = 0,
-			co2->mj.reqaction = 2;
+				co2->mj.reqaction = 2;
 		}
 		return;
 	case Act_Knuckles_JumpPanelOn:
@@ -246,7 +263,7 @@ static void Knuckles_RunActions_r(taskwk* data, motionwk2* mwp, playerwk* co2)
 		{
 			data->mode = 1;
 			co2->waittimer = 0,
-			co2->mj.reqaction = 2;
+				co2->mj.reqaction = 2;
 			return;
 		}
 		if (JumpAllowed((EntityData1*)data) != 2)
@@ -352,6 +369,7 @@ void Knuckles_Init(const HelperFunctions& helperFunctions, const IniFile* config
 {
 	Knuckles_Exec_t.Hook(Knuckles_Exec_r);
 	Knuckles_RunActions_t.Hook(Knuckles_RunActions_r);
+	KnucklesSetAttackColli_t.Hook(KnucklesSetAttackColli_r);
 
 	auto configgrp = config->getGroup("Knuckles");
 
