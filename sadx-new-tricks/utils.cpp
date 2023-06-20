@@ -3,6 +3,8 @@
 #include "AnimationFile.h"
 #include "utils.h"
 
+DataPointer(bool*, pInputStatusForEachPlayer, 0x40F30C); // we get a pointer to `ucInputStatusForEachPlayer` since the input mod replaces the array
+
 void LoadAnimation(AnimationFile** info, const char* name, const HelperFunctions& helperFunctions)
 {
 	std::string fullPath = "system\\";
@@ -33,7 +35,7 @@ bool CheckControl(int id)
 		}
 	}
 
-	return !EV_MainThread_ptr && ControlEnabled == 1 && ControllerEnabled[id] == 1;
+	return !EV_MainThread_ptr && ucInputStatus == TRUE && pInputStatusForEachPlayer[id] == 1;
 }
 
 void PlayerClearSpeed(motionwk2* mwp, playerwk* pwp)
