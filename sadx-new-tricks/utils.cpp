@@ -35,7 +35,7 @@ bool CheckControl(int id)
 		}
 	}
 
-	return !EV_MainThread_ptr && ucInputStatus == TRUE && pInputStatusForEachPlayer[id] == 1;
+	return !EV_MainThread_ptr && ucInputStatus == TRUE && (pInputStatusForEachPlayer[id] == 1 || isTailsAI(id));
 }
 
 void PlayerClearSpeed(motionwk2* mwp, playerwk* pwp)
