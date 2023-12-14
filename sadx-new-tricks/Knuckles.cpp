@@ -21,8 +21,8 @@ FunctionHook<void, taskwk*, motionwk2*, playerwk*> Knuckles_RunActions_t((intptr
 
 static UsercallFuncVoid(KnucklesSetAttackColli_t, (taskwk* a1, playerwk* a2), (a1, a2), 0x474BA0, rESI, stack4);
 
-static PL_ACTION DrillClawAnim = { nullptr, 78, 3, Anm_Knuckles_CustomDrillClaw, 0.5f, 2.0f };
-static PL_ACTION DrillDigAnim = { nullptr, 78, 4, Anm_Knuckles_Dig, 1.0f, 1.5f };
+static PL_ACTION DrillClawAnim = { nullptr, 73, 3, Anm_Knuckles_CustomDrillClaw, 0.5f, 2.0f };
+static PL_ACTION DrillDigAnim = { nullptr, 73, 4, Anm_Knuckles_Dig, 1.0f, 1.5f };
 
 static AnimationFile* DrillClawMotion = nullptr;
 
