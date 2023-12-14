@@ -19,8 +19,6 @@ ObjectFunc(DeleteGammaMissileIfNoTarget, 0x4CEFE0);
 DataArray(PL_ACTION, AmyAnimData, 0x3C54880, 102);
 DataArray(PL_ACTION, KnucklesAnimData, 0x3C532A0, 115);
 
-DataArray(CollisionData, JumpPanel_Collision_, 0x97DF68, 4);
-
 //signed int __usercall Knuckles_RunNextAction@<eax>(CharObj2 *co2@<edi>, EntityData1 *data@<esi>, EntityData2 *mwp)
 static const void* const Knuckles_RunNextActionPtr = (void*)0x476970;
 static inline signed int Knuckles_RunNextAction(CharObj2* co2, motionwk2* mwp, EntityData1* data)
